@@ -1,0 +1,5 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-3.3.3/examples/CMakeLists.txt
+  simple.c
+  glad_gl.c
+  Generating Code...
+  simple.vcxproj -> C:\Users\Alientech\Documents\Projects\OGL\OpenglLearn\dependencies\glfw-3.3.3\examples\Debug\simple.exe

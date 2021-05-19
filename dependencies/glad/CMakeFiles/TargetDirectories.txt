@@ -1,0 +1,4 @@
+C:/Users/Alientech/Downloads/glad/CMakeFiles/glad-generate-files.dir
+C:/Users/Alientech/Downloads/glad/CMakeFiles/glad.dir
+C:/Users/Alientech/Downloads/glad/CMakeFiles/ALL_BUILD.dir
+C:/Users/Alientech/Downloads/glad/CMakeFiles/ZERO_CHECK.dir

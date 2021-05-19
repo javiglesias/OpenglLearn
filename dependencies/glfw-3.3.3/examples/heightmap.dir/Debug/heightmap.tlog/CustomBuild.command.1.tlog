@@ -1,0 +1,10 @@
+^C:\USERS\ALIENTECH\DOWNLOADS\GLFW-3.3.3\EXAMPLES\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Alientech/Downloads/glfw-3.3.3 -BC:/Users/Alientech/Documents/Projects/OGL/OpenglLearn/dependencies/glfw-3.3.3 --check-stamp-file C:/Users/Alientech/Documents/Projects/OGL/OpenglLearn/dependencies/glfw-3.3.3/examples/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

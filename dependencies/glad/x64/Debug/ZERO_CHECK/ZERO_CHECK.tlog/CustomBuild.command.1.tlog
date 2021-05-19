@@ -1,0 +1,10 @@
+^C:\USERS\ALIENTECH\DOWNLOADS\GLAD\CMAKEFILES\C9720321D6926A41F8A9ABFA0B7A25C9\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Alientech/Downloads/glad-master -BC:/Users/Alientech/Downloads/glad --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Alientech/Downloads/glad/GLAD.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
