@@ -1,0 +1,32 @@
+^C:\USERS\ALIENTECH\DOWNLOADS\GLAD-MASTER\CMAKEFILES\E57403489193BA0E352B451E73692D96\GLAD.H.RULE
+setlocal
+cd C:\Users\Alientech\Downloads\glad-master
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+C:\Users\Alientech\AppData\Local\Programs\Python\Python39\python.exe -m glad --profile=compatibility --out-path=C:/Users/Alientech/Downloads/glad-master --api= --generator=c --extensions= --spec=gl
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ALIENTECH\DOWNLOADS\GLAD-MASTER\CMAKEFILES\03BE26E5473A89FF08D810938185939E\GLAD-GENERATE-FILES.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ALIENTECH\DOWNLOADS\GLAD-MASTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Alientech/Downloads/glad-master -BC:/Users/Alientech/Downloads/glad-master --check-stamp-file C:/Users/Alientech/Downloads/glad-master/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

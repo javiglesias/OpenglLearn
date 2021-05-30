@@ -1,0 +1,6 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/tests/CMakeLists.txt
+  empty.c
+  tinycthread.c
+  glad_gl.c
+  Generating Code...
+  empty.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\tests\Debug\empty.exe

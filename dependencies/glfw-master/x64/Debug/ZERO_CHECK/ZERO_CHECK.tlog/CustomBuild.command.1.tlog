@@ -1,0 +1,10 @@
+^C:\USERS\ALIENTECH\DOWNLOADS\GLFW-MASTER\CMAKEFILES\083E6ECC55FDB3C4E7A249F2CB2FA3F6\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Alientech/Downloads/glfw-master -BC:/Users/Alientech/Downloads/glfw-master --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Alientech/Downloads/glfw-master/GLFW.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -1,0 +1,5 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/examples/CMakeLists.txt
+  triangle-opengl.c
+  glad_gl.c
+  Generating Code...
+  triangle-opengl.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\examples\Debug\triangle-opengl.exe

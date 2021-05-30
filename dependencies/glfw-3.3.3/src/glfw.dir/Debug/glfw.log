@@ -1,8 +1,0 @@
-﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-3.3.3/src/CMakeLists.txt
-  CMake is re-running because C:/Users/Alientech/Documents/Projects/OGL/OpenglLearn/dependencies/glfw-3.3.3/src/CMakeFiles/generate.stamp is out-of-date.
-    the file 'C:/Users/Alientech/Downloads/glfw-3.3.3/src/CMakeLists.txt'
-    is newer than 'C:/Users/Alientech/Documents/Projects/OGL/OpenglLearn/dependencies/glfw-3.3.3/src/CMakeFiles/generate.stamp.depend'
-    result='0'
-CUSTOMBUILD : CMake error : The source directory "C:/Users/Alientech/Downloads/glfw-3.3.3" does not exist.
-  Specify --help for usage, or press the help button on the CMake GUI.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(240,5): error MSB8066: Custom build for 'C:\Users\Alientech\Downloads\glfw-3.3.3\src\CMakeLists.txt' exited with code 1.

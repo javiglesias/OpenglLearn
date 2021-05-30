@@ -1,112 +1,99 @@
 #include "Shader.h"
-#include <sstream>
 #include <fstream>
+#include <sstream>
 #include <iostream>
-#include "Renderer.h"
+#include "glad/glad.h"
 
-Shader::Shader(const std::string& filepath)
-	:m_RendererID(0), m_Filepath(filepath)
+Shader::Shader(const char* vertex_path, const char* fragment_path)
 {
-	source = ParseShader(filepath);
-	m_RendererID = CreateShader(source.vertexSource, source.fragmentSource);
-}
+	std::string vertex_code;
+	std::string fragment_code;
+	std::ifstream v_shader_file;
+	std::ifstream f_shader_file;
 
-Shader::~Shader()
-{
-	GLCall(glDeleteProgram(m_RendererID));
-}
+	v_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	f_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-void Shader::Bind() const
-{
-	GLCall(glUseProgram(m_RendererID))
-}
-
-void Shader::Unbind() const
-{
-	GLCall(glUseProgram(0))
-}
-
-void Shader::SetUniforms1i(const std::string& name, int v0)
-{
-	int location = Shader::GetUniformLocation(name);
-	GLCall(glUniform1i(location, v0))
-}
-
-void Shader::SetUniforms4f(const std::string& name, float v0, float v1, float v2, float v3)
-{
-	int location = Shader::GetUniformLocation(name);
-	GLCall(glUniform4f(location, v0, v1, v2, v3))
-}
-
-unsigned int Shader::CompileShader(GLenum type, std::string source)
-{
-	GLCall(unsigned int id = glCreateShader(type))
-	// Source tiene que existir cuando se llame a este codigo porque se esta devolviendo la direccion a la que apunta.
-	const char* src = source.c_str();
-	GLCall(glShaderSource(id, 1, &src, nullptr))
-	GLCall(glCompileShader(id))
-
-	int compilationResult;
-	GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &compilationResult))
-	if (compilationResult == GL_FALSE)
+	try
 	{
-		int length;
-		GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length))
-		char* message = (char*)alloca(length * sizeof(char));
-		GLCall(glGetShaderInfoLog(id, length, &length, message))
-	}
-	return id;
-}
-
-unsigned int Shader::CreateShader(const std::string& vertex_shader, const std::string& framentShader)
-{
-	GLCall(unsigned int program = glCreateProgram())
-	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertex_shader);
-	unsigned int fShader = CompileShader(GL_FRAGMENT_SHADER, framentShader);
-	GLCall(glAttachShader(program, vertexShader))
-	GLCall(glAttachShader(program, fShader))
-	GLCall(glLinkProgram(program))
-	GLCall(glValidateProgram(program))
-
-	GLCall(glDeleteShader(vertexShader))
-	GLCall(glDeleteShader(fShader))
-
-	return program;
-}
-
-ShaderPrograms Shader::ParseShader(const std::string& filepath)
-{
-	std::fstream fShader(filepath);
-	std::stringstream ss[2];
-	ShaderType type = ShaderType::NONE;
-	std::string line;
-	while (getline(fShader, line))
+		v_shader_file.open(vertex_path);
+		f_shader_file.open(fragment_path);
+		std::stringstream v_shader_stream, f_shader_stream;
+		v_shader_stream << v_shader_file.rdbuf();
+		f_shader_stream << f_shader_file.rdbuf();
+		v_shader_file.close();
+		f_shader_file.close();
+		vertex_code = v_shader_stream.str();
+		fragment_code = f_shader_stream.str();
+	} catch(std::ifstream::failure e)
 	{
-		if (line.find("#shader") != std::string::npos)
-		{
-			if (line.find("vertex") != std::string::npos)
-			{
-				type = ShaderType::VERTEX;
-			}
-			else if (line.find("fragment") != std::string::npos)
-			{
-				type = ShaderType::FRAGMENT;
-			}
-		}
-		else
-		{
-			ss[(int)type] << line << '\n';
-		}
+		std::cerr << e.what();
 	}
-	return { ss[0].str(), ss[1].str() };
+	const char* v_shader_code = vertex_code.c_str();
+	const char* f_shader_code = fragment_code.c_str();
+	unsigned int vertex, fragment;
+	int success;
+	char log_info[512];
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &v_shader_code, nullptr);
+	glCompileShader(vertex);
+	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+	if(!success)
+	{
+		glGetShaderInfoLog(vertex, 512, nullptr, log_info);
+		std::cerr << log_info;
+	}
+	else
+	{
+		std::cout << "Vertex Shader created successfully.\n";
+	}
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment, 1, &f_shader_code, nullptr);
+	glCompileShader(fragment);
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragment, 512, nullptr, log_info);
+		std::cerr << log_info;
+	}
+	else
+	{
+		std::cout << "Fragment Shader created successfully.\n";
+	}
+	id = glCreateProgram();
+	glAttachShader(id, vertex);
+	glAttachShader(id, fragment);
+	glLinkProgram(id);
+	glGetProgramiv(id, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(id, 512, nullptr, log_info);
+		std::cerr << log_info;
+	}
+	else
+	{
+		std::cout << "Shader program linked successfully.\n";
+	}
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
 }
 
-int Shader::GetUniformLocation(const std::string& name)
+void Shader::use()
 {
-	// Creamos una cache para que devuelva el location sin tene que buscarlo siempre.
-	if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
-		return m_UniformLocationCache[name];
-	int location = glGetUniformLocation(m_RendererID, name.c_str());
-	m_UniformLocationCache[name] = location;
-	return location;
+	glUseProgram(id);
+}
+
+void Shader::setBool(const std::string& name, bool value) const
+{
+	glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
+}
+
+void Shader::setFloat(const std::string& name, float value) const
+{
+	glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+}
+
+void Shader::setInt(const std::string& name, int value) const
+{
+	glUniform1i(glGetUniformLocation(id, name.c_str()), value);
 }

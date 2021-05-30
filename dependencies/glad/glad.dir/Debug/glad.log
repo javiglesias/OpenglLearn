@@ -1,7 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1947,5): warning : The referenced project 'C:\Users\Alientech\Downloads\glad\ZERO_CHECK.vcxproj' does not exist.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1947,5): warning : The referenced project 'C:\Users\Alientech\Downloads\glad\glad-generate-files.vcxproj' does not exist.
-  Building Custom Rule C:/Users/Alientech/Downloads/glad-master/CMakeLists.txt
-  CMake is re-running because C:/Users/Alientech/Downloads/glad/CMakeFiles/generate.stamp dependency file is missing.
-CUSTOMBUILD : CMake error : The source directory "C:/Users/Alientech/Downloads/glad-master" does not exist.
-  Specify --help for usage, or press the help button on the CMake GUI.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(240,5): error MSB8066: Custom build for 'C:\Users\Alientech\Downloads\glad-master\CMakeLists.txt' exited with code 1.

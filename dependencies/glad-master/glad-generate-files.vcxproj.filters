@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Alientech\Downloads\glad-master\CMakeFiles\e57403489193ba0e352b451e73692d96\glad.h.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Alientech\Downloads\glad-master\CMakeFiles\03be26e5473a89ff08d810938185939e\glad-generate-files.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Alientech\Downloads\glad-master\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Alientech\Downloads\glad-master\CMakeFiles\glad-generate-files" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{AA76546A-EA75-30DE-82B5-2E0939F65386}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,5 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/tests/CMakeLists.txt
+  triangle-vulkan.c
+  glad_vulkan.c
+  Generating Code...
+  triangle-vulkan.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\tests\Debug\triangle-vulkan.exe

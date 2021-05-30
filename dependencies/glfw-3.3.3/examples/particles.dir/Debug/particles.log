@@ -1,7 +1,0 @@
-﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-3.3.3/examples/CMakeLists.txt
-  particles.c
-  tinycthread.c
-  getopt.c
-  glad_gl.c
-  Generating Code...
-  particles.vcxproj -> C:\Users\Alientech\Documents\Projects\OGL\OpenglLearn\dependencies\glfw-3.3.3\examples\Debug\particles.exe
