@@ -42,6 +42,8 @@
   <ItemGroup>
     <None Include="resources\shaders\basic_shader.vs" />
     <None Include="resources\shaders\basic_shader.fs" />
+    <None Include="resources\shaders\light_shader.fs" />
+    <None Include="resources\shaders\light_shader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\container.jpg">

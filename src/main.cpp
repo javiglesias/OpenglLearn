@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+// Rendering Namespace
 namespace Render {
 	glm::vec3 camera_forward;
 	float field_of_view;
@@ -20,46 +21,53 @@ namespace Render {
 	float last_x_position;
 	float last_y_position;
 	bool first_mouse_interaction;
+	glm::vec4 light_color(1.f);
+	glm::vec3 coral(1.f, .5f, .31f);
+	bool VAO_MODE = true;
+	glm::vec3 camera_position = glm::vec3(0.f, 0.f, 3.f);
+	glm::vec3 camera_up = glm::vec3(0.f, 1.f, 0.f);
+	glm::mat4 view = glm::lookAt(camera_position, 
+		Render::camera_forward, camera_up);
+	float const y_constant = camera_position.y;
+	float camera_speed = 0.05f;
+	float delta_time = 0.f;
+	float last_frame = 0.f;
+	float current_frame = glfwGetTime();
+	bool dual_passage[10] = {
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false ,
+		std::rand() % 2 >= 1 ? true : false 
+	};
+	const char* vertex_shader_source =
+		"#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec3 aColor;\n"
+		"out vec3 color;\n"
+		"void main()\n"
+		"{\n"
+		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   color = aColor;\n"
+		"}\0";
+	const char* fragment_shader_source =
+		"#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"uniform vec4 ourColor;\n"
+		"in vec3 color;\n"
+		"void main()\n"
+		"{\n"
+		"   FragColor = vec4(color, 1.0f);\n"
+		"}\0";
+
 }
-bool VAO_MODE = true;
-glm::vec3 camera_position = glm::vec3(0.f, 0.f, 3.f);
-glm::vec3 camera_up = glm::vec3(0.f, 1.f, 0.f);
-glm::mat4 view = glm::lookAt(camera_position, Render::camera_forward, camera_up);
-float camera_speed = 0.05f;
-float delta_time = 0.f;
-float last_frame = 0.f;
-float current_frame = glfwGetTime();
-float const y_constant = camera_position.y;
-bool dual_passage[10] = {
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false ,
-	std::rand() % 2 >= 1 ? true : false };
-const char* vertex_shader_source =
-	"#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"layout (location = 1) in vec3 aColor;\n"
-	"out vec3 color;\n"
-	"void main()\n"
-	"{\n"
-	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"   color = aColor;\n"
-	"}\0";
-const char* fragment_shader_source =
-	"#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"uniform vec4 ourColor;\n"
-	"in vec3 color;\n"
-	"void main()\n"
-	"{\n"
-	"   FragColor = vec4(color, 1.0f);\n"
-	"}\0";
+
+// FREE FUNCTIONS
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height)
 {
@@ -116,47 +124,47 @@ void process_input(GLFWwindow* m_window)
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		VAO_MODE = false;
+		Render::VAO_MODE = false;
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_4) == GLFW_PRESS)
 	{
-		VAO_MODE = true;
+		Render::VAO_MODE = true;
 	}
 	// CAMERA MOVEMENT
 	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera_position += camera_speed * Render::camera_forward;
+		Render::camera_position += Render::camera_speed * Render::camera_forward;
 	}
 	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera_position += glm::normalize(glm::cross(
-			camera_up, Render::camera_forward)) * camera_speed;
+		Render::camera_position += glm::normalize(glm::cross(
+			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
 	}
 	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera_position -= camera_speed * Render::camera_forward;
+		Render::camera_position -= Render::camera_speed * Render::camera_forward;
 	}
 	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera_position -= glm::normalize(glm::cross(
-			camera_up, Render::camera_forward)) * camera_speed;
+		Render::camera_position -= glm::normalize(glm::cross(
+			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
 	}
-	camera_position.y = y_constant;
+	Render::camera_position.y = Render::y_constant;
 	if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		// RESET
-		for (int i = 0; i < sizeof(dual_passage) / sizeof(bool); i++)
+		for (int i = 0; i < sizeof(Render::dual_passage) / sizeof(bool); i++)
 		{
-			dual_passage[i] = std::rand() % 2 >= 1 ? true : false;
+			Render::dual_passage[i] = std::rand() % 2 >= 1 ? true : false;
 		}
 	}
 	if (glfwGetKey(m_window, GLFW_KEY_HOME) == GLFW_PRESS)
 	{
-		camera_speed += 0.01;
+		Render::camera_speed += 0.01;
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_END) == GLFW_PRESS)
 	{
-		camera_speed -= camera_speed > 0.01 ? 0.01 : 0.f;
+		Render::camera_speed -= Render::camera_speed > 0.01 ? 0.01 : 0.f;
 	}
 }
 
@@ -206,6 +214,51 @@ int main()
 			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
 			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
 			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,*/
+
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	};
+
+	float vertices_cube_complete[] = {
+		// CUBO COMPLETO
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
 			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -286,7 +339,8 @@ int main()
 	// CREATE SHADER INSTANCE AND PROGRAM
 	Shader my_shader("resources/shaders/basic_shader.vs",
 		"resources/shaders/basic_shader.fs");
-
+	Shader light_shader("resources/shaders/ligth_shader.vs",
+		"resources/shaders/ligth_shader.fs");
 	// VERTEX BUFFER OBJECT (GPU)
 	/*unsigned int VBO;
 	glGenBuffers(1, & VBO);*/
@@ -381,6 +435,17 @@ int main()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(texture_data2);
 
+	// CUBO LIGHT SOURCE
+	unsigned int VBO_light_source;
+	glGenBuffers(1, &VBO_light_source);
+	unsigned int VAO_light_source;
+	glGenVertexArrays(1, &VAO_light_source);
+	glBindVertexArray(VAO_light_source);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_light_source);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_cube_complete), vertices_cube_complete, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
 	// TRANSFORMATIONS
 	glm::mat4 projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
 		0.1f, 100.f);
@@ -388,6 +453,7 @@ int main()
 	unsigned int model_location = glGetUniformLocation(my_shader.id, "model");
 	unsigned int view_location = glGetUniformLocation(my_shader.id, "view");
 	unsigned int projection_location = glGetUniformLocation(my_shader.id, "projection");
+	unsigned int light_color_location = glGetUniformLocation(my_shader.id, "light_color");
 	/*glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));*/
 	// CAMERA
@@ -401,25 +467,25 @@ int main()
 	//glm::vec3 camera_up(glm::cross(camera_direction, camera_right));
 	glm::mat4 look_at(
 		glm::vec4(camera_right, 0.f),
-		glm::vec4(camera_up, 0.f),
+		glm::vec4(Render::camera_up, 0.f),
 		glm::vec4(Render::camera_forward, 0.f),
 		glm::vec4(0.f, 0.f, 0.f, 1.f));
 	look_at *= glm::mat4(
-		glm::vec4(1.f, 0.f, 0.f, camera_position.x),
-		glm::vec4(0.f, 1.f, 0.f, camera_position.y),
-		glm::vec4(0.f, 0.f, 1.f, camera_position.z),
+		glm::vec4(1.f, 0.f, 0.f, Render::camera_position.x),
+		glm::vec4(0.f, 1.f, 0.f, Render::camera_position.y),
+		glm::vec4(0.f, 0.f, 1.f, Render::camera_position.z),
 		glm::vec4(0.f, 0.f, 0.f, 1.f));
 
 
-	view = glm::lookAt(camera_position, Render::camera_forward, camera_up); // camera up direction
+	Render::view = glm::lookAt(Render::camera_position, Render::camera_forward, Render::camera_up); // camera up direction
 
 
 
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
-		delta_time = current_frame - last_frame;
-		last_frame = current_frame;
+		Render::delta_time = Render::current_frame - Render::last_frame;
+		Render::last_frame = Render::current_frame;
 
 		process_input(m_window);
 		//All the rendering things
@@ -428,8 +494,8 @@ int main()
 		/*float time_value = glfwGetTime();
 		float green = (sin(time_value)/2.f)+ .5f;*/
 
-		view = glm::lookAt(camera_position, camera_position + Render::camera_forward,
-			camera_up); // camera up direction
+		Render::view = glm::lookAt(Render::camera_position, Render::camera_position + Render::camera_forward,
+			Render::camera_up); // camera up direction
 		projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
 			0.1f, 100.f); // Change de Field of view;
 		// DEMO MODE
@@ -446,17 +512,24 @@ int main()
 		my_shader.setInt("texture1", 0);
 		my_shader.setInt("texture2", 1);
 		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
 		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniform4fv(light_color_location, 1, glm::value_ptr(Render::light_color));
 		/*glActiveTexture(GL_TEXTURE0 + 1);
 		glBindTexture(GL_TEXTURE_2D, texture2);*/
-
+		// DRAW LIGHT SOURCE
+		glBindVertexArray(VAO_light_source);
+		model = glm::mat4(1.f);
+		model = glm::scale(model, glm::vec3(0.1f));
+		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
+		// DRAW REST
 		glBindVertexArray(VAO_cube);
 		for (int i = 0; i < 10; i++)
 		{
 			model = glm::mat4(1.f);
 			model = glm::translate(model, glm::vec3(cubePositions.x,
-				y_constant, cubePositions.z + i));
+				Render::y_constant, cubePositions.z + i));
 			if (i % 2 == 0)
 			{
 				glActiveTexture(GL_TEXTURE0);
@@ -470,14 +543,14 @@ int main()
 				glBindVertexArray(0);
 				glBindVertexArray(VAO_cube);
 				model = glm::translate(model, glm::vec3(cubePositions.x - 1,
-					y_constant, cubePositions.z));
+					Render::y_constant, cubePositions.z));
 				model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
 				// MIRROR pAssage
-				if (dual_passage[i])
+				if (Render::dual_passage[i])
 				{
 					glm::mat4 model2(glm::mat4(1.f));
 					model2 = glm::translate(model2, glm::vec3(cubePositions.x + 1,
-						y_constant, cubePositions.z + i));
+						Render::y_constant, cubePositions.z + i));
 					model2 = glm::rotate(model2, glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
 					glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model2));
 					glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube) / sizeof(float));
