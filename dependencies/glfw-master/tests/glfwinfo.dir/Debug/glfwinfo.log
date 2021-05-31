@@ -1,0 +1,7 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/tests/CMakeLists.txt
+  glfwinfo.c
+  getopt.c
+  glad_gl.c
+  glad_vulkan.c
+  Generating Code...
+  glfwinfo.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\tests\Debug\glfwinfo.exe

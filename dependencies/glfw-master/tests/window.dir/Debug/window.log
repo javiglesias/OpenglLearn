@@ -1,0 +1,5 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/tests/CMakeLists.txt
+  window.c
+  glad_gl.c
+  Generating Code...
+  window.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\tests\Debug\window.exe

@@ -1,0 +1,6 @@
+﻿  Generating GLAD
+  [05/07/2021 09:42:46][INFO	][glad   	]: downloading latest 'gl' specification
+  [05/07/2021 09:42:46][INFO	][glad.opener	]: opening: 'https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/master/xml/gl.xml'
+  [05/07/2021 09:42:47][INFO	][glad   	]: generating 'gl' bindings: {'gl': None}
+  [05/07/2021 09:42:47][INFO	][glad   	]: generating 'gl' bindings - done
+  Building Custom Rule C:/Users/Alientech/Downloads/glad-master/CMakeLists.txt

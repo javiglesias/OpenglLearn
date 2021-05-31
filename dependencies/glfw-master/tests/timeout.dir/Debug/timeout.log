@@ -1,0 +1,5 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/tests/CMakeLists.txt
+  timeout.c
+  glad_gl.c
+  Generating Code...
+  timeout.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\tests\Debug\timeout.exe

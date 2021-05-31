@@ -1,0 +1,6 @@
+﻿  Building Custom Rule C:/Users/Alientech/Downloads/glfw-master/tests/CMakeLists.txt
+  clipboard.c
+  getopt.c
+  glad_gl.c
+  Generating Code...
+  clipboard.vcxproj -> C:\Users\Alientech\Downloads\glfw-master\tests\Debug\clipboard.exe
