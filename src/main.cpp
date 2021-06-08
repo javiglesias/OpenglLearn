@@ -21,7 +21,7 @@ namespace Render {
 	float last_x_position;
 	float last_y_position;
 	bool first_mouse_interaction;
-	glm::vec4 light_color(1.f);
+	glm::vec4 light_color(1.f, 0.f, 0.f, 1.f);
 	glm::vec3 light_position(1.f, 1.f, 1.f);
 	glm::vec3 coral(1.f, .5f, .31f);
 	bool VAO_MODE = true;
@@ -209,92 +209,78 @@ int main()
 
 	float vertices_cube[] = {
 		// CHUNK PASILLO
-			/*-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,*/
+		-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-			/*-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,*/
+		0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-			-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
 
-			 0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-
-			-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	float vertices_cube_complete[] = {
 		// CUBO COMPLETO
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
 	glm::vec3 cubePositions(0.0f, 0.0f, 0.0f);
@@ -332,21 +318,25 @@ int main()
 	{
 		std::cout << "Glad loaded.\n";
 	}
-	// CALLBACK FOR RESIZE WINDOW
-	//framebuffer_size_callback(m_window, 800, 600);
-	//glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+	// CALLBACKS
+	framebuffer_size_callback(m_window, 800, 600);
+	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(m_window, mouse_movement_callback);
 	glfwSetScrollCallback(m_window, mouse_scroll_callback);
+	
 	// DEPTH TEST
 	glEnable(GL_DEPTH_TEST);
+
 	// CULLING 
 	/*glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CW);*/
+
 	// CREATE SHADER INSTANCE AND PROGRAM
 	Shader my_shader("resources/shaders/basic_shader.vs",
 		"resources/shaders/basic_shader.fs");
+
 	// VERTEX BUFFER OBJECT (GPU)
 	/*unsigned int VBO;
 	glGenBuffers(1, & VBO);*/
@@ -474,7 +464,9 @@ int main()
 	unsigned int light_color_location = glGetUniformLocation(my_shader.id, "light_color");
 	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "light_position");
 	unsigned int viewer_position_location = glGetUniformLocation(my_shader.id, "viewer_position");
-
+	unsigned int material_ambient_location = glGetUniformLocation(my_shader.id, "material.ambient");
+	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
+	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular"); 
 	/*glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));*/
 	// CAMERA
@@ -519,6 +511,10 @@ int main()
 		projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
 			0.1f, 100.f); // Change de Field of view;
 		
+		// MOVE LIGHT OVER TIME
+		Render::light_position = glm::vec3(glm::sin(glfwGetTime()),
+			glm::sin(glfwGetTime()),
+			Render::light_position.z);
 		// DRAW LIGHT SOURCE
 		light_model = glm::mat4(1.f);
 		light_model = glm::scale(light_model, glm::vec3(0.2f));
@@ -549,6 +545,10 @@ int main()
 		glUniform3fv(light_color_location, 1, glm::value_ptr(Render::light_color));
 		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
 		glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+		glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
+		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(.1)));
+		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(.9)));
+		my_shader.setFloat("material.shininess", 32);
 
 		//// DRAW REST
 		glBindVertexArray(VAO_cube);
