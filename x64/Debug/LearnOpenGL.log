@@ -1,20 +1,8 @@
 ﻿  main.cpp
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(36,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(87,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(88,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(89,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(90,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(107,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(171,31): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(175,67): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(549,74): warning C4305: 'argument': truncation from 'double' to 'T'
-          with
-          [
-              T=float
-          ]
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(550,75): warning C4305: 'argument': truncation from 'double' to 'T'
-          with
-          [
-              T=float
-          ]
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(40,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(91,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(92,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(93,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(94,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(111,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
   LearnOpenGL.vcxproj -> C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\x64\Debug\LearnOpenGL.exe

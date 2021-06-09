@@ -21,8 +21,12 @@ namespace Render {
 	float last_x_position;
 	float last_y_position;
 	bool first_mouse_interaction;
-	glm::vec4 light_color(1.f, 0.f, 0.f, 1.f);
+	glm::vec4 light_ambient(1.f, 1.f, 1.f, 1.f);
+	glm::vec4 light_diffuse(1.f, 1.f, 1.f, 1.f);
+	glm::vec4 light_specular(1.f, 1.f, 1.f, 1.f);
 	glm::vec3 light_position(1.f, 1.f, 1.f);
+
+	float shininess = 1.f;
 	glm::vec3 coral(1.f, .5f, .31f);
 	bool VAO_MODE = true;
 	glm::vec3 camera_position = glm::vec3(0.f, 0.f, 3.f);
@@ -168,11 +172,11 @@ void process_input(GLFWwindow* m_window)
 	}
 	if (glfwGetKey(m_window, GLFW_KEY_HOME) == GLFW_PRESS)
 	{
-		Render::camera_speed += 0.01;
+		Render::shininess += 1;
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_END) == GLFW_PRESS)
 	{
-		Render::camera_speed -= Render::camera_speed > 0.01 ? 0.01 : 0.f;
+		Render::shininess -= 1;
 	}
 }
 
@@ -396,20 +400,6 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	// Load Texture 1
-	stbi_set_flip_vertically_on_load(false);
-	int width, heigth, nr_channels;
-	unsigned char* texture_data = stbi_load("resources/textures/container.jpg",
-		&width, &heigth, &nr_channels, 0);
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE,
-		texture_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	stbi_image_free(texture_data);
-
-
 	// roof && floor
 	unsigned int VBO_roof_floor;
 	glGenBuffers(1, &VBO_roof_floor);
@@ -420,14 +410,28 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_roof_floor), vertices_roof_floor, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	// Load Texture 1
+	stbi_set_flip_vertically_on_load(false);
+	int width, heigth, nr_channels;
+	unsigned char* texture_data = stbi_load("resources/textures/WoddenBox.png",
+		&width, &heigth, &nr_channels, 0);
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		texture_data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(texture_data);
+
 	// Load Texture 2
 	int width2, heigth2, nr_channels2;
-	unsigned char* texture_data2 = stbi_load("resources/textures/awesomeface.png",
+	unsigned char* texture_data2 = stbi_load("resources/textures/WoddenBox_specular.png",
 		&width2, &heigth2, &nr_channels2, 0);
 	unsigned int texture2;
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, heigth2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, heigth2, 0, GL_RGB, GL_UNSIGNED_BYTE,
 		texture_data2);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(texture_data2);
@@ -461,8 +465,10 @@ int main()
 	unsigned int model_location = glGetUniformLocation(my_shader.id, "model");
 	unsigned int view_location = glGetUniformLocation(my_shader.id, "view");
 	unsigned int projection_location = glGetUniformLocation(my_shader.id, "projection");
-	unsigned int light_color_location = glGetUniformLocation(my_shader.id, "light_color");
-	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "light_position");
+	unsigned int light_ambient_location = glGetUniformLocation(my_shader.id, "light.ambient");
+	unsigned int light_diffuse_location = glGetUniformLocation(my_shader.id, "light.diffuse");
+	unsigned int light_specular_location = glGetUniformLocation(my_shader.id, "light.specular");
+	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "light.position");
 	unsigned int viewer_position_location = glGetUniformLocation(my_shader.id, "viewer_position");
 	unsigned int material_ambient_location = glGetUniformLocation(my_shader.id, "material.ambient");
 	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
@@ -491,8 +497,6 @@ int main()
 
 
 	Render::view = glm::lookAt(Render::camera_position, Render::camera_forward, Render::camera_up); // camera up direction
-
-
 
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
@@ -542,13 +546,25 @@ int main()
 		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
 		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniform3fv(light_color_location, 1, glm::value_ptr(Render::light_color));
+		// LIGHT CONFIG
+		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
+		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
+		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
 		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		// OBSERVATOR
 		glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+		// MATERIAL CONFIG
 		glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
-		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(.1)));
-		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(.9)));
-		my_shader.setFloat("material.shininess", 32);
+		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
+		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
+		my_shader.setFloat("material.shininess", Render::shininess);
+		my_shader.setInt("material.diffuse_map", 0);
+		my_shader.setInt("material.specular_map", 1);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		//// DRAW REST
 		glBindVertexArray(VAO_cube);
@@ -557,16 +573,15 @@ int main()
 			model = glm::mat4(1.f);
 			model = glm::translate(model, glm::vec3(cubePositions.x,
 				cubePositions.y, cubePositions.z + i));
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
 			if (i % 2 == 0)
 			{
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texture2);
 				glBindVertexArray(0);
 				glBindVertexArray(VAO_roof_floor);
 				glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 				glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_roof_floor) / sizeof(float));
 
-				glBindTexture(GL_TEXTURE_2D, texture2);
 				glBindVertexArray(0);
 				glBindVertexArray(VAO_cube);
 				model = glm::translate(model, glm::vec3(cubePositions.x - 1,
@@ -583,7 +598,6 @@ int main()
 					glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube) / sizeof(float));
 				}
 			}
-			glBindTexture(GL_TEXTURE_2D, texture);
 			glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube) / sizeof(float));
 		}
