@@ -59,5 +59,8 @@
     <Image Include="resources\textures\WoddenBox_specular.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\textures\WoddenBox_specular2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

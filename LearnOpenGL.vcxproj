@@ -166,6 +166,7 @@
     <Image Include="resources\textures\container.jpg" />
     <Image Include="resources\textures\WoddenBox.png" />
     <Image Include="resources\textures\WoddenBox_specular.png" />
+    <Image Include="resources\textures\WoddenBox_specular2.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

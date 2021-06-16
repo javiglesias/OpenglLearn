@@ -25,8 +25,13 @@ namespace Render {
 	glm::vec4 light_diffuse(1.f, 1.f, 1.f, 1.f);
 	glm::vec4 light_specular(1.f, 1.f, 1.f, 1.f);
 	glm::vec3 light_position(1.f, 1.f, 1.f);
-
+	glm::vec3 light_directional(0.f, 0.f, 1.f);
+	float light_k_constant = 1.0;
+	float light_k_linear = 0.09f;
+	float light_k_quadratic = 0.032f;
 	float shininess = 1.f;
+	float light_cutoff = 12.5f;
+	float light_outer_cutoff = 17.2f;
 	glm::vec3 coral(1.f, .5f, .31f);
 	bool VAO_MODE = true;
 	glm::vec3 camera_position = glm::vec3(0.f, 0.f, 3.f);
@@ -50,28 +55,7 @@ namespace Render {
 		std::rand() % 2 >= 1 ? true : false ,
 		std::rand() % 2 >= 1 ? true : false 
 	};
-	const char* vertex_shader_source =
-		"#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"layout (location = 1) in vec3 aColor;\n"
-		"out vec3 color;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"   color = aColor;\n"
-		"}\0";
-	const char* fragment_shader_source =
-		"#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"uniform vec4 ourColor;\n"
-		"in vec3 color;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(color, 1.0f);\n"
-		"}\0";
-
 }
-
 // FREE FUNCTIONS
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height)
@@ -469,10 +453,15 @@ int main()
 	unsigned int light_diffuse_location = glGetUniformLocation(my_shader.id, "light.diffuse");
 	unsigned int light_specular_location = glGetUniformLocation(my_shader.id, "light.specular");
 	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "light.position");
+	unsigned int light_directional_location = glGetUniformLocation(my_shader.id, "light.direction");
+	unsigned int light_k_constant_location = glGetUniformLocation(my_shader.id, "light.k_constant");
+	unsigned int light_k_linear_location = glGetUniformLocation(my_shader.id, "light.k_linear");
+	unsigned int light_k_quadratic_location = glGetUniformLocation(my_shader.id, "light.k_quadratic");
 	unsigned int viewer_position_location = glGetUniformLocation(my_shader.id, "viewer_position");
 	unsigned int material_ambient_location = glGetUniformLocation(my_shader.id, "material.ambient");
 	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
 	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular"); 
+	
 	/*glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));*/
 	// CAMERA
@@ -551,6 +540,14 @@ int main()
 		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
 		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
 		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
+		// ATTENUATION
+		my_shader.setFloat("light.k_constant",Render::light_k_constant);
+		my_shader.setFloat("light.k_linear", Render::light_k_linear);
+		my_shader.setFloat("light.k_quadratic", Render::light_k_quadratic);
+		// SPOTLIGHT
+		my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
+			my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
 		// OBSERVATOR
 		glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
 		// MATERIAL CONFIG
