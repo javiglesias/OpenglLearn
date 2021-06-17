@@ -449,18 +449,21 @@ int main()
 	unsigned int model_location = glGetUniformLocation(my_shader.id, "model");
 	unsigned int view_location = glGetUniformLocation(my_shader.id, "view");
 	unsigned int projection_location = glGetUniformLocation(my_shader.id, "projection");
-	unsigned int light_ambient_location = glGetUniformLocation(my_shader.id, "light.ambient");
-	unsigned int light_diffuse_location = glGetUniformLocation(my_shader.id, "light.diffuse");
-	unsigned int light_specular_location = glGetUniformLocation(my_shader.id, "light.specular");
-	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "light.position");
-	unsigned int light_directional_location = glGetUniformLocation(my_shader.id, "light.direction");
-	unsigned int light_k_constant_location = glGetUniformLocation(my_shader.id, "light.k_constant");
-	unsigned int light_k_linear_location = glGetUniformLocation(my_shader.id, "light.k_linear");
-	unsigned int light_k_quadratic_location = glGetUniformLocation(my_shader.id, "light.k_quadratic");
+	
+	// GENERAL LIGHT SETTINGS
 	unsigned int viewer_position_location = glGetUniformLocation(my_shader.id, "viewer_position");
+	// DIRECTIONAL LIGHT
+	unsigned int light_ambient_location = glGetUniformLocation(my_shader.id, "dir_light.ambient");
+	unsigned int light_diffuse_location = glGetUniformLocation(my_shader.id, "dir_light.diffuse");
+	unsigned int light_specular_location = glGetUniformLocation(my_shader.id, "dir_light.specular");
+	unsigned int light_directional_location = glGetUniformLocation(my_shader.id, "dir_light.direction");
+	// POINT LIGHT
+	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "point_light[0].position");
+
+	/*
 	unsigned int material_ambient_location = glGetUniformLocation(my_shader.id, "material.ambient");
 	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
-	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular"); 
+	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular"); */
 	
 	/*glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));*/
@@ -539,21 +542,23 @@ int main()
 		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
 		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
 		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
-		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
 		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
-		// ATTENUATION
-		my_shader.setFloat("light.k_constant",Render::light_k_constant);
-		my_shader.setFloat("light.k_linear", Render::light_k_linear);
-		my_shader.setFloat("light.k_quadratic", Render::light_k_quadratic);
-		// SPOTLIGHT
-		my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
-			my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
+		//// ATTENUATION
+		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		my_shader.setFloat("point_light[0].k_constant",Render::light_k_constant);
+		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
+		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
+		//// SPOTLIGHT
+		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
+		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
+		
 		// OBSERVATOR
 		glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
-		// MATERIAL CONFIG
-		glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
-		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
-		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
+		
+		//// MATERIAL CONFIG
+		//glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
+		//glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
+		//glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
 		my_shader.setFloat("material.shininess", Render::shininess);
 		my_shader.setInt("material.diffuse_map", 0);
 		my_shader.setInt("material.specular_map", 1);
