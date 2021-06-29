@@ -14,10 +14,14 @@ Object::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indic
 	setupMesh();
 }
 
-void Object::Mesh::Draw(Shader& shader)
+void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
 	unsigned int diffuse_Nr = 1;
 	unsigned int specular_Nr = 1;
+	unsigned int model_location = glGetUniformLocation(shader.id, "model");
+	unsigned int view_location = glGetUniformLocation(shader.id, "view");
+	unsigned int projection_location = glGetUniformLocation(shader.id, "projection");
+
 	shader.use();
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -37,6 +41,9 @@ void Object::Mesh::Draw(Shader& shader)
 	}
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
+	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }

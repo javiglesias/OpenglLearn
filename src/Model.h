@@ -16,7 +16,7 @@ namespace Object
 		{
 			loadModel(path);
 		}
-		void Draw(Shader &shader);
+		void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 	private:
 		std::vector<Mesh> meshes;
 		std::string directory;

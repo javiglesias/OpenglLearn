@@ -1,8 +1,14 @@
-﻿  main.cpp
+﻿  Mesh.cpp
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Mesh.cpp(39,54): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Mesh.cpp(47,65): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Model.cpp
+  main.cpp
 C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(46,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(76,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(77,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(78,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(79,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(96,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(505,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
   LearnOpenGL.vcxproj -> C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\x64\Debug\LearnOpenGL.exe

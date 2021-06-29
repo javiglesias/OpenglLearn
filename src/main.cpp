@@ -35,7 +35,7 @@ namespace Render {
 	float light_outer_cutoff = 17.2f;
 	glm::vec3 coral(1.f, .5f, .31f);
 	bool VAO_MODE = true;
-	glm::vec3 camera_position = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 camera_position = glm::vec3(0.f, 0.f, 0.3f);
 	glm::vec3 camera_up = glm::vec3(0.f, 1.f, 0.f);
 	glm::mat4 view = glm::lookAt(camera_position, 
 		Render::camera_forward, camera_up);
@@ -173,59 +173,59 @@ int main()
 	Render::camera_forward = glm::vec3(0.f, 0.f, -1.f);
 	Render::field_of_view = 90.f;
 
-	//float vertices[] = {
-	//	-0.5f, -0.5f, 1.0f, 0.5f, 0.f, 0.0f,  1.f, 1.f,
-	//	 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.f, 0.f,
-	//	 0.5f, 0.5f, 1.0f,  0.f, 0.5f, 0.0f,  0.f, 0.f,
-	//	-0.5f, 0.5f, 1.0f,  0.5f, 0.5f, 0.0f, 0.f, 1.f
-	//};
+	float vertices[] = {
+		-0.5f, -0.5f, 1.0f, 0.5f, 0.f, 0.0f,  1.f, 1.f,
+		 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.f, 0.f,
+		 0.5f, 0.5f, 1.0f,  0.f, 0.5f, 0.0f,  0.f, 0.f,
+		-0.5f, 0.5f, 1.0f,  0.5f, 0.5f, 0.0f, 0.f, 1.f
+	};
 
-	//float vertices_roof_floor[] = {
-	//	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	//	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	//	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	//	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	//	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	//	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	float vertices_roof_floor[] = {
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-	//	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	//	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	//	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	//	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	//	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	//	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	//};
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	};
 
-	//float vertices_cube[] = {
-	//	// CHUNK PASILLO
-	//	-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	//	-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	//	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	//	-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	float vertices_cube[] = {
+		// CHUNK PASILLO
+		-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-	//	0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	//	0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	//	0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	//	0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-	//	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-	//	0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	//	0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	//	-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	//	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
 
-	//	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-	//	0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	//	0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	//	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-	//	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
-	//};
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+	};
 
 	float vertices_cube_complete[] = {
 		// CUBO COMPLETO
@@ -272,18 +272,18 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	//glm::vec3 cubePositions(0.0f, 0.0f, 0.0f);
+	glm::vec3 cubePositions(0.0f, 0.0f, 0.0f);
 
-	//float vertices_triangle[] = {
-	//	0.f, 0.f, 0.f,
-	//	1.f, 0.f, 0.f,
-	//	.5f, 1.f, 0.f
-	//};
-	//float tex_coordinates[] = {
-	//	0.f, 0.f, 0.f,
-	//	1.f, 0.f, 0.f,
-	//	.5f, 1.f, 0.f
-	//};
+	float vertices_triangle[] = {
+		0.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		.5f, 1.f, 0.f
+	};
+	float tex_coordinates[] = {
+		0.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		.5f, 1.f, 0.f
+	};
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -315,7 +315,7 @@ int main()
 	glfwSetScrollCallback(m_window, mouse_scroll_callback);
 	
 	// DEPTH TEST
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 	// CULLING 
 	/*glEnable(GL_CULL_FACE);
@@ -327,17 +327,17 @@ int main()
 		"resources/shaders/basic_shader.fs");
 
 	// VERTEX BUFFER OBJECT (GPU)
-	/*unsigned int VBO;
-	glGenBuffers(1, & VBO);*/
+	unsigned int VBO;
+	glGenBuffers(1, & VBO);
 	// VERTEX ARRAY OBJECT
-	/*unsigned int VAO;
+	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);*/
+	glEnableVertexAttribArray(0);
 	// ELEMENT BUFFER OBJECT
-	/*unsigned int indices[] = {
+	unsigned int indices[] = {
 		0,1,2,
 		0,2,3
 	};
@@ -345,59 +345,59 @@ int main()
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	*/// POSITION FOR VERTEX SHADER (location 0)
-	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);*/
+	// POSITION FOR VERTEX SHADER (location 0)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 	// COLOR FOR VERTEX SHADER (location 1)
-	/*glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);*/
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
 	// TEXTURE COORDINATES FOR THE SHADER
-	/*glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);*/
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// VERTEX BUFFER OBJECT (GPU)
-	//unsigned int VBO_triangle;
-	//glGenBuffers(1, &VBO_triangle);
+	unsigned int VBO_triangle;
+	glGenBuffers(1, &VBO_triangle);
 	//// VERTEX ARRAY OBJECT
-	//unsigned int VAO_triangle;
-	//glGenVertexArrays(1, &VAO_triangle);
-	//glBindVertexArray(VAO_triangle);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_triangle);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle), vertices_triangle, GL_STATIC_DRAW);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	//glEnableVertexAttribArray(0);
+	unsigned int VAO_triangle;
+	glGenVertexArrays(1, &VAO_triangle);
+	glBindVertexArray(VAO_triangle);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_triangle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle), vertices_triangle, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
-	//unsigned int VBO_cube;
-	//glGenBuffers(1, &VBO_cube);
-	//unsigned int VAO_cube;
-	//glGenVertexArrays(1, &VAO_cube);
-	//glBindVertexArray(VAO_cube);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_cube), vertices_cube, GL_STATIC_DRAW);
+	unsigned int VBO_cube;
+	glGenBuffers(1, &VBO_cube);
+	unsigned int VAO_cube;
+	glGenVertexArrays(1, &VAO_cube);
+	glBindVertexArray(VAO_cube);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_cube), vertices_cube, GL_STATIC_DRAW);
 	//
 	//// APOS POSITION FOR THE SHADER (location 0)
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	//glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 	//// NORMALS VECTORS FOR THE SHADER (location 1)
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	//glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 	//// TEXTURE COORDINATES FOR THE SHADER (location 2)
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	//glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	//// roof && floor
-	//unsigned int VBO_roof_floor;
-	//glGenBuffers(1, &VBO_roof_floor);
-	//unsigned int VAO_roof_floor;
-	//glGenVertexArrays(1, &VAO_roof_floor);
-	//glBindVertexArray(VAO_roof_floor);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_roof_floor);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_roof_floor), vertices_roof_floor, GL_STATIC_DRAW);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	//glEnableVertexAttribArray(0);
+	unsigned int VBO_roof_floor;
+	glGenBuffers(1, &VBO_roof_floor);
+	unsigned int VAO_roof_floor;
+	glGenVertexArrays(1, &VAO_roof_floor);
+	glBindVertexArray(VAO_roof_floor);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_roof_floor);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_roof_floor), vertices_roof_floor, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	//// Load Texture 1
-	/*stbi_set_flip_vertically_on_load(false);
+	stbi_set_flip_vertically_on_load(false);
 	int width, heigth, nr_channels;
 	unsigned char* texture_data = stbi_load("resources/textures/WoddenBox.png",
 		&width, &heigth, &nr_channels, 0);
@@ -407,19 +407,19 @@ int main()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE,
 		texture_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	stbi_image_free(texture_data);*/
+	stbi_image_free(texture_data);
 
 	//// Load Texture 2
-	//int width2, heigth2, nr_channels2;
-	//unsigned char* texture_data2 = stbi_load("resources/textures/WoddenBox_specular.png",
-	//	&width2, &heigth2, &nr_channels2, 0);
-	//unsigned int texture2;
-	//glGenTextures(1, &texture2);
-	//glBindTexture(GL_TEXTURE_2D, texture2);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, heigth2, 0, GL_RGB, GL_UNSIGNED_BYTE,
-	//	texture_data2);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-	//stbi_image_free(texture_data2);
+	int width2, heigth2, nr_channels2;
+	unsigned char* texture_data2 = stbi_load("resources/textures/WoddenBox_specular.png",
+		&width2, &heigth2, &nr_channels2, 0);
+	unsigned int texture2;
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, heigth2, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		texture_data2);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(texture_data2);
 
 	//// CUBO LIGHT SOURCE
 	Shader light_shader("resources/shaders/light_shader.vs",
@@ -444,8 +444,8 @@ int main()
 	glEnableVertexAttribArray(1);
 
 	//// TRANSFORMATIONS
-	/*glm::mat4 projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
-		0.1f, 100.f);*/
+	glm::mat4 projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
+		0.1f, 100.f);
 
 	unsigned int model_location = glGetUniformLocation(my_shader.id, "model");
 	unsigned int view_location = glGetUniformLocation(my_shader.id, "view");
@@ -466,17 +466,17 @@ int main()
 	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
 	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular"); 
 	
-	/*glm::mat4 view(1.f);
-	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));*/
+	glm::mat4 view(1.f);
+	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
 	// CAMERA
 	glm::vec3 camera(0.f, 0.f, 0.3f);
 	glm::vec3 camera_target(0.f, 0.f, 0.f);
-	//glm::vec3 camera_direction(glm::normalize(camera - camera_target));
+	glm::vec3 camera_direction(glm::normalize(camera - camera_target));
 	glm::vec3 up(0.f, 1.f, 0.f);
 	// Vector cross product gives us a orthogonal vector;
 	glm::vec3 camera_right(glm::normalize(glm::cross(up, Render::camera_forward)));
 	// this cross gives us the last direction orthogonal
-	//glm::vec3 camera_up(glm::cross(camera_direction, camera_right));
+	glm::vec3 camera_up(glm::cross(camera_direction, camera_right));
 	glm::mat4 look_at(
 		glm::vec4(camera_right, 0.f),
 		glm::vec4(Render::camera_up, 0.f),
@@ -502,17 +502,18 @@ int main()
 		//All the rendering things
 		glClearColor(0.2f, 0.1f, 0.5f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		/*float time_value = glfwGetTime();
-		float green = (sin(time_value)/2.f)+ .5f;*/
+		float time_value = glfwGetTime();
+		float green = (sin(time_value)/2.f)+ .5f;
 		Render::view = glm::lookAt(Render::camera_position, Render::camera_position + Render::camera_forward,
 			Render::camera_up); // camera up direction
-		/*projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
-		0.1f, 100.f); */ // Change de Field of view;
+		projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
+		0.1f, 100.f);  // Change de Field of view;
 		//
 		//// MOVE LIGHT OVER TIME
-		Render::light_position = glm::vec3(glm::sin(glfwGetTime()),
+		/*Render::light_position = glm::vec3(glm::sin(glfwGetTime()),
 			glm::sin(glfwGetTime()),
-			Render::light_position.z);
+			Render::light_position.z);*/
+
 		//// DRAW LIGHT SOURCE
 		light_model = glm::mat4(1.f);
 		light_model = glm::scale(light_model, glm::vec3(0.2f));
@@ -520,55 +521,55 @@ int main()
 		light_shader.use();
 		glUniformMatrix4fv(light_model_location, 1, GL_FALSE, glm::value_ptr(light_model));
 		glUniformMatrix4fv(light_view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-		//glUniformMatrix4fv(light_projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(light_projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 		glBindVertexArray(VAO_light_source);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
 
 		//// DEMO MODE
-		///*const float radius(10.f);
-		//float camx(sin(glfwGetTime()) * radius);
-		//float camz(cos(glfwGetTime()) * radius);
-		//view = glm::lookAt(
-		//	glm::vec3(camx, 0.f, camz),
-		//	glm::vec3(0.f, 0.f, 0.f),
-		//	glm::vec3(0.f, 1.f, 0.f));*/
+		/*const float radius(10.f);
+		float camx(sin(glfwGetTime()) * radius);
+		float camz(cos(glfwGetTime()) * radius);
+		view = glm::lookAt(
+			glm::vec3(camx, 0.f, camz),
+			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(0.f, 1.f, 0.f));*/
 
 		//// LINKING UNIFORM SHADER ATTRIBUTES
-		//my_shader.use();
-		//my_shader.setInt("texture1", 0);
-		//my_shader.setInt("texture2", 1);
-		//glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		//// LIGHT CONFIG
-		//glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
-		//glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
-		//glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
-		//glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
+		my_shader.use();
+		my_shader.setInt("texture1", 0);
+		my_shader.setInt("texture2", 1);
+		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+		// LIGHT CONFIG
+		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
+		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
+		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
+		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
 		////// ATTENUATION
-		//glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-		//my_shader.setFloat("point_light[0].k_constant",Render::light_k_constant);
-		//my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
-		//my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
-		////// SPOTLIGHT
-		////my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
-		////my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
+		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		my_shader.setFloat("point_light[0].k_constant",Render::light_k_constant);
+		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
+		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
+		//////// SPOTLIGHT
+		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
+		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
 		//
 		//// OBSERVATOR
 		glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
 		//
 		////// MATERIAL CONFIG
-		////glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
-		////glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
-		////glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
-		//my_shader.setFloat("material.shininess", Render::shininess);
-		//my_shader.setInt("material.diffuse_map", 0);
-		//my_shader.setInt("material.specular_map", 1);
-		//
+		glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
+		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
+		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
+		my_shader.setFloat("material.shininess", Render::shininess);
+		my_shader.setInt("material.diffuse_map", 0);
+		my_shader.setInt("material.specular_map", 1);
+		
 		//glActiveTexture(GL_TEXTURE0);
 		//glBindTexture(GL_TEXTURE_2D, texture);
 		//glActiveTexture(GL_TEXTURE1);
 		//glBindTexture(GL_TEXTURE_2D, texture2);
 
-		////// DRAW REST
+		//////// DRAW REST
 		//glBindVertexArray(VAO_cube);
 		//for (int i = 0; i < 10; i++)
 		//{
@@ -603,12 +604,8 @@ int main()
 		//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 		//	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube) / sizeof(float));
 		//}
-		glBindVertexArray(0);
-
-		model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
-		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-		chest.Draw(my_shader);
+		//glBindVertexArray(0);
+		chest.Draw(my_shader, model, Render::view, projection);
 		// poll the events and call the callback functions.
 		glfwPollEvents();
 		// swap the Color buffer
