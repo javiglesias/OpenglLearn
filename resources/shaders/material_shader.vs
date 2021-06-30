@@ -1,4 +1,5 @@
 #version 330 core
+
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
@@ -8,12 +9,6 @@ uniform mat4 transformation;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_diffuse2;
-uniform sampler2D texture_diffuse3;
-uniform sampler2D texture_specular1;
-uniform sampler2D texture_specular2;
 
 out vec3 color;
 out vec2 texCoord;
