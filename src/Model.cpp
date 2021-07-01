@@ -11,11 +11,12 @@
 
 #include "../dependencies/stb_image/stb_image.h"
 
-void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position)
 {
+	std::cout << "Triangles: " << triangle_count << '\n';
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
-		meshes[i].Draw(shader, model, view, projection);
+		meshes[i].Draw(shader, model, view, projection, camera_position);
 	}
 }
 
@@ -29,6 +30,7 @@ void Object::Model::loadModel(std::string path)
 		return;
 	}
 	directory = path.substr(0, path.find_last_of('/'));
+	directory = directory + '/';
 	processNode(scene->mRootNode, scene);
 }
 
@@ -41,6 +43,7 @@ void Object::Model::processNode(aiNode* node, const aiScene* scene)
 	}
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
+		std::cout << node->mChildren[i]->mName.C_Str() << ": ";
 		processNode(node->mChildren[i], scene);
 	}
 }
@@ -51,6 +54,8 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
+	triangle_count += mesh->mNumVertices/3;
+	std::cout << mesh->mNumVertices << '\n';
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
@@ -98,6 +103,9 @@ std::vector<Object::Texture> Object::Model::LoadMaterialTextures(aiMaterial* mat
 		tex.id = TextureFromFile(str.C_Str(), directory);
 		tex.type = name;
 		tex.path = str.C_Str();
+		tex.heigth = heigth;
+		tex.width = width;
+		tex.nr_channels = nr_channels;
 		textures.push_back(tex);
 	}
 	return textures;
@@ -106,8 +114,8 @@ std::vector<Object::Texture> Object::Model::LoadMaterialTextures(aiMaterial* mat
 unsigned int Object::Model::TextureFromFile(std::string str, std::string directory)
 {
 	stbi_set_flip_vertically_on_load(false);
-	int width, heigth, nr_channels;
-	unsigned char* texture_data = stbi_load((directory + str).c_str(),
+	directory.append(str);
+	unsigned char* texture_data = stbi_load(directory.c_str(),
 		&width, &heigth, &nr_channels, 0);
 	unsigned int texture;
 	glGenTextures(1, &texture);

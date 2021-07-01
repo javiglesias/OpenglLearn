@@ -1,0 +1,10 @@
+﻿  stb_image.cpp
+  Mesh.cpp
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Mesh.h(4,10): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  Model.cpp
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Model.h(6,10): fatal error C1083: Cannot open include file: 'assimp/scene.h': No such file or directory
+  Render.cpp
+  Shader.cpp
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Shader.h(6,10): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  main.cpp
+C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(2,10): fatal error C1083: Cannot open include file: 'glad/glad.h': No such file or directory

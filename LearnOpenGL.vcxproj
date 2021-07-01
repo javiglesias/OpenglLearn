@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="src\Header.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Render.h" />
@@ -163,6 +164,7 @@
     <None Include="resources\shaders\light_shader.fs" />
     <None Include="resources\shaders\light_shader.vs" />
     <None Include="resources\shaders\material_shader.fs" />
+    <None Include="resources\shaders\material_shader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\awesomeface.png" />

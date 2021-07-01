@@ -17,6 +17,7 @@ namespace Object
 		unsigned int id;
 		std::string type;
 		std::string path;
+		int width, heigth, nr_channels;
 	};
 	class Mesh 
 	{
@@ -27,7 +28,7 @@ namespace Object
 			Mesh(std::vector<Vertex> vertices,
 			std::vector<unsigned int> indices,
 			std::vector<Texture> textures);
-			void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+			void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position);
 		private:
 		// RENDER DATA.
 			unsigned int VAO, VBO, EBO;

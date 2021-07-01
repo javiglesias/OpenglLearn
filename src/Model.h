@@ -16,16 +16,17 @@ namespace Object
 		{
 			loadModel(path);
 		}
-		void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+		void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position);
 	private:
 		std::vector<Mesh> meshes;
 		std::string directory;
-
+		int width, heigth, nr_channels;
 		void loadModel(std::string path);
 		void processNode(aiNode *node, const aiScene *scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 		std::vector<Texture> LoadMaterialTextures(aiMaterial*, aiTextureType, std::string);
 		unsigned int TextureFromFile(std::string, std::string);
+		unsigned int triangle_count = 0;
 	};
 }
 #endif // !C__MODEL_H

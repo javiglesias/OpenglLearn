@@ -29,8 +29,11 @@ struct SpotLight
 
 struct Material
 {
-	sampler2D texture_diffuse1;
-	sampler2D texture_specular1;
+	sampler2D diffuse_map;
+	sampler2D specular_map;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
 	float shininess;
 };
 
@@ -57,7 +60,7 @@ void main()
 {
 	vec3 viewer_direction = normalize(viewer_position - frag_position);
 	vec3 result = directional_light_calculations(dir_light, normal, frag_position, viewer_direction);
-	FragColor = vec4(result, 1.0f);
+	FragColor = vec4(1.0f);
 }
 vec3 directional_light_calculations(DirectionalLight light, vec3 normal, vec3 frag_position, vec3 viewer_direction)
 {
@@ -65,9 +68,9 @@ vec3 directional_light_calculations(DirectionalLight light, vec3 normal, vec3 fr
 	float diff = max(dot(normal, light_dir), 0.0f);
 	vec3 reflect_dir = reflect(-light_dir, normal);
 	float spec = pow(max(dot(viewer_direction, reflect_dir), 0.0f), material.shininess);
-	vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse1, texCoord));
-	vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse1, texCoord));
-	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, texCoord));
+	vec3 ambient = light.ambient * vec3(texture(material.diffuse_map, texCoord));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse_map, texCoord));
+	vec3 specular = light.specular * spec * vec3(texture(material.specular_map, texCoord));
 	return ambient + diffuse + specular;
 }
 
@@ -79,9 +82,9 @@ vec3 point_light_calculations(PointLight light, vec3 normal, vec3 frag_position,
 	float spec = pow(max(dot(viewer_direction, reflect_dir), 0.0f), material.shininess);
 	float distance = length(light.position-frag_position);
 	float attenuation = 1.0f/(light.k_constant + light.k_linear*distance + light.k_quadratic*(distance*distance));
-	vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse1, texCoord));
-	vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse1, texCoord));
-	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, texCoord));
+	vec3 ambient = light.ambient * vec3(texture(material.diffuse_map, texCoord));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse_map, texCoord));
+	vec3 specular = light.specular * spec * vec3(texture(material.specular_map, texCoord));
 	return ambient + diffuse + specular;
 }
 vec3 spot_light_calculations(vec3 normal, vec3 frag_position, vec3 viewer_direction)
