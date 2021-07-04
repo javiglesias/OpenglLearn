@@ -16,6 +16,7 @@
 
 // Rendering Namespace
 namespace Render {
+	#define CHUNK 1000
 	glm::vec3 camera_forward;
 	float field_of_view;
 	float yaw;
@@ -31,7 +32,7 @@ namespace Render {
 	float light_k_constant = 1.0;
 	float light_k_linear = 0.09f;
 	float light_k_quadratic = 0.032f;
-	float shininess = 1.f;
+	float shininess = 32.f;
 	float light_cutoff = 12.5f;
 	float light_outer_cutoff = 17.2f;
 	glm::vec3 coral(1.f, .5f, .31f);
@@ -57,5 +58,6 @@ namespace Render {
 		std::rand() % 2 >= 1 ? true : false ,
 		std::rand() % 2 >= 1 ? true : false
 	};
+	unsigned int squared_world_size = CHUNK;
 }
 #endif // !HEADER__H

@@ -37,9 +37,13 @@ struct Material
 	float shininess;
 };
 
+float near = 0.3f;
+float far = 100.f;
+
 vec3 directional_light_calculations(DirectionalLight light, vec3 normal, vec3 frag_position, vec3 viewer_direction);
 vec3 point_light_calculations(PointLight light, vec3 normal, vec3 frag_position, vec3 viewer_direction);
 vec3 spot_light_calculations(vec3 normal, vec3 frag_position, vec3 viewer_direction);
+float LinearizeDepth(float depth);
 
 #define NR_POINT_LIGHTS 4
 
@@ -60,8 +64,28 @@ void main()
 {
 	vec3 viewer_direction = normalize(viewer_position - frag_position);
 	vec3 result = directional_light_calculations(dir_light, normal, frag_position, viewer_direction);
-	FragColor = vec4(1.0f);
+// Obtnemos las coordenadas normalizadas del dispositivo.
+	float depth = LinearizeDepth(frag_position.z);
+	vec3 color = vec3(94.f,157.f,52.f);
+	if(color.x > 1.f) 
+	{
+		color.x = color.x/256 * depth;
+		color.y = color.y/256;
+		color.z = color.z/256;
+	}
+	for(int i = 0; i < NR_POINT_LIGHTS; i++)
+	{
+		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
+	}
+	FragColor = vec4(color, 1.0);
 }
+
+float LinearizeDepth(float depth) 
+{
+	float z = depth * 2 - 1.0;
+	return (2.0 * near * far) / (far + near - z * (far - near));
+}
+
 vec3 directional_light_calculations(DirectionalLight light, vec3 normal, vec3 frag_position, vec3 viewer_direction)
 {
 	vec3 light_dir = normalize(-light.direction);

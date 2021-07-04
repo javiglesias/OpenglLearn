@@ -53,7 +53,7 @@ void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::ma
 	}
 	else
 	{
-		projection_tex = glm::perspective(glm::radians(90.f), 32.f / 32.f,
+		projection_tex = glm::perspective(glm::radians(90.f), 1.f,
 			0.3f, 10.f);
 	}
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));

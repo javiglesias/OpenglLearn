@@ -72,11 +72,11 @@ void process_input(GLFWwindow* m_window)
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		Render::VAO_MODE = false;
+		
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_4) == GLFW_PRESS)
 	{
-		Render::VAO_MODE = true;
+		
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_5) == GLFW_PRESS)
 	{
@@ -298,33 +298,33 @@ int main(int args, char** argv)
 		"resources/shaders/basic_shader.fs");
 
 	// VERTEX BUFFER OBJECT (GPU)
-	unsigned int VBO;
-	glGenBuffers(1, & VBO);
-	// VERTEX ARRAY OBJECT
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
+	//unsigned int VBO;
+	//glGenBuffers(1, & VBO);
+	//// VERTEX ARRAY OBJECT
+	//unsigned int VAO;
+	//glGenVertexArrays(1, &VAO);
+	//glBindVertexArray(VAO);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//glEnableVertexAttribArray(0);
 	// ELEMENT BUFFER OBJECT
-	unsigned int indices[] = {
-		0,1,2,
-		0,2,3
-	};
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	// POSITION FOR VERTEX SHADER (location 0)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// COLOR FOR VERTEX SHADER (location 1)
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);
-	// TEXTURE COORDINATES FOR THE SHADER
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	//unsigned int indices[] = {
+	//	0,1,2,
+	//	0,2,3
+	//};
+	//unsigned int EBO;
+	//glGenBuffers(1, &EBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//// POSITION FOR VERTEX SHADER (location 0)
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(0);
+	//// COLOR FOR VERTEX SHADER (location 1)
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+	//glEnableVertexAttribArray(1);
+	//// TEXTURE COORDINATES FOR THE SHADER
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
 
 	//// VERTEX BUFFER OBJECT (GPU)
 	//unsigned int VBO_triangle;
@@ -338,34 +338,22 @@ int main(int args, char** argv)
 	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	//glEnableVertexAttribArray(0);
 
-	unsigned int VBO_cube;
+	/*unsigned int VBO_cube;
 	glGenBuffers(1, &VBO_cube);
 	unsigned int VAO_cube;
 	glGenVertexArrays(1, &VAO_cube);
 	glBindVertexArray(VAO_cube);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_cube_complete), vertices_cube_complete, GL_STATIC_DRAW);
-	
-	//// APOS POSITION FOR THE SHADER (location 0)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	//// NORMALS VECTORS FOR THE SHADER (location 1)
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	//// TEXTURE COORDINATES FOR THE SHADER (location 2)
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-	//// roof && floor
-	/*unsigned int VBO_roof_floor;
-	glGenBuffers(1, &VBO_roof_floor);
-	unsigned int VAO_roof_floor;
-	glGenVertexArrays(1, &VAO_roof_floor);
-	glBindVertexArray(VAO_roof_floor);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_roof_floor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_roof_floor), vertices_roof_floor, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);*/
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);*/
+	
+	unsigned int instanced_cubes;
+	glGenBuffers(1, &instanced_cubes);
+	glBindBuffer(GL_ARRAY_BUFFER, instanced_cubes);
+	glBufferData(GL_ARRAY_BUFFER, CHUNK * sizeof(vertices_cube_complete), NULL, GL_STATIC_DRAW);
 
 	//// Load Texture 1
 	stbi_set_flip_vertically_on_load(false);
@@ -465,6 +453,11 @@ int main(int args, char** argv)
 	Shader backpack_shader("resources/shaders/material_shader.vs",
 		"resources/shaders/material_shader.fs");
 	//Object::Model chest(model_path);
+	//Object::Model chest(model_path);
+	unsigned int squared_world_size = 16;
+	glm::vec3 start_point = glm::vec3(0.f);
+	std::cout << "Rendering chunk of size: " << CHUNK << '\n';
+	std::cout << "triangle count: " << CHUNK * CHUNK * 2 * 6 << '\n';
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
@@ -487,8 +480,8 @@ int main(int args, char** argv)
 			glm::sin(glfwGetTime()),
 			Render::light_position.z);
 		glm::mat4 projection = glm::mat4(1.f);*/
-		//// DRAW LIGHT SOURCE
-		light_model = glm::mat4(1.f);
+		// DRAW LIGHT SOURCE
+		light_model = glm::mat4(10.f);
 		light_model = glm::scale(light_model, glm::vec3(0.2f));
 		light_model = glm::translate(light_model, Render::light_position);
 		light_shader.use();
@@ -508,45 +501,55 @@ int main(int args, char** argv)
 			glm::vec3(0.f, 1.f, 0.f));*/
 
 		//// LINKING UNIFORM SHADER ATTRIBUTES
-	/*	my_shader.use();
-		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));*/
-		//// LIGHT CONFIG
-		//glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
-		//glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
-		//glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
-		//glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
-		//////// ATTENUATION
-		//glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-		//my_shader.setFloat("point_light[0].k_constant",Render::light_k_constant);
-		//my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
-		//my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
+		my_shader.use();
+		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+		// LIGHT CONFIG
+		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
+		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
+		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
+		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
+		// ATTENUATION
+		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		my_shader.setFloat("point_light[0].k_constant",Render::light_k_constant);
+		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
+		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
 		//////// SPOTLIGHT
 		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
 		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
 
-		//// OBSERVATOR
-		/*glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));*/
+		// OBSERVATOR
+		glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
 		//
-		////// MATERIAL CONFIG
-		/*glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
+		// MATERIAL CONFIG
+		glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
 		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
 		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
 		my_shader.setFloat("material.shininess", Render::shininess);
 		my_shader.setInt("material.diffuse_map", 0);
-		my_shader.setInt("material.specular_map", 1);*/
-		
+		my_shader.setInt("material.specular_map", 1);
+		my_shader.setFloat("CHUNK", CHUNK);
 		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);*/
 		//////// DRAW
-		model = glm::mat4(2.f);
-		my_shader.use();
-		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-		glBindVertexArray(VAO_light_source);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
-		glBindVertexArray(0);
+		/*for (unsigned int i = 0; i < squared_world_size; i++)
+		{
+			for (unsigned int j = 0; j < squared_world_size; j++)
+			{*/
+
+				model = glm::mat4(1.f);
+				/*start_point = glm::vec3(2.1 * vertices_cube_complete[0] * i, 0.f, 2.1 * vertices_cube_complete[0] * j);
+				model = glm::translate(model, start_point);*/
+				glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+				glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
+				
+				/*glBindVertexArray(VAO_cube);
+				glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));*/
+			/*}
+		}*/
+		glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK*CHUNK);
 		//chest.Draw(backpack_shader, model, Render::view, projection, Render::camera_position);
+		 glBindVertexArray(0);
 		// poll the events and call the callback functions.
 		glfwPollEvents();
 		// swap the Color buffer
