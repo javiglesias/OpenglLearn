@@ -14,134 +14,6 @@
 #include <iostream>
 
 #include "Header.h"
-// FREE FUNCTIONS
-
-void framebuffer_size_callback(GLFWwindow*, int width, int height)
-{
-	glViewport(-1, -1, width, height);
-	//glm::ortho(0.f, (float)width, 0.f, (float)height, 0.3f, 10.f);
-}
-
-void mouse_movement_callback(GLFWwindow* window, double x_position, double y_position)
-{
-	if (Render::first_mouse_interaction)
-	{
-	//	last_x_position = x_position;
-	//	last_y_position = y_position;
-		//Render::first_mouse_interaction = false;
-	}
-	float x_offset = x_position - Render::last_x_position;
-	float y_offset = Render::last_y_position - y_position;
-	Render::last_x_position = x_position;
-	Render::last_y_position = y_position;
-	float senseo = 0.1f;
-	x_offset *= senseo;
-	y_offset *= senseo;
-	Render::yaw += x_offset;
-	Render::pitch += y_offset;
-	// CONSTRAINTS
-	if (Render::pitch > 89.0f) Render::pitch = 89.0f;
-	if (Render::pitch < -89.0f) Render::pitch = -89.0f;
-	glm::vec3 camera_direction;
-	camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-	camera_direction.y = sin(glm::radians(Render::pitch));
-	camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-	Render::camera_forward = glm::normalize(camera_direction);
-}
-void mouse_scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
-{
-	Render::field_of_view -= y_offset;
-	if (Render::field_of_view < 1.f) Render::field_of_view = 1.f;
-	if (Render::field_of_view > 90.f) Render::field_of_view = 90.f;
-}
-
-void process_input(GLFWwindow* m_window)
-{
-	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(m_window, true);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS)
-	{
-		glDisable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS)
-	{
-		
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_4) == GLFW_PRESS)
-	{
-		
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_5) == GLFW_PRESS)
-	{
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_ALWAYS);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_6) == GLFW_PRESS)
-	{
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_7) == GLFW_PRESS)
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_8) == GLFW_PRESS)
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-	}
-	// CAMERA MOVEMENT
-	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		Render::camera_position += Render::camera_speed * Render::camera_forward;
-		Render::light_position += Render::camera_speed * Render::camera_forward;
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		Render::camera_position += glm::normalize(glm::cross(
-			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
-		Render::light_position += glm::normalize(glm::cross(
-			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		Render::camera_position -= Render::camera_speed * Render::camera_forward;
-		Render::light_position -= Render::camera_speed * Render::camera_forward;
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		Render::camera_position -= glm::normalize(glm::cross(
-			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
-		Render::light_position -= glm::normalize(glm::cross(
-			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
-	}
-	// FPS old school
-	// Render::camera_position.y = Render::y_constant;
-	if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
-	{
-		// RESET
-		for (int i = 0; i < sizeof(Render::dual_passage) / sizeof(bool); i++)
-		{
-			Render::dual_passage[i] = std::rand() % 2 >= 1 ? true : false;
-		}
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_HOME) == GLFW_PRESS)
-	{
-		Render::shininess += 1;
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_END) == GLFW_PRESS)
-	{
-		Render::shininess -= 1;
-	}
-}
 
 int main(int args, char** argv)
 {
@@ -150,60 +22,6 @@ int main(int args, char** argv)
 	Render::pitch = 0.f;
 	Render::camera_forward = glm::vec3(0.f, 0.f, -1.f);
 	Render::field_of_view = 90.f;
-
-	float vertices[] = {
-		-0.5f, -0.5f, 1.0f, 0.5f, 0.f, 0.0f,  1.f, 1.f,
-		 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.f, 0.f,
-		 0.5f, 0.5f, 1.0f,  0.f, 0.5f, 0.0f,  0.f, 0.f,
-		-0.5f, 0.5f, 1.0f,  0.5f, 0.5f, 0.0f, 0.f, 1.f
-	};
-
-	//float vertices_roof_floor[] = {
-	//	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	//	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	//	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	//	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	//	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	//	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	//	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	//	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	//	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	//	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	//	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	//	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	//};
-
-	//float vertices_cube[] = {
-	//	// CHUNK PASILLO
-	//	-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	//	-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	//	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	//	-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-	//	0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	//	0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	//	0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	//	0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-	//	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-	//	0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	//	0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	//	-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	//	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-
-	//	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-	//	0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-	//	0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	//	0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	//	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-	//	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
-	//};
 
 	float vertices_cube_complete[] = {
 		// CUBO COMPLETO
@@ -285,6 +103,19 @@ int main(int args, char** argv)
 	{
 		std::cout << "Glad loaded.\n";
 	}
+
+	// INICIALIZAMOS IMGUI
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& input_output = ImGui::GetIO();
+	(void)input_output;
+	// INICIALIZAMOS EL ESTULO DE IMGUI
+	ImGui::StyleColorsDark();
+	// ESTABLECEMOS LA PATAFORMA Y RENDER
+	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
+
 	// CALLBACKS
 	framebuffer_size_callback(m_window, 800, 600);
 	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
@@ -424,6 +255,8 @@ int main(int args, char** argv)
 	unsigned int material_ambient_location = glGetUniformLocation(my_shader.id, "material.ambient");
 	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
 	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular"); 
+
+	unsigned int rgb_color_location = glGetUniformLocation(my_shader.id, "RGB_COLOR");
 	
 	glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
@@ -456,18 +289,39 @@ int main(int args, char** argv)
 	//Object::Model chest(model_path);
 	unsigned int squared_world_size = 16;
 	glm::vec3 start_point = glm::vec3(0.f);
-	std::cout << "Rendering chunk of size: " << CHUNK << '\n';
-	std::cout << "triangle count: " << CHUNK * CHUNK * 2 * 6 << '\n';
+	
+	//Render prep
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1.f, 0xff);
+
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
 		Render::delta_time = Render::current_frame - Render::last_frame;
 		Render::last_frame = Render::current_frame;
-
+		
 		process_input(m_window);
 		//All the rendering things
 		glClearColor(0.2f, 0.1f, 0.5f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// IMGUI
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		if (Render::show_GUI_cursor)
+		{
+			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+		else 
+		{
+			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+
 		float time_value = glfwGetTime();
 		float green = (sin(time_value)/2.f)+ .5f;
 		Render::view = glm::lookAt(Render::camera_position, Render::camera_position + Render::camera_forward,
@@ -480,7 +334,7 @@ int main(int args, char** argv)
 			glm::sin(glfwGetTime()),
 			Render::light_position.z);
 		glm::mat4 projection = glm::mat4(1.f);*/
-		// DRAW LIGHT SOURCE
+		glBindVertexArray(VAO_light_source);
 		light_model = glm::mat4(10.f);
 		light_model = glm::scale(light_model, glm::vec3(0.2f));
 		light_model = glm::translate(light_model, Render::light_position);
@@ -488,8 +342,17 @@ int main(int args, char** argv)
 		glUniformMatrix4fv(light_model_location, 1, GL_FALSE, glm::value_ptr(light_model));
 		glUniformMatrix4fv(light_view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
 		glUniformMatrix4fv(light_projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		glBindVertexArray(VAO_light_source);
+		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // a menos que los dos test pase, mantenemos el valor del buffer
+		//glStencilFunc(GL_ALWAYS, 1, 0xFF); // a 1 todo
+		//glStencilMask(0xFF); // activamos la escritura al buffer
+
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
+
+		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // invertimos la condicion del test queremos los que son != 1
+		//glStencilMask(0x00); // desactivamos escritura al buffer.
+		//glDisable(GL_DEPTH_TEST);
+		//// pintamos otra vez.
+		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
 
 		//// DEMO MODE
 		/*const float radius(10.f);
@@ -524,10 +387,13 @@ int main(int args, char** argv)
 		glUniform3fv(material_ambient_location	, 1, glm::value_ptr(glm::vec3(.5)));
 		glUniform3fv(material_diffuse_location	, 1, glm::value_ptr(glm::vec3(1)));
 		glUniform3fv(material_specular_location	, 1, glm::value_ptr(glm::vec3(1)));
+		
 		my_shader.setFloat("material.shininess", Render::shininess);
 		my_shader.setInt("material.diffuse_map", 0);
 		my_shader.setInt("material.specular_map", 1);
 		my_shader.setFloat("CHUNK", CHUNK);
+		my_shader.setFloat("SCALE", Render::SCALE);
+
 		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);*/
 		//////// DRAW
@@ -547,14 +413,29 @@ int main(int args, char** argv)
 				glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));*/
 			/*}
 		}*/
-		glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK*CHUNK);
+		glUniform3fv(rgb_color_location, 1, glm::value_ptr(glm::vec3(94.f, 157.f, 52.f)));
+		glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK* CHUNK);
+		glBindVertexArray(0);
+
+		ImGui::Begin("Hello, World IMGUI");
+			ImGui::Text("Rendering chunk of size: ");
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(CHUNK).c_str());
+			ImGui::Text("Triangle count: ");
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(CHUNK* CHUNK * 2 * 6).c_str());
+		ImGui::End();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		
 		//chest.Draw(backpack_shader, model, Render::view, projection, Render::camera_position);
-		 glBindVertexArray(0);
 		// poll the events and call the callback functions.
 		glfwPollEvents();
 		// swap the Color buffer
 		glfwSwapBuffers(m_window);
 	}
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	return 0;
 }

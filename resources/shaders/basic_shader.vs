@@ -9,6 +9,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform float CHUNK;
+uniform float SCALE;
+uniform vec3 RGB_COLOR;
 
 out vec3 color;
 out vec2 texCoord;
@@ -21,12 +23,13 @@ void main()
 	float local_instance_ID = 0;
 	if(index_ID > 0)
 	{
-		local_instance_ID = CHUNK * (index_ID + 1) - gl_InstanceID;
+		local_instance_ID = CHUNK * index_ID - gl_InstanceID;
 	}
-	vec3 pos_instance  = vec3(aPos.x + local_instance_ID , aPos.y, aPos.z + index_ID);
+	vec3 pos_instance  = vec3(aPos.x + local_instance_ID , aPos.y, aPos.z + index_ID) * SCALE;
 	
 	gl_Position = projection * view * model * vec4(pos_instance, 1.f);
 	texCoord = aTexCoord;
 	frag_position = aPos;
 	normal = aNormal;
+	color = RGB_COLOR;// vec3(94.f,157.f,52.f);
 }

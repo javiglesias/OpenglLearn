@@ -149,6 +149,13 @@
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\vendor\imgui.cpp" />
+    <ClCompile Include="src\vendor\imgui_demo.cpp" />
+    <ClCompile Include="src\vendor\imgui_draw.cpp" />
+    <ClCompile Include="src\vendor\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\vendor\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\vendor\imgui_tables.cpp" />
+    <ClCompile Include="src\vendor\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
@@ -157,6 +164,14 @@
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\vendor\imconfig.h" />
+    <ClInclude Include="src\vendor\imgui.h" />
+    <ClInclude Include="src\vendor\imgui_impl_glfw.h" />
+    <ClInclude Include="src\vendor\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\vendor\imgui_internal.h" />
+    <ClInclude Include="src\vendor\imstb_rectpack.h" />
+    <ClInclude Include="src\vendor\imstb_textedit.h" />
+    <ClInclude Include="src\vendor\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\basic_shader.fs" />

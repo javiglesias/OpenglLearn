@@ -62,22 +62,22 @@ in vec3 frag_position;
 
 void main()
 {
+	vec3 normalized_color = color;
 	vec3 viewer_direction = normalize(viewer_position - frag_position);
 	vec3 result = directional_light_calculations(dir_light, normal, frag_position, viewer_direction);
 // Obtnemos las coordenadas normalizadas del dispositivo.
 	float depth = LinearizeDepth(frag_position.z);
-	vec3 color = vec3(94.f,157.f,52.f);
-	if(color.x > 1.f) 
+	if(normalized_color.x > 1.f) 
 	{
-		color.x = color.x/256 * depth;
-		color.y = color.y/256;
-		color.z = color.z/256;
+		normalized_color.x = normalized_color.x/256;
+		normalized_color.y = normalized_color.y/256;
+		normalized_color.z = normalized_color.z/256;
 	}
 	for(int i = 0; i < NR_POINT_LIGHTS; i++)
 	{
 		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
 	}
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(result + normalized_color, 1.0);
 }
 
 float LinearizeDepth(float depth) 
