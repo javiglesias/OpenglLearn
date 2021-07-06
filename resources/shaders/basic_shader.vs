@@ -20,7 +20,7 @@ out vec3 frag_position;
 void main()
 {
 	float index_ID = int(gl_InstanceID/CHUNK);
-	float local_instance_ID = 0;
+	float local_instance_ID = gl_InstanceID;
 	if(index_ID > 0)
 	{
 		local_instance_ID = CHUNK * index_ID - gl_InstanceID;

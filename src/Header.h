@@ -86,9 +86,15 @@ namespace Render {
 	float delta_time = 0.f;
 	float last_frame = 0.f;
 	float current_frame = glfwGetTime();
-	bool demo_window = false;
-	bool show_GUI_cursor = false;
+	unsigned int cubes_spawned = 0;
+	bool demo_mode = false;
+	bool demo_model = false;
+	bool show_GUI_cursor = true;
 	unsigned int squared_world_size = CHUNK;
+	bool mouse_movement = false;
+	bool directional_light_enabled = false;
+	bool point_light_enabled = false;
+	bool spot_light_enabled = false;
 }
 
 // FREE FUNCTIONS
@@ -100,29 +106,32 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height)
 
 void mouse_movement_callback(GLFWwindow* window, double x_position, double y_position)
 {
-	if (Render::first_mouse_interaction)
+	if (Render::mouse_movement)
 	{
-		//	last_x_position = x_position;
-		//	last_y_position = y_position;
-			//Render::first_mouse_interaction = false;
+		if (Render::first_mouse_interaction)
+		{
+			//	last_x_position = x_position;
+			//	last_y_position = y_position;
+				//Render::first_mouse_interaction = false;
+		}
+		float x_offset = x_position - Render::last_x_position;
+		float y_offset = Render::last_y_position - y_position;
+		Render::last_x_position = x_position;
+		Render::last_y_position = y_position;
+		float senseo = 0.1f;
+		x_offset *= senseo;
+		y_offset *= senseo;
+		Render::yaw += x_offset;
+		Render::pitch += y_offset;
+		// CONSTRAINTS
+		if (Render::pitch > 89.0f) Render::pitch = 89.0f;
+		if (Render::pitch < -89.0f) Render::pitch = -89.0f;
+		glm::vec3 camera_direction;
+		camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
+		camera_direction.y = sin(glm::radians(Render::pitch));
+		camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
+		Render::camera_forward = glm::normalize(camera_direction);
 	}
-	float x_offset = x_position - Render::last_x_position;
-	float y_offset = Render::last_y_position - y_position;
-	Render::last_x_position = x_position;
-	Render::last_y_position = y_position;
-	float senseo = 0.1f;
-	x_offset *= senseo;
-	y_offset *= senseo;
-	Render::yaw += x_offset;
-	Render::pitch += y_offset;
-	// CONSTRAINTS
-	if (Render::pitch > 89.0f) Render::pitch = 89.0f;
-	if (Render::pitch < -89.0f) Render::pitch = -89.0f;
-	glm::vec3 camera_direction;
-	camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-	camera_direction.y = sin(glm::radians(Render::pitch));
-	camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-	Render::camera_forward = glm::normalize(camera_direction);
 }
 void mouse_scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 {
@@ -221,6 +230,16 @@ void process_input(GLFWwindow* m_window)
 	else if (glfwGetKey(m_window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 	{
 		Render::SCALE -= 0.01f;
+	}
+
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		Render::mouse_movement = true;
+	}
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE 
+		&& Render::mouse_movement)
+	{
+		Render::mouse_movement = false;
 	}
 }
 #endif // !HEADER__H

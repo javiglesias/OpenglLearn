@@ -12,6 +12,7 @@ namespace Object
 	class Model
 	{
 	public:
+		Model(){}
 		Model(std::string path)
 		{
 			loadModel(path);
@@ -26,6 +27,7 @@ namespace Object
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 		std::vector<Texture> LoadMaterialTextures(aiMaterial*, aiTextureType, std::string);
 		unsigned int TextureFromFile(std::string, std::string);
+	public:
 		unsigned int triangle_count = 0;
 	};
 }
