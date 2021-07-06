@@ -11,8 +11,6 @@
 #include "Model.h"
 #include "../dependencies/stb_image/stb_image.h"
 
-#include <iostream>
-
 #include "Header.h"
 
 int main(int args, char** argv)
@@ -304,6 +302,12 @@ int main(int args, char** argv)
 		Render::last_frame = Render::current_frame;
 		
 		process_input(m_window);
+
+		Render::DEBUG_LOG("Rendering chunk of size: ", std::to_string(CHUNK).c_str());
+		Render::DEBUG_LOG("Triangle count: ", std::to_string(CHUNK * CHUNK * 2 * 6).c_str());
+		Render::DEBUG_LOG("Frame time: ", std::to_string(Render::last_frame).c_str());
+
+
 		//All the rendering things
 		glClearColor(0.2f, 0.1f, 0.5f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -417,14 +421,97 @@ int main(int args, char** argv)
 		glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK* CHUNK);
 		glBindVertexArray(0);
 
-		ImGui::Begin("Hello, World IMGUI");
-			ImGui::Text("Rendering chunk of size: ");
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(CHUNK).c_str());
-			ImGui::Text("Triangle count: ");
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(CHUNK* CHUNK * 2 * 6).c_str());
+		ImGui::Begin("DEBUG LOG");
+			while(!Render::gui_commands_q.empty())
+			{
+				Render::GUI_command command = Render::gui_commands_q.front();
+				Render::gui_commands_q.pop();
+				switch (command.command)
+				{
+					case Render::GUI_COMMANDS::Text:
+						ImGui::Text(command.value.c_str());
+						break;
+					case Render::GUI_COMMANDS::SameLine:
+						ImGui::SameLine();
+						break;
+					default:
+						break;
+				}
+			}
 		ImGui::End();
+		//	APRENDIZAJE DE GRAFICOS y GUI
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("Graphics"))
+			{
+				if (ImGui::MenuItem("Wireframe", "1"))
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				}
+				if (ImGui::MenuItem("Solid", "2"))
+				{
+					glDisable(GL_CULL_FACE);
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				}
+				if (ImGui::MenuItem("Stencil 0x00", "3"))
+				{
+					glEnable(GL_STENCIL_BUFFER_BIT);
+					glStencilMask(0x00);
+					glStencilFunc(GL_EQUAL, 0.5f, 0xff);
+				}
+				if (ImGui::MenuItem("Disable Stencil", "4"))
+				{
+					glDisable(GL_STENCIL_BUFFER_BIT);
+				}
+				if (ImGui::MenuItem("Disable Depth", "5"))
+				{
+					glDisable(GL_DEPTH_TEST);
+				}
+				if (ImGui::MenuItem("Enable Depth", "6"))
+				{
+					glEnable(GL_DEPTH_TEST);
+					glDepthFunc(GL_LESS);
+				}
+				if (ImGui::MenuItem("Cull Back", "7"))
+				{
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_BACK);
+				}
+				if (ImGui::MenuItem("Cull Front", "8"))
+				{
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_FRONT);
+				}
+				if (ImGui::MenuItem("Toggle cursor", "TAB"))
+				{
+					Render::show_GUI_cursor = !Render::show_GUI_cursor;
+				}
+				if (ImGui::MenuItem("Material Shine +", "HOME"))
+				{
+					Render::shininess += 1;
+				}
+				if (ImGui::MenuItem("Material Shine -", "END"))
+				{
+					Render::shininess -= 1;
+				}
+				if (ImGui::MenuItem("Scale +", "PAG UP"))
+				{
+					Render::SCALE += 0.01f;
+				}
+				if (ImGui::MenuItem("Scale -", "PAG DOWN"))
+				{
+					Render::SCALE -= 0.01f;
+				}
+				if (ImGui::MenuItem("Quit", "ESC"))
+				{
+					glfwSetWindowShouldClose(m_window, true);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		// RENDER THE DATA FOR THE GUI
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		

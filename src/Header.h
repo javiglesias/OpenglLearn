@@ -17,10 +17,45 @@
 #include "Model.h"
 #include "../dependencies/stb_image/stb_image.h"
 
+#include <iostream>
+#include <queue>
+
 // Rendering Namespace
 namespace Render {
+
+	enum GUI_COMMANDS
+	{
+		Text,
+		SameLine
+	};
+	struct GUI_command
+	{
+		GUI_COMMANDS command;
+		std::string value;
+
+		GUI_command(GUI_COMMANDS _command, std::string _value)
+		{
+			command = _command;
+			value = _value;
+		}
+	};
+
 	#define CHUNK 1000
 	float SCALE = 1.f;
+
+	std::queue<GUI_command> gui_commands_q;
+
+	//DEBUG GUI
+	void DEBUG_LOG(std::string title, std::string value)
+	{
+		gui_commands_q.push(Render::GUI_command(
+			Render::GUI_COMMANDS::Text, title.c_str()));
+		gui_commands_q.push(Render::GUI_command(
+			Render::GUI_COMMANDS::SameLine, ""));
+		gui_commands_q.push(GUI_command(
+			GUI_COMMANDS::Text, value.c_str()));
+	}
+	// END DEBUG GUI
 
 	glm::vec3 camera_forward;
 	float field_of_view;
