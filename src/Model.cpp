@@ -87,6 +87,11 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
 
 	}
+	else
+	{
+		aiMaterial* material;
+	}
+	model_loaded = true;
 	return Mesh(vertices, indices, textures);
 }
 

@@ -150,7 +150,6 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\vendor\imgui.cpp" />
-    <ClCompile Include="src\vendor\imgui_demo.cpp" />
     <ClCompile Include="src\vendor\imgui_draw.cpp" />
     <ClCompile Include="src\vendor\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\vendor\imgui_impl_opengl3.cpp" />
@@ -174,12 +173,14 @@
     <ClInclude Include="src\vendor\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\basic_shader.fs" />
-    <None Include="resources\shaders\basic_shader.vs" />
-    <None Include="resources\shaders\light_shader.fs" />
-    <None Include="resources\shaders\light_shader.vs" />
-    <None Include="resources\shaders\material_shader.fs" />
-    <None Include="resources\shaders\material_shader.vs" />
+    <None Include="resources\shaders\basic_shader.frag" />
+    <None Include="resources\shaders\basic_shader.vert" />
+    <None Include="resources\shaders\basic_shape_shader.frag" />
+    <None Include="resources\shaders\basic_shape_shader.vert" />
+    <None Include="resources\shaders\light_shader.frag" />
+    <None Include="resources\shaders\light_shader.vert" />
+    <None Include="resources\shaders\material_shader.frag" />
+    <None Include="resources\shaders\material_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\awesomeface.png" />

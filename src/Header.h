@@ -19,6 +19,8 @@
 
 #include <iostream>
 #include <queue>
+#include <thread>
+#include <future>
 
 // Rendering Namespace
 namespace Render {
@@ -40,10 +42,33 @@ namespace Render {
 		}
 	};
 
+	struct model_loaded
+	{
+		Object::Model model_load;
+		Shader shader;
+		glm::mat4 model;
+		glm::mat4 view;
+		glm::mat4 projection;
+		glm::vec3 camera_position;
+		
+		model_loaded(Object::Model _model_load, Shader _shader,
+		glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
+		glm::vec3 _camera_position)
+		{
+			model_load = _model_load;
+			shader = _shader;
+			model = _model;
+			view = _view;
+			projection = _projection;
+			camera_position = _camera_position;
+		}
+	};
+	
 	#define CHUNK 1000
 	float SCALE = 1.f;
 
 	std::queue<GUI_command> gui_commands_q;
+	std::queue<model_loaded> models_loaded;
 
 	//DEBUG GUI
 	void DEBUG_LOG(std::string title, std::string value)
@@ -56,7 +81,8 @@ namespace Render {
 			GUI_COMMANDS::Text, value.c_str()));
 	}
 	// END DEBUG GUI
-
+	int screen_width = 800, screen_heigth = 600;
+	float z_near = 0.3f, z_far = 1000.f;
 	glm::vec3 camera_forward;
 	float field_of_view;
 	float yaw;
@@ -95,6 +121,7 @@ namespace Render {
 	bool directional_light_enabled = false;
 	bool point_light_enabled = false;
 	bool spot_light_enabled = false;
+
 }
 
 // FREE FUNCTIONS
@@ -142,47 +169,21 @@ void mouse_scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 
 void process_input(GLFWwindow* m_window)
 {
-	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	// MOVIMIENTO DE LA LUZ
+	if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(m_window, true);
+		Render::light_position.z -= 1;
+	} else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		Render::light_position.z += 1;
 	}
-	else if (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		Render::light_position.x += 1;
 	}
-	else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS)
+	else if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		glDisable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS)
-	{
-		glEnable(GL_STENCIL_BUFFER_BIT);
-		glStencilMask(0x00);
-		glStencilFunc(GL_EQUAL, 0.5f, 0xff);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_4) == GLFW_PRESS)
-	{
-		glDisable(GL_STENCIL_BUFFER_BIT);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_5) == GLFW_PRESS)
-	{
-		glDisable(GL_DEPTH_TEST);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_6) == GLFW_PRESS)
-	{
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_7) == GLFW_PRESS)
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_8) == GLFW_PRESS)
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
+		Render::light_position.x -= 1;
 	}
 	// CAMERA MOVEMENT
 	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

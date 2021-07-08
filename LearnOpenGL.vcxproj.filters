@@ -36,9 +36,6 @@
     <ClCompile Include="src\vendor\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\vendor\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\vendor\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -100,12 +97,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\basic_shader.vs" />
-    <None Include="resources\shaders\basic_shader.fs" />
-    <None Include="resources\shaders\light_shader.fs" />
-    <None Include="resources\shaders\light_shader.vs" />
-    <None Include="resources\shaders\material_shader.fs" />
-    <None Include="resources\shaders\material_shader.vs" />
+    <None Include="resources\shaders\basic_shader.vert" />
+    <None Include="resources\shaders\basic_shader.frag" />
+    <None Include="resources\shaders\light_shader.frag" />
+    <None Include="resources\shaders\light_shader.vert" />
+    <None Include="resources\shaders\material_shader.frag" />
+    <None Include="resources\shaders\material_shader.vert" />
+    <None Include="resources\shaders\basic_shape_shader.vert" />
+    <None Include="resources\shaders\basic_shape_shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\container.jpg">

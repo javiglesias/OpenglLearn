@@ -29,6 +29,7 @@ namespace Object
 		unsigned int TextureFromFile(std::string, std::string);
 	public:
 		unsigned int triangle_count = 0;
+		bool model_loaded = false;
 	};
 }
 #endif // !C__MODEL_H
