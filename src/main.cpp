@@ -16,8 +16,6 @@
 // TODO: Hebra que cargue modelos  
 // y avise cuando acabe para renderizarlos en el siguiente frame
 
-// TODO: establecer la posicion en la que spawnear el cubo basico.
-
 int main(int args, char** argv)
 {
 	bool is_set_position_open = false;
@@ -294,8 +292,17 @@ int main(int args, char** argv)
 	glEnable(GL_STENCIL_TEST);
 	glStencilFunc(GL_NOTEQUAL, 1.f, 0xff);
 	Object::Model chest;
+
+	// Cargando modelos basicos. BASIC SHAPES
 	Object::Model Lightbulb("resources/models/BasicShapes/LightBulb.obj");
 	Object::Model Cube("resources/models/BasicShapes/Cube.obj");
+	Object::Model Monkey("resources/models/BasicShapes/Monkey.obj");
+	Object::Model Cone("resources/models/BasicShapes/Cone.obj");
+	Object::Model Plane("resources/models/BasicShapes/Plane.obj");
+	Object::Model Torus("resources/models/BasicShapes/Torus.obj");
+	Object::Model Sphere("resources/models/BasicShapes/Sphere.obj");
+	Object::Model Cylinder("resources/models/BasicShapes/Cylinder.obj");
+
 	bool rendering_light_model = false;
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
@@ -482,6 +489,9 @@ int main(int args, char** argv)
 				}
 			}
 		ImGui::End();
+		ImGui::Begin("World");
+
+		ImGui::End();
 		//	APRENDIZAJE DE GRAFICOS y GUI
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -587,7 +597,7 @@ int main(int args, char** argv)
 				{
 					Render::cubes_spawned++;
 				}
-				if (ImGui::MenuItem("Basic Cube"))
+				if (ImGui::MenuItem("Basic Shape"))
 				{
 					is_set_position_open = true;
 				}
@@ -599,16 +609,91 @@ int main(int args, char** argv)
 		{
 			if (ImGui::Begin("Position"))
 			{
-				ImGui::Text("Set the position to spawn cube:");
+				ImGui::Text("Set the position and rotation to spawn:");
+				Render::Shape_model model_to_create;
 				ImGui::Separator();
 				static float position[3];
 				ImGui::InputFloat3("position", position);
+				static float rotation[1];
+				ImGui::InputFloat("rotation angles degrees", rotation);
+				static int radio_button;
+				if (ImGui::RadioButton("Cube", &radio_button, Render::BASIC_SHAPES::Cube))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Cube;
+					model_to_create.model_obj = Cube;
+				} else if (ImGui::RadioButton("Cone", &radio_button, Render::BASIC_SHAPES::Cone))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Cone;
+					model_to_create.model_obj = Cone;
+				} else if (ImGui::RadioButton("Cylinder", &radio_button, Render::BASIC_SHAPES::Cylinder))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Cylinder;
+					model_to_create.model_obj = Cylinder;
+				}
+				else if (ImGui::RadioButton("Plane", &radio_button, Render::BASIC_SHAPES::Plane))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Plane;
+					model_to_create.model_obj = Plane;
+				}
+				else if (ImGui::RadioButton("Torus", &radio_button, Render::BASIC_SHAPES::Torus))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Torus;
+					model_to_create.model_obj = Torus;
+				}
+				else if (ImGui::RadioButton("LightBulb", &radio_button, Render::BASIC_SHAPES::LightBulb))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::LightBulb;
+					model_to_create.model_obj = Lightbulb;
+				}
+				else if (ImGui::RadioButton("Monkey", &radio_button, Render::BASIC_SHAPES::Monkey))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Monkey;
+					model_to_create.model_obj = Monkey;
+				}
+				else if (ImGui::RadioButton("Sphere", &radio_button, Render::BASIC_SHAPES::Sphere))
+				{
+					model_to_create.shape = Render::BASIC_SHAPES::Sphere;
+					model_to_create.model_obj = Sphere;
+				}
 				if (ImGui::Button("OK"))
 				{
+				// TODO: rotation of the model.
 					glm::mat4 basic_cube_model(1.f);
 					basic_cube_model = glm::translate(basic_cube_model, glm::vec3(position[0], position[1], position[2]));
+					glm::rotate(basic_cube_model, glm::radians(rotation[0]), glm::vec3(position[0], position[1], position[2]));
+					Object::Model model_to_load;
+					switch (model_to_create.shape)
+					{
+					case Render::BASIC_SHAPES::Cube:
+						model_to_load = Cube;
+						break;
+					case Render::BASIC_SHAPES::Cylinder:
+						model_to_load = Cylinder;
+						break;
+					case Render::BASIC_SHAPES::Cone:
+						model_to_load = Cone;
+						break;
+					case Render::BASIC_SHAPES::Plane:
+						model_to_load = Plane;
+						break;
+					case Render::BASIC_SHAPES::Sphere:
+						model_to_load = Sphere;
+						break;
+					case Render::BASIC_SHAPES::Torus:
+						model_to_load = Torus;
+						break;
+					case Render::BASIC_SHAPES::LightBulb:
+						model_to_load = Lightbulb;
+						break;
+					case Render::BASIC_SHAPES::Monkey:
+						model_to_load = Monkey;
+						break;
+					default:
+						model_to_load = Monkey;
+						break;
+					}
 					Render::models_loaded.push(Render::model_loaded(
-						Cube, basic_shape_shader,
+						model_to_load, basic_shape_shader,
 						basic_cube_model, Render::view, projection, Render::camera_position));
 					is_set_position_open = false;
 				}

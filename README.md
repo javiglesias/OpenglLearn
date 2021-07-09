@@ -1,5 +1,9 @@
 Documentation for this learning
 
+09/07/2021 - Added new basic shapes to the add action with translation in 3 axis.
+
+<img src="https://shared.graphics/storage/m/_v2/317934842270584832/4be6889c4-9a72ca/45AZX9fZoxtY/ZmE0TYvf7WBK37WIXC5uAp14nBWTmdJIe9pAR6SU.jpg">
+
 06/07/2021 - Basic menu layout and some lighting functions on frag shader.
 
 <img src="https://shared.graphics/storage/m/_v2/317934842270584832/4be6889c4-9a72ca/JUL3UO6dQ8De/USiJGOUwQsaiixSbBohPW2zcVPohFRZOu6K64Wns.jpg">

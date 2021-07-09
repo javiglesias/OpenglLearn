@@ -23,8 +23,24 @@
 #include <future>
 
 // Rendering Namespace
-namespace Render {
-
+namespace Render 
+{
+	enum BASIC_SHAPES
+	{
+		Cube,
+		Cone,
+		Cylinder,
+		Plane,
+		Sphere,
+		Torus,
+		LightBulb,
+		Monkey
+	};
+	struct Shape_model
+	{
+		BASIC_SHAPES shape;
+		Object::Model model_obj;
+	};
 	enum GUI_COMMANDS
 	{
 		Text,
