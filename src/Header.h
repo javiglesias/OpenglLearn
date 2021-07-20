@@ -21,6 +21,7 @@
 #include <queue>
 #include <thread>
 #include <future>
+#include <map>
 
 // Rendering Namespace
 namespace Render 
@@ -66,10 +67,11 @@ namespace Render
 		glm::mat4 view;
 		glm::mat4 projection;
 		glm::vec3 camera_position;
+		std::string name;
 		
 		model_loaded(Object::Model _model_load, Shader _shader,
 		glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
-		glm::vec3 _camera_position)
+		glm::vec3 _camera_position, std::string _name = "model_")
 		{
 			model_load = _model_load;
 			shader = _shader;
@@ -77,6 +79,7 @@ namespace Render
 			view = _view;
 			projection = _projection;
 			camera_position = _camera_position;
+			name = _name;
 		}
 	};
 	
@@ -85,7 +88,7 @@ namespace Render
 
 	std::queue<GUI_command> gui_commands_q;
 	std::queue<model_loaded> models_loaded;
-
+	std::map<std::string, model_loaded> world_names;
 	//DEBUG GUI
 	void DEBUG_LOG(std::string title, std::string value)
 	{
@@ -114,6 +117,7 @@ namespace Render
 	float light_k_constant = 1.0;
 	float light_k_linear = 0.09f;
 	float light_k_quadratic = 0.032f;
+	glm::vec3 point_lights_position[4];
 	float shininess = 32.f;
 	float light_cutoff = 12.5f;
 	float light_outer_cutoff = 17.2f;

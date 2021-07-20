@@ -73,11 +73,11 @@ void main()
 		normalized_color.y = normalized_color.y/256;
 		normalized_color.z = normalized_color.z/256;
 	}
-	for(int i = 0; i < NR_POINT_LIGHTS; i++)
-	{
-		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
-	}
-	FragColor = vec4(result + normalized_color, 1.0);
+//	for(int i = 0; i < NR_POINT_LIGHTS; i++)
+//	{
+//		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
+//	}
+	FragColor = vec4(normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
 }
 
 float LinearizeDepth(float depth) 

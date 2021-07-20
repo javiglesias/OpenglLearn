@@ -11,11 +11,14 @@
 
 #include "../dependencies/stb_image/stb_image.h"
 
-void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position)
+void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
+	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
+	unsigned int texture)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
-		meshes[i].Draw(shader, model, view, projection, camera_position);
+		meshes[i].Draw(shader, model, view, projection, camera_position, 
+			light_position, texture);
 	}
 }
 

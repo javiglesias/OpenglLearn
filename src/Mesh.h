@@ -28,7 +28,9 @@ namespace Object
 			Mesh(std::vector<Vertex> vertices,
 			std::vector<unsigned int> indices,
 			std::vector<Texture> textures);
-			void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position);
+			void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
+				glm::mat4 projection, glm::vec3 camera_position,
+				glm::vec3 light_position, unsigned int texture = -1);
 		private:
 		// RENDER DATA.
 			unsigned int VAO, VBO, EBO;

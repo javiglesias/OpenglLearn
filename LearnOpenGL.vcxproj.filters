@@ -105,6 +105,8 @@
     <None Include="resources\shaders\material_shader.vert" />
     <None Include="resources\shaders\basic_shape_shader.vert" />
     <None Include="resources\shaders\basic_shape_shader.frag" />
+    <None Include="resources\shaders\grass_shader.vert" />
+    <None Include="resources\shaders\grass_shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\container.jpg">
@@ -120,6 +122,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="resources\textures\WoddenBox_specular2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\Grass.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

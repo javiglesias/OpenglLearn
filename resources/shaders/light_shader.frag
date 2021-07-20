@@ -2,7 +2,14 @@
 
 out vec4 frag_color;
 
+in vec2 TexCoords;
+
+uniform sampler2D texture_bulb;
+
 void main()
 {
-   frag_color = vec4(1.f,0.f, 0.f, 1.f);
+   vec4 texColor = texture(texture_bulb, TexCoords);
+	if(texColor.a < 0.1)
+		discard;
+	frag_color = texColor;
 }

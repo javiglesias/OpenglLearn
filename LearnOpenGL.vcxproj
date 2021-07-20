@@ -29,13 +29,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -177,6 +177,8 @@
     <None Include="resources\shaders\basic_shader.vert" />
     <None Include="resources\shaders\basic_shape_shader.frag" />
     <None Include="resources\shaders\basic_shape_shader.vert" />
+    <None Include="resources\shaders\grass_shader.frag" />
+    <None Include="resources\shaders\grass_shader.vert" />
     <None Include="resources\shaders\light_shader.frag" />
     <None Include="resources\shaders\light_shader.vert" />
     <None Include="resources\shaders\material_shader.frag" />
@@ -185,6 +187,7 @@
   <ItemGroup>
     <Image Include="resources\textures\awesomeface.png" />
     <Image Include="resources\textures\container.jpg" />
+    <Image Include="resources\textures\Grass.png" />
     <Image Include="resources\textures\WoddenBox.png" />
     <Image Include="resources\textures\WoddenBox_specular.png" />
     <Image Include="resources\textures\WoddenBox_specular2.png" />

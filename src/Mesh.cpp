@@ -15,7 +15,9 @@ Object::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indic
 	setupMesh();
 }
 
-void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position)
+void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
+	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
+	unsigned int texture)
 {
 	unsigned int diffuse_Nr = 1;
 	unsigned int specular_Nr = 1;
@@ -23,30 +25,46 @@ void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, glm::ma
 	unsigned int view_location = glGetUniformLocation(shader.id, "view");
 	unsigned int projection_location = glGetUniformLocation(shader.id, "projection");
 	unsigned int viewer_position_location = glGetUniformLocation(shader.id, "viewer_position");
+	unsigned int light_position_location = glGetUniformLocation(shader.id, "dir_light.direction");
 	shader.use();
-	for (unsigned int i = 0; i < textures.size(); i++)
+	if (texture >= 0)
 	{
-		glActiveTexture(GL_TEXTURE0+i);
-		std::string number;
-		std::string name = textures[i].type;
-		if (name._Equal("texture_diffuse"))
-		{
-			number = std::to_string(diffuse_Nr++);
-		}
-		else if (name._Equal("texture_specular"))
-		{
-			number = std::to_string(specular_Nr++);
-		}
-		shader.setFloat(("material."+name+number).c_str(), i);
-		glBindTexture(GL_TEXTURE_2D, textures[i].id);
+		glActiveTexture(GL_TEXTURE0);
+		shader.setFloat("texture_grass", texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
 	}
-	glActiveTexture(GL_TEXTURE0);
+	else 
+	{
+		for (unsigned int i = 0; i < textures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			std::string number;
+			std::string name = textures[i].type;
+			if (name._Equal("texture_diffuse"))
+			{
+				number = std::to_string(diffuse_Nr++);
+			}
+			else if (name._Equal("texture_specular"))
+			{
+				number = std::to_string(specular_Nr++);
+			}
+			shader.setFloat(("material." + name + number).c_str(), i);
+			glBindTexture(GL_TEXTURE_2D, textures[i].id);
+		}
+		shader.setFloat("material_shininess", 1);
+	}
 	glBindVertexArray(VAO);
 	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 	glUniform3fv(viewer_position_location, 1, glm::value_ptr(camera_position));
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+	glUniform3fv(light_position_location, 1, glm::value_ptr(light_position));
 	glm::mat4 projection_tex;
-	if (textures.size() > 0)
+	if (texture >= 0)
+	{
+		projection_tex = glm::perspective(glm::radians(90.f), (float)495 / 380,
+			0.3f, 10.f);
+	}
+	else if (textures.size() > 0)
 	{
 		projection_tex = glm::perspective(glm::radians(90.f), (float)textures[0].width / textures[0].heigth,
 			0.3f, 10.f);
@@ -70,10 +88,10 @@ void Object::Mesh::setupMesh()
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
-		&vertices[0], GL_STATIC_DRAW);
+		&vertices[0], GL_STREAM_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), 
-		&indices[0], GL_STATIC_DRAW);
+		&indices[0], GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
 		(void*)0);

@@ -124,7 +124,7 @@ int main(int args, char** argv)
 	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_window, mouse_movement_callback);
 	glfwSetScrollCallback(m_window, mouse_scroll_callback);
-
+	glEnable(GL_BLEND);
 
 	// CREATE SHADER INSTANCE AND PROGRAM
 	Shader my_shader("resources/shaders/basic_shader.vert",
@@ -135,6 +135,8 @@ int main(int args, char** argv)
 		"resources/shaders/light_shader.frag");
 	Shader backpack_shader("resources/shaders/material_shader.vert",
 		"resources/shaders/material_shader.frag");
+	Shader grass_shader("resources/shaders/grass_shader.vert",
+		"resources/shaders/grass_shader.frag");
 
 	// VERTEX BUFFER OBJECT (GPU)
 	//unsigned int VBO;
@@ -192,23 +194,23 @@ int main(int args, char** argv)
 	unsigned int instanced_cubes;
 	glGenBuffers(1, &instanced_cubes);
 	glBindBuffer(GL_ARRAY_BUFFER, instanced_cubes);
-	glBufferData(GL_ARRAY_BUFFER, CHUNK * sizeof(vertices_cube_complete), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, CHUNK * sizeof(vertices_cube_complete), NULL, GL_STREAM_DRAW);
 
 	//// Load Texture 1
 	stbi_set_flip_vertically_on_load(false);
 	int width, heigth, nr_channels;
-	unsigned char* texture_data = stbi_load("resources/textures/WoddenBox.png",
+	unsigned char* texture_data = stbi_load("resources/textures/Grass.png",
 		&width, &heigth, &nr_channels, 0);
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE,
+	unsigned int texture_grass;
+	glGenTextures(1, &texture_grass);
+	glBindTexture(GL_TEXTURE_2D, texture_grass);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		texture_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(texture_data);
 
 	////// Load Texture 2
-	int width2, heigth2, nr_channels2;
+	/*int width2, heigth2, nr_channels2;
 	unsigned char* texture_data2 = stbi_load("resources/textures/WoddenBox_specular.png",
 		&width2, &heigth2, &nr_channels2, 0);
 	unsigned int texture2;
@@ -217,7 +219,7 @@ int main(int args, char** argv)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, heigth2, 0, GL_RGB, GL_UNSIGNED_BYTE,
 		texture_data2);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	stbi_image_free(texture_data2);
+	stbi_image_free(texture_data2);*/
 
 	/*unsigned int VBO_light_source;
 	glGenBuffers(1, &VBO_light_source);
@@ -364,7 +366,8 @@ int main(int args, char** argv)
 		light_model = glm::scale(light_model, glm::vec3(0.2f));
 		light_model = glm::translate(light_model, Render::light_position);
 		Lightbulb.Draw(light_shader,
-			light_model, Render::view, projection, Render::camera_position);
+			light_model, Render::view, projection, Render::camera_position,
+			Render::light_directional);
 		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
 
 		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // invertimos la condicion del test queremos los que son != 1
@@ -383,80 +386,96 @@ int main(int args, char** argv)
 			glm::vec3(0.f, 1.f, 0.f));*/
 
 		//// LINKING UNIFORM SHADER ATTRIBUTES
-		if (Render::demo_mode)
-		{
-			// LIGHT CONFIG
-			if (Render::directional_light_enabled)
-			{
-				glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
-				glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
-				glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
-				glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
-			}
-			// ATTENUATION
-			if (Render::point_light_enabled)
-			{
-				glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-				my_shader.setFloat("point_light[0].k_constant", Render::light_k_constant);
-				my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
-				my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
+		//if (Render::demo_mode)
+		//{
+		//	my_shader.use();
+		//	// LIGHT CONFIG
+		//	if (Render::directional_light_enabled)
+		//	{
+		//		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
+		//		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
+		//		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
+		//		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
+		//	}
+		//	// ATTENUATION
+		//	if (Render::point_light_enabled)
+		//	{
+		//		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		//		my_shader.setFloat("point_light[0].k_constant", Render::light_k_constant);
+		//		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
+		//		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
 
-			}
+		//	}
 
-			// MATERIAL CONFIG
-			if (Render::spot_light_enabled)
-			{
-				//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
-				//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
-			
-				glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
-				glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
-				glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));
+		//	// MATERIAL CONFIG
+		//	if (Render::spot_light_enabled)
+		//	{
+		//		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
+		//		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
+		//	
+		//		glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
+		//		glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
+		//		glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));
 
-				my_shader.setFloat("material.shininess", Render::shininess);
-				my_shader.setInt("material.diffuse_map", 0);
-				my_shader.setInt("material.specular_map", 1);
-				my_shader.setFloat("CHUNK", CHUNK);
-				my_shader.setFloat("SCALE", Render::SCALE);
-			}
+		//		my_shader.setFloat("material.shininess", Render::shininess);
+		//		my_shader.setInt("material.diffuse_map", 0);
+		//		my_shader.setInt("material.specular_map", 1);
+		//	}
 
-			model = glm::mat4(1.f);
-			glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-			glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-			// OBSERVATOR
-			glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
-			glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-			glUniform3fv(rgb_color_location, 1, glm::value_ptr(glm::vec3(94.f, 157.f, 52.f)));
-			
-			glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK * CHUNK);
+		//	my_shader.setFloat("CHUNK", CHUNK);
+		//	my_shader.setFloat("SCALE", Render::SCALE);
 
-		}
+		//	model = glm::mat4(1.f);
+		//	model = glm::translate(model, glm::vec3(1.f));
+		//	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+		//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+		//	// OBSERVATOR
+		//	glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+		//	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
+		//	glUniform3fv(rgb_color_location, 1, glm::value_ptr(glm::vec3(94.f, 157.f, 52.f)));
+		//	
+		//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK * CHUNK);
+
+		//}
 		if (Render::cubes_spawned > 0)
 		{
-			my_shader.use();
-			model = glm::mat4(Render::cubes_spawned * 1.f);
-			glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-			glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+			unsigned int model_location = glGetUniformLocation(basic_shape_shader.id, "model");
+			unsigned int view_location = glGetUniformLocation(basic_shape_shader.id, "view");
+			unsigned int projection_location = glGetUniformLocation(basic_shape_shader.id, "projection");
+			//
+			//// GENERAL LIGHT SETTINGS
+			unsigned int viewer_position_location = glGetUniformLocation(basic_shape_shader.id, "viewer_position");
+			//// DIRECTIONAL LIGHT
+			unsigned int light_ambient_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.ambient");
+			unsigned int light_diffuse_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.diffuse");
+			basic_shape_shader.use();
 			glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-			glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-			glUniform3fv(rgb_color_location, 1, glm::value_ptr(glm::vec3(94.f, 157.f, 52.f)));
-			glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
+			basic_shape_shader.setFloat("material_shininess", 1);
+			glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+			glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+			glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+			glm::mat4 projection_tex;
+			projection_tex = glm::perspective(glm::radians(90.f), 1.f,
+				0.3f, 10.f);
+			glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
+
+		/*	glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
 			glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
-			glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));
+			glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));*/
 
-			my_shader.setFloat("material.shininess", Render::shininess);
+			/*my_shader.setFloat("material.shininess", Render::shininess);
 			my_shader.setInt("material.diffuse_map", 0);
-			my_shader.setInt("material.specular_map", 1);
-			my_shader.setFloat("CHUNK", Render::cubes_spawned);
-			my_shader.setFloat("SCALE", Render::SCALE);
-
-			Render::DEBUG_LOG("N. Cubes", std::to_string(Render::cubes_spawned).c_str());
+			my_shader.setInt("material.specular_map", 1);*/
+			/*my_shader.setFloat("CHUNK", Render::cubes_spawned);
+			my_shader.setFloat("SCALE", Render::SCALE);*/
 			glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
+			glBindVertexArray(0);
 		}
 		if (Render::demo_model)
 		{
 			Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(chest.triangle_count).c_str());
-			chest.Draw(backpack_shader, model, Render::view, projection, Render::camera_position);
+			chest.Draw(backpack_shader, model, Render::view, projection, Render::camera_position,
+				Render::light_directional);
 		}
 		if (Render::models_loaded.size() > 0)
 		{
@@ -465,14 +484,15 @@ int main(int args, char** argv)
 				auto model_to_draw = Render::models_loaded.front();
 				Render::models_loaded.pop();
 				model_to_draw.model_load.Draw(model_to_draw.shader, model_to_draw.model,
-					Render::view, model_to_draw.projection, Render::camera_position);
+					Render::view, model_to_draw.projection, Render::camera_position, 
+					Render::light_position);
 				Render::models_loaded.push(model_to_draw);
 			}
 		}
 		glBindVertexArray(0);
 
-		ImGui::Begin("DEBUG LOG");
-			while(!Render::gui_commands_q.empty())
+		/*ImGui::Begin("DEBUG LOG");
+			for(unsigned int i=0; i<Render::gui_commands_q.size(); i++)
 			{
 				Render::GUI_command command = Render::gui_commands_q.front();
 				Render::gui_commands_q.pop();
@@ -487,11 +507,15 @@ int main(int args, char** argv)
 					default:
 						break;
 				}
+				Render::gui_commands_q.push(command);
 			}
-		ImGui::End();
-		ImGui::Begin("World");
+		ImGui::End();*/
 
-		ImGui::End();
+		// TODO: world outliner
+		/*ImGui::Begin("World");
+		static int current_outliner = 0;
+		ImGui::End();*/
+
 		//	APRENDIZAJE DE GRAFICOS y GUI
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -502,10 +526,9 @@ int main(int args, char** argv)
 					chest = Object::Model(model_path);
 					Render::demo_model = true;
 				}
-				if (ImGui::MenuItem("Demo mode"))
+				if (ImGui::MenuItem("Demo mode", nullptr, false, false))
 				{
 					Render::demo_mode = !Render::demo_mode;
-					Render::DEBUG_LOG("Demo mode: ", std::to_string(Render::demo_mode).c_str());
 				}
 				if (ImGui::MenuItem("Quit"))
 				{
@@ -659,8 +682,10 @@ int main(int args, char** argv)
 				{
 				// TODO: rotation of the model.
 					glm::mat4 basic_cube_model(1.f);
-					basic_cube_model = glm::translate(basic_cube_model, glm::vec3(position[0], position[1], position[2]));
-					glm::rotate(basic_cube_model, glm::radians(rotation[0]), glm::vec3(position[0], position[1], position[2]));
+					basic_cube_model = glm::translate(basic_cube_model, 
+						glm::vec3(position[0], position[1], position[2]));
+					glm::rotate(basic_cube_model, glm::radians(rotation[0]), 
+						glm::vec3(position[0], position[1], position[2]));
 					Object::Model model_to_load;
 					switch (model_to_create.shape)
 					{
@@ -692,9 +717,12 @@ int main(int args, char** argv)
 						model_to_load = Monkey;
 						break;
 					}
-					Render::models_loaded.push(Render::model_loaded(
-						model_to_load, basic_shape_shader,
-						basic_cube_model, Render::view, projection, Render::camera_position));
+					Render::model_loaded object_to_load = Render::model_loaded(
+						model_to_load, light_shader,
+						basic_cube_model, Render::view, projection, 
+						Render::camera_position);
+					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
+					Render::models_loaded.push(object_to_load);
 					is_set_position_open = false;
 				}
 				ImGui::SameLine();

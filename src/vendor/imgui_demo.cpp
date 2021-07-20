@@ -524,7 +524,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
     ShowDemoWindowMisc();
 
     // End of ShowDemoWindow()
-    ImGui::PopItemWidth();
+    ImGui::PopItemWidth();Added new basic shapes to the add action with translation in 3 axis.
     ImGui::End();
 }
 
