@@ -1,0 +1,1 @@
+dir /b resources\\models\\*.obj > resources\\models\\models.log

@@ -19,13 +19,38 @@
 int main(int args, char** argv)
 {
 	bool is_set_position_open = false;
+	std::string line{};
+	std::vector<std::string> models{};
+	std::ifstream models_paths;
 
 	Render::first_mouse_interaction = true;
 	Render::yaw = -90.f;
 	Render::pitch = 0.f;
 	Render::camera_forward = glm::vec3(0.f, 0.f, -1.f);
 	Render::field_of_view = 90.f;
-
+	system("resources\\bats\\seachModels.bat");
+	models_paths.open("resources\\models\\models.log", std::fstream::in);
+	while (models_paths.is_open() && models_paths.good() && !models_paths.eof())
+	{
+		try
+		{
+			char c = (char)models_paths.get();
+			if (c != '\n')
+			{
+				line += c;
+			}
+			else
+			{
+				std::cout << line << '\n';
+				models.push_back(line);
+				line = "";
+			}
+		}
+		catch (std::exception ex)
+		{
+			std::cerr << "Cannot find models." << '\n';
+		}
+	}
 	float vertices_cube_complete[] = {
 		// CUBO COMPLETO
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -293,7 +318,6 @@ int main(int args, char** argv)
 
 	glEnable(GL_STENCIL_TEST);
 	glStencilFunc(GL_NOTEQUAL, 1.f, 0xff);
-	Object::Model chest;
 
 	// Cargando modelos basicos. BASIC SHAPES
 	Object::Model Lightbulb("resources/models/BasicShapes/LightBulb.obj");
@@ -473,8 +497,8 @@ int main(int args, char** argv)
 		}
 		if (Render::demo_model)
 		{
-			Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(chest.triangle_count).c_str());
-			chest.Draw(backpack_shader, model, Render::view, projection, Render::camera_position,
+			Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(Render::custom_model.triangle_count).c_str());
+			Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
 				Render::light_directional);
 		}
 		if (Render::models_loaded.size() > 0)
@@ -515,16 +539,34 @@ int main(int args, char** argv)
 		/*ImGui::Begin("World");
 		static int current_outliner = 0;
 		ImGui::End();*/
-
 		//	APRENDIZAJE DE GRAFICOS y GUI
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Load demo model"))
+				if (ImGui::BeginMenu("Load model", models.size() > 0))
 				{
-					chest = Object::Model(model_path);
-					Render::demo_model = true;
+					// TODO: Search all the models on a folder and show on load
+					for(auto model : models)
+					{
+						if (ImGui::BeginMenu(model.c_str()))
+						{
+							if (ImGui::MenuItem(model.c_str()))
+							{
+								Render::custom_model = Object::Model("resources\\models\\" + model);
+								Render::demo_model = true;
+							}
+							if (ImGui::SmallButton("->"))
+							{
+								auto path = argv[0];
+								char* next_token;
+								int str_length = sizeof path;
+								system("explorer resources\\models\\");
+							}
+							ImGui::EndMenu();
+						}
+					}
+					ImGui::EndMenu();
 				}
 				if (ImGui::MenuItem("Demo mode", nullptr, false, false))
 				{

@@ -1,27 +1,14 @@
-﻿  stb_image.cpp
-  Mesh.cpp
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Mesh.cpp(33,36): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Mesh.cpp(51,59): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Mesh.cpp(78,65): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Model.cpp
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Model.cpp(95,15): warning C4101: 'material': unreferenced local variable
-  Render.cpp
-  Shader.cpp
-  main.cpp
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Header.h(134,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Header.h(164,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Header.h(165,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Header.h(166,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Header.h(167,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\Header.h(185,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(295,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(340,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\src\main.cpp(554,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-  imgui.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
-  Generating Code...
-  LearnOpenGL.vcxproj -> C:\Users\Alientech\Documents\Projects\C_plus_plus\OpenglLearn\x64\Debug\LearnOpenGL.exe
+﻿  main.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\Alientech\Documents\Projects\OpenglLearn\dependencies\glad-master\include\glad\glad.h(32): message : see previous definition of 'APIENTRY'
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(137,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(167,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(168,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(169,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(170,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(188,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(320,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(364,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(596,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(562,15): warning C4101: 'next_token': unreferenced local variable
+  LearnOpenGL.vcxproj -> C:\Users\Alientech\Documents\Projects\OpenglLearn\x64\Debug\LearnOpenGL.exe

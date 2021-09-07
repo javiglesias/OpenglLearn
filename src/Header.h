@@ -16,12 +16,14 @@
 #include "Shader.h"
 #include "Model.h"
 #include "../dependencies/stb_image/stb_image.h"
-
+#include <fstream>
 #include <iostream>
 #include <queue>
 #include <thread>
 #include <future>
 #include <map>
+#include <Windows.h>
+#include <filesystem>
 
 // Rendering Namespace
 namespace Render 
@@ -89,6 +91,7 @@ namespace Render
 	std::queue<GUI_command> gui_commands_q;
 	std::queue<model_loaded> models_loaded;
 	std::map<std::string, model_loaded> world_names;
+	Object::Model custom_model;
 	//DEBUG GUI
 	void DEBUG_LOG(std::string title, std::string value)
 	{
@@ -112,7 +115,7 @@ namespace Render
 	glm::vec4 light_ambient(1.f, 1.f, 1.f, 1.f);
 	glm::vec4 light_diffuse(1.f, 1.f, 1.f, 1.f);
 	glm::vec4 light_specular(1.f, 1.f, 1.f, 1.f);
-	glm::vec3 light_position(5.f);
+	glm::vec3 light_position(0.f);
 	glm::vec3 light_directional(0.f, 0.f, 1.f);
 	float light_k_constant = 1.0;
 	float light_k_linear = 0.09f;
@@ -262,5 +265,9 @@ void process_input(GLFWwindow* m_window)
 	{
 		Render::mouse_movement = false;
 	}
+}
+std::string ExePath() {
+	char pwd[256]{};
+	return std::string(pwd);
 }
 #endif // !HEADER__H
