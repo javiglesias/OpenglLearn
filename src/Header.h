@@ -25,6 +25,8 @@
 #include <Windows.h>
 #include <filesystem>
 
+#define _(x) #x
+
 // Rendering Namespace
 namespace Render 
 {
@@ -91,7 +93,8 @@ namespace Render
 	std::queue<GUI_command> gui_commands_q;
 	std::queue<model_loaded> models_loaded;
 	std::map<std::string, model_loaded> world_names;
-	Object::Model custom_model;
+	std::queue<Object::Model> custom_models;
+	Object::Model temp_custom_model;
 	//DEBUG GUI
 	void DEBUG_LOG(std::string title, std::string value)
 	{

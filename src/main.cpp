@@ -495,12 +495,16 @@ int main(int args, char** argv)
 			glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
 			glBindVertexArray(0);
 		}
-		if (Render::demo_model)
+		/*if (Render::demo_model)
 		{
 			Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(Render::custom_model.triangle_count).c_str());
+			for (auto custom_model : Render::custom_models)
+			{
+
+			}
 			Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
 				Render::light_directional);
-		}
+		}*/
 		if (Render::models_loaded.size() > 0)
 		{
 			for (int j = 0; j < Render::models_loaded.size(); j++)
@@ -536,9 +540,13 @@ int main(int args, char** argv)
 		ImGui::End();*/
 
 		// TODO: world outliner
-		/*ImGui::Begin("World");
-		static int current_outliner = 0;
-		ImGui::End();*/
+		ImGui::Begin("World");
+			static int current_outliner = 0;
+			for (auto actor : Render::world_names)
+			{
+				ImGui::Selectable(actor.first.c_str());
+			}
+		ImGui::End();
 		//	APRENDIZAJE DE GRAFICOS y GUI
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -553,9 +561,10 @@ int main(int args, char** argv)
 						{
 							if (ImGui::MenuItem(model.c_str()))
 							{
-								Render::custom_model = Object::Model("resources\\models\\" + model);
+								Render::temp_custom_model = Object::Model("resources\\models\\" + model);
 								Render::demo_model = true;
 							}
+							ImGui::SameLine();
 							if (ImGui::SmallButton("->"))
 							{
 								auto path = argv[0];
@@ -729,41 +738,51 @@ int main(int args, char** argv)
 					glm::rotate(basic_cube_model, glm::radians(rotation[0]), 
 						glm::vec3(position[0], position[1], position[2]));
 					Object::Model model_to_load;
+					std::string actor_name = "";
 					switch (model_to_create.shape)
 					{
 					case Render::BASIC_SHAPES::Cube:
 						model_to_load = Cube;
+						actor_name = _(Cube);
 						break;
 					case Render::BASIC_SHAPES::Cylinder:
 						model_to_load = Cylinder;
+						actor_name = _(Cylinder);
 						break;
 					case Render::BASIC_SHAPES::Cone:
 						model_to_load = Cone;
+						actor_name = _(Cone);
 						break;
 					case Render::BASIC_SHAPES::Plane:
 						model_to_load = Plane;
+						actor_name = _(Plane);
 						break;
 					case Render::BASIC_SHAPES::Sphere:
 						model_to_load = Sphere;
+						actor_name = _(Sphere);
 						break;
 					case Render::BASIC_SHAPES::Torus:
 						model_to_load = Torus;
+						actor_name = _(Torus);
 						break;
 					case Render::BASIC_SHAPES::LightBulb:
 						model_to_load = Lightbulb;
+						actor_name = _(Lightbulb);
 						break;
 					case Render::BASIC_SHAPES::Monkey:
 						model_to_load = Monkey;
+						actor_name = _(Monkey);
 						break;
 					default:
 						model_to_load = Monkey;
+						actor_name = _(Monkey);
 						break;
 					}
 					Render::model_loaded object_to_load = Render::model_loaded(
 						model_to_load, light_shader,
 						basic_cube_model, Render::view, projection, 
 						Render::camera_position);
-					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
+					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(actor_name, object_to_load));
 					Render::models_loaded.push(object_to_load);
 					is_set_position_open = false;
 				}
@@ -771,6 +790,41 @@ int main(int args, char** argv)
 				if (ImGui::Button("Cancel"))
 				{
 					is_set_position_open = false;
+				}
+				ImGui::End();
+			}
+		}
+		if (Render::demo_model)
+		{
+			if (ImGui::Begin("Position"))
+			{
+				ImGui::Text("Set the position and rotation to spawn:");
+				ImGui::Separator();
+				static float position[3];
+				ImGui::InputFloat3("position", position);
+				static float rotation[1];
+				ImGui::InputFloat("rotation angles degrees", rotation);
+				static int radio_button;
+				if (ImGui::Button("OK"))
+				{
+					glm::mat4 basic_cube_model(1.f);
+					basic_cube_model = glm::translate(basic_cube_model,
+						glm::vec3(position[0], position[1], position[2]));
+					glm::rotate(basic_cube_model, glm::radians(rotation[0]),
+						glm::vec3(position[0], position[1], position[2]));
+					Render::model_loaded object_to_load = Render::model_loaded(
+						Render::temp_custom_model, light_shader,
+						basic_cube_model, Render::view, projection,
+						Render::camera_position);
+					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
+					Render::models_loaded.push(object_to_load);
+					//delete(&Render::temp_custom_model);
+					Render::demo_model = false;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel"))
+				{
+					Render::demo_model = false;
 				}
 				ImGui::End();
 			}
