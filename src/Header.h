@@ -72,10 +72,12 @@ namespace Render
 		glm::mat4 projection;
 		glm::vec3 camera_position;
 		std::string name;
+		bool visible = true;
 		
 		model_loaded(Object::Model _model_load, Shader _shader,
 		glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
-		glm::vec3 _camera_position, std::string _name = "model_")
+		glm::vec3 _camera_position, std::string _name = "model_",
+		bool _visible = true)
 		{
 			model_load = _model_load;
 			shader = _shader;
@@ -84,6 +86,7 @@ namespace Render
 			projection = _projection;
 			camera_position = _camera_position;
 			name = _name;
+			visible = _visible;
 		}
 	};
 	
@@ -92,9 +95,10 @@ namespace Render
 
 	std::queue<GUI_command> gui_commands_q;
 	std::queue<model_loaded> models_loaded;
+	std::queue<model_loaded> lights_loaded;
 	std::map<std::string, model_loaded> world_names;
 	std::queue<Object::Model> custom_models;
-	Object::Model temp_custom_model;
+	std::string temp_custom_model;
 	//DEBUG GUI
 	void DEBUG_LOG(std::string title, std::string value)
 	{
@@ -107,7 +111,7 @@ namespace Render
 	}
 	// END DEBUG GUI
 	int screen_width = 800, screen_heigth = 600;
-	float z_near = 0.3f, z_far = 1000.f;
+	float z_near = 0.3f, z_far = 100.f;
 	glm::vec3 camera_forward;
 	float field_of_view;
 	float yaw;
@@ -133,6 +137,7 @@ namespace Render
 	glm::vec3 camera_up = glm::vec3(0.f, 1.f, 0.f);
 	glm::mat4 view = glm::lookAt(camera_position,
 		Render::camera_forward, camera_up);
+	glm::mat4 projection = glm::mat4(1.f);
 	float const y_constant = camera_position.y;
 	float camera_speed = 0.05f;
 	float delta_time = 0.f;

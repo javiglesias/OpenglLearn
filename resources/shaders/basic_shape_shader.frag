@@ -54,13 +54,13 @@ uniform PointLight point_light[NR_POINT_LIGHTS];
 
 void main() 
 {
-	vec3 directional = directional_light_calculations();
-	vec3 result =  vec3(1, 0, 1)+directional;
-	for(int i = 0; i<NR_POINT_LIGHTS; i++)
-	{
-		result += point_light_calculations(point_light[i]);
-	}
-    FragColor = vec4(result,1.f);
+	//vec3 directional = directional_light_calculations();
+	//vec3 result =  vec3(1, 0, 1)+directional;
+	//for(int i = 0; i<NR_POINT_LIGHTS; i++)
+	//{
+	//	result += point_light_calculations(point_light[i]);
+	//}
+    FragColor = vec4(1.f, 0.f, 1.f, 1.f);
 }
 
 vec3 directional_light_calculations()

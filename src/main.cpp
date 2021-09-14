@@ -259,7 +259,7 @@ int main(int args, char** argv)
 	glEnableVertexAttribArray(1);*/
 
 	//// TRANSFORMATIONS
-	glm::mat4 projection = glm::perspective(glm::radians(Render::field_of_view), 
+	Render::projection = glm::perspective(glm::radians(Render::field_of_view), 
 		(float)Render::screen_width / Render::screen_heigth, Render::z_near, Render::z_far);
 	glm::mat4 model(1.f);
 	unsigned int model_location = glGetUniformLocation(my_shader.id, "model");
@@ -306,7 +306,7 @@ int main(int args, char** argv)
 		glm::vec4(0.f, 0.f, 0.f, 1.f));
 
 
-	Render::view = glm::lookAt(Render::camera_position, Render::camera_forward, Render::camera_up); // camera up direction
+	//Render::view = glm::lookAt(Render::camera_position, Render::camera_forward, Render::camera_up); // camera up direction
 	std::string model_path = args > 1 ? argv[1] : "resources/models/backpack.obj";
 	//Object::Model chest(model_path);
 	unsigned int squared_world_size = 16;
@@ -330,6 +330,21 @@ int main(int args, char** argv)
 	Object::Model Cylinder("resources/models/BasicShapes/Cylinder.obj");
 
 	bool rendering_light_model = false;
+
+	// INITIAL LIGHT
+	unsigned int light_model_location = glGetUniformLocation(light_shader.id, "model");
+	unsigned int light_view_location = glGetUniformLocation(light_shader.id, "view");
+	unsigned int light_projection_location = glGetUniformLocation(light_shader.id, "projection");
+
+	glm::mat4 light_model(1.f);
+	light_model = glm::scale(light_model, glm::vec3(0.2f));
+	light_model = glm::translate(light_model, Render::light_position);
+	Render::model_loaded light_to_load = Render::model_loaded(
+		Lightbulb, light_shader,
+		light_model, Render::view, Render::projection,
+		Render::camera_position, "Light");
+	Render::lights_loaded.push(light_to_load);
+
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
@@ -365,8 +380,8 @@ int main(int args, char** argv)
 		float green = (sin(time_value)/2.f)+ .5f;
 		Render::view = glm::lookAt(Render::camera_position, Render::camera_position + Render::camera_forward,
 			Render::camera_up); // camera up direction
-		projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
-		0.1f, 100.f);  // Change de Field of view;
+		/*Render::projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
+		0.1f, 100.f);*/  // Change de Field of view;
 		//
 		//// MOVE LIGHT OVER TIME
 		/*Render::light_position = glm::vec3(glm::sin(glfwGetTime()),
@@ -381,17 +396,6 @@ int main(int args, char** argv)
 		*///glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // a menos que los dos test pase, mantenemos el valor del buffer
 		//glStencilFunc(GL_ALWAYS, 1, 0xFF); // a 1 todo
 		//glStencilMask(0xFF); // activamos la escritura al buffer
-		
-		unsigned int light_model_location = glGetUniformLocation(light_shader.id, "model");
-		unsigned int light_view_location = glGetUniformLocation(light_shader.id, "view");
-		unsigned int light_projection_location = glGetUniformLocation(light_shader.id, "projection");
-
-		glm::mat4 light_model(1.f);
-		light_model = glm::scale(light_model, glm::vec3(0.2f));
-		light_model = glm::translate(light_model, Render::light_position);
-		Lightbulb.Draw(light_shader,
-			light_model, Render::view, projection, Render::camera_position,
-			Render::light_directional);
 		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
 
 		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // invertimos la condicion del test queremos los que son != 1
@@ -461,40 +465,40 @@ int main(int args, char** argv)
 		//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK * CHUNK);
 
 		//}
-		if (Render::cubes_spawned > 0)
-		{
-			unsigned int model_location = glGetUniformLocation(basic_shape_shader.id, "model");
-			unsigned int view_location = glGetUniformLocation(basic_shape_shader.id, "view");
-			unsigned int projection_location = glGetUniformLocation(basic_shape_shader.id, "projection");
-			//
-			//// GENERAL LIGHT SETTINGS
-			unsigned int viewer_position_location = glGetUniformLocation(basic_shape_shader.id, "viewer_position");
-			//// DIRECTIONAL LIGHT
-			unsigned int light_ambient_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.ambient");
-			unsigned int light_diffuse_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.diffuse");
-			basic_shape_shader.use();
-			glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-			basic_shape_shader.setFloat("material_shininess", 1);
-			glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
-			glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
-			glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-			glm::mat4 projection_tex;
-			projection_tex = glm::perspective(glm::radians(90.f), 1.f,
-				0.3f, 10.f);
-			glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
+		//if (Render::cubes_spawned > 0)
+		//{
+		//	unsigned int model_location = glGetUniformLocation(basic_shape_shader.id, "model");
+		//	unsigned int view_location = glGetUniformLocation(basic_shape_shader.id, "view");
+		//	unsigned int projection_location = glGetUniformLocation(basic_shape_shader.id, "projection");
+		//	//
+		//	//// GENERAL LIGHT SETTINGS
+		//	unsigned int viewer_position_location = glGetUniformLocation(basic_shape_shader.id, "viewer_position");
+		//	//// DIRECTIONAL LIGHT
+		//	unsigned int light_ambient_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.ambient");
+		//	unsigned int light_diffuse_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.diffuse");
+		//	basic_shape_shader.use();
+		//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+		//	basic_shape_shader.setFloat("material_shininess", 1);
+		//	glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+		//	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+		//	glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+		//	glm::mat4 projection_tex;
+		//	projection_tex = glm::perspective(glm::radians(90.f), 1.f,
+		//		0.3f, 10.f);
+		//	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
 
-		/*	glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
-			glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
-			glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));*/
+		///*	glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
+		//	glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
+		//	glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));*/
 
-			/*my_shader.setFloat("material.shininess", Render::shininess);
-			my_shader.setInt("material.diffuse_map", 0);
-			my_shader.setInt("material.specular_map", 1);*/
-			/*my_shader.setFloat("CHUNK", Render::cubes_spawned);
-			my_shader.setFloat("SCALE", Render::SCALE);*/
-			glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
-			glBindVertexArray(0);
-		}
+		//	/*my_shader.setFloat("material.shininess", Render::shininess);
+		//	my_shader.setInt("material.diffuse_map", 0);
+		//	my_shader.setInt("material.specular_map", 1);*/
+		//	/*my_shader.setFloat("CHUNK", Render::cubes_spawned);
+		//	my_shader.setFloat("SCALE", Render::SCALE);*/
+		//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
+		//	glBindVertexArray(0);
+		//}
 		/*if (Render::demo_model)
 		{
 			Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(Render::custom_model.triangle_count).c_str());
@@ -505,15 +509,61 @@ int main(int args, char** argv)
 			Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
 				Render::light_directional);
 		}*/
+		if (Render::lights_loaded.size() > 0)
+		{
+			for (int j = 0; j < Render::lights_loaded.size(); j++)
+			{
+				bool to_delete = false;
+				auto light_to_draw = Render::lights_loaded.front();
+				Render::lights_loaded.pop();
+				ImGui::Begin("Lights outliner");
+				static int current_outliner = 0;
+				if (ImGui::MenuItem(light_to_draw.name.c_str(), "", &light_to_draw.visible))
+				{
+				}
+				if (ImGui::SmallButton("X"))
+				{
+					to_delete = true;
+				}
+				ImGui::End();
+				if (to_delete)
+					continue;
+				if (light_to_draw.visible)
+				{
+					light_to_draw.model_load.Draw(light_to_draw.shader, light_to_draw.model,
+						Render::view, light_to_draw.projection, Render::camera_position,
+						Render::light_position);
+				}
+				Render::lights_loaded.push(light_to_draw);
+			}
+		}
+		glBindVertexArray(0);
 		if (Render::models_loaded.size() > 0)
 		{
+		// el truquito de que el size se copia a una variable local de memoria.
 			for (int j = 0; j < Render::models_loaded.size(); j++)
 			{
 				auto model_to_draw = Render::models_loaded.front();
+				bool to_delete = false;
 				Render::models_loaded.pop();
-				model_to_draw.model_load.Draw(model_to_draw.shader, model_to_draw.model,
-					Render::view, model_to_draw.projection, Render::camera_position, 
-					Render::light_position);
+				// TODO: world outliner
+				ImGui::Begin("World outliner");
+					static int current_outliner = 0;
+					if (ImGui::MenuItem(model_to_draw.name.c_str(), "", &model_to_draw.visible))
+					{}
+					if (ImGui::SmallButton("X"))
+					{
+						to_delete = true;
+					}
+				ImGui::End();
+				if(to_delete)
+					continue;
+				if (model_to_draw.visible)
+				{
+					model_to_draw.model_load.Draw(model_to_draw.shader, model_to_draw.model,
+						Render::view, model_to_draw.projection, Render::camera_position,
+						Render::light_position);
+				}
 				Render::models_loaded.push(model_to_draw);
 			}
 		}
@@ -538,15 +588,6 @@ int main(int args, char** argv)
 				Render::gui_commands_q.push(command);
 			}
 		ImGui::End();*/
-
-		// TODO: world outliner
-		ImGui::Begin("World");
-			static int current_outliner = 0;
-			for (auto actor : Render::world_names)
-			{
-				ImGui::Selectable(actor.first.c_str());
-			}
-		ImGui::End();
 		//	APRENDIZAJE DE GRAFICOS y GUI
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -561,7 +602,7 @@ int main(int args, char** argv)
 						{
 							if (ImGui::MenuItem(model.c_str()))
 							{
-								Render::temp_custom_model = Object::Model("resources\\models\\" + model);
+								Render::temp_custom_model = model;
 								Render::demo_model = true;
 							}
 							ImGui::SameLine();
@@ -667,10 +708,10 @@ int main(int args, char** argv)
 			}
 			if (ImGui::BeginMenu("Object"))
 			{
-				if (ImGui::MenuItem("Instance Cube"))
+				/*if (ImGui::MenuItem("Instance Cube"))
 				{
 					Render::cubes_spawned++;
-				}
+				}*/
 				if (ImGui::MenuItem("Basic Shape"))
 				{
 					is_set_position_open = true;
@@ -779,9 +820,9 @@ int main(int args, char** argv)
 						break;
 					}
 					Render::model_loaded object_to_load = Render::model_loaded(
-						model_to_load, light_shader,
-						basic_cube_model, Render::view, projection, 
-						Render::camera_position);
+						model_to_load, basic_shape_shader,
+						basic_cube_model, Render::view, Render::projection, 
+						Render::camera_position, actor_name);
 					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(actor_name, object_to_load));
 					Render::models_loaded.push(object_to_load);
 					is_set_position_open = false;
@@ -807,14 +848,15 @@ int main(int args, char** argv)
 				static int radio_button;
 				if (ImGui::Button("OK"))
 				{
+					auto temp_mesh = Object::Model("resources\\models\\" + Render::temp_custom_model);
 					glm::mat4 basic_cube_model(1.f);
 					basic_cube_model = glm::translate(basic_cube_model,
 						glm::vec3(position[0], position[1], position[2]));
 					glm::rotate(basic_cube_model, glm::radians(rotation[0]),
 						glm::vec3(position[0], position[1], position[2]));
 					Render::model_loaded object_to_load = Render::model_loaded(
-						Render::temp_custom_model, light_shader,
-						basic_cube_model, Render::view, projection,
+						temp_mesh, basic_shape_shader,
+						basic_cube_model, Render::view, Render::projection,
 						Render::camera_position);
 					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
 					Render::models_loaded.push(object_to_load);
@@ -839,6 +881,5 @@ int main(int args, char** argv)
 	}
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-
 	return 0;
 }

@@ -14,3 +14,5 @@ void main()
 {
 	gl_Position = projection * view * model * vec4(aPos, 1.f);
 }
+
+// view nos da la vision de la camara, si lo quitamos, los objetos no se mueven.
