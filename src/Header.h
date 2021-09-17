@@ -26,6 +26,8 @@
 #include <filesystem>
 
 #define _(x) #x
+#define FRAMECAP60 0.016
+#define FRAMECAP30 0.033
 
 // Rendering Namespace
 namespace Render 
@@ -141,11 +143,14 @@ namespace Render
 	float const y_constant = camera_position.y;
 	float camera_speed = 0.05f;
 	float delta_time = 0.f;
-	float last_frame = 0.f;
-	float current_frame = glfwGetTime();
+	float new_frame = 0.f;
+	float time_accumulated = 0.f;
+	float time_accumulated_physics = 0.f;
+	float frame_cap = FRAMECAP60;
+	float current_frame = 0.f;
 	unsigned int cubes_spawned = 0;
 	bool demo_mode = false;
-	bool demo_model = false;
+	bool custom_model = false;
 	bool show_GUI_cursor = true;
 	unsigned int squared_world_size = CHUNK;
 	bool mouse_movement = false;

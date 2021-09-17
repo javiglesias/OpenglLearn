@@ -344,540 +344,562 @@ int main(int args, char** argv)
 		light_model, Render::view, Render::projection,
 		Render::camera_position, "Light");
 	Render::lights_loaded.push(light_to_load);
-
+	// fixed timestep
+	Render::current_frame = glfwGetTime();
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
-		Render::delta_time = Render::current_frame - Render::last_frame;
-		Render::last_frame = Render::current_frame;
-		
-		process_input(m_window);
-
-		Render::DEBUG_LOG("Rendering chunk of size: ", std::to_string(CHUNK).c_str());
-		Render::DEBUG_LOG("Triangle count: ", std::to_string(CHUNK * CHUNK * 2 * 6).c_str());
-		Render::DEBUG_LOG("Frame time: ", std::to_string(Render::last_frame).c_str());
-
-
-		//All the rendering things
-		glClearColor(0.f, 0.f, 0.f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		// IMGUI
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		if (Render::show_GUI_cursor)
+		Render::new_frame = glfwGetTime();
+		Render::delta_time = Render::new_frame - Render::current_frame;
+		Render::current_frame = Render::new_frame;
+		Render::time_accumulated += Render::delta_time;
+		Render::time_accumulated_physics += Render::delta_time;
+		// Frame fixed a 60
+		if (Render::time_accumulated > Render::frame_cap)
 		{
-			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
-		else 
-		{
-			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		}
+			process_input(m_window);
 
-		float time_value = glfwGetTime();
-		float green = (sin(time_value)/2.f)+ .5f;
-		Render::view = glm::lookAt(Render::camera_position, Render::camera_position + Render::camera_forward,
-			Render::camera_up); // camera up direction
-		/*Render::projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
-		0.1f, 100.f);*/  // Change de Field of view;
-		//
-		//// MOVE LIGHT OVER TIME
-		/*Render::light_position = glm::vec3(glm::sin(glfwGetTime()),
-			glm::sin(glfwGetTime()),
-			Render::light_position.z);
-		glm::mat4 projection = glm::mat4(1.f);*/
-		//glBindVertexArray(VAO_light_source);
-		//light_shader.use();
-		/*glUniformMatrix4fv(light_model_location, 1, GL_FALSE, glm::value_ptr(light_model));
-		glUniformMatrix4fv(light_view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-		glUniformMatrix4fv(light_projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		*///glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // a menos que los dos test pase, mantenemos el valor del buffer
-		//glStencilFunc(GL_ALWAYS, 1, 0xFF); // a 1 todo
-		//glStencilMask(0xFF); // activamos la escritura al buffer
-		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
+			Render::DEBUG_LOG("Rendering chunk of size: ", std::to_string(CHUNK).c_str());
+			Render::DEBUG_LOG("Triangle count: ", std::to_string(CHUNK * CHUNK * 2 * 6).c_str());
 
-		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // invertimos la condicion del test queremos los que son != 1
-		//glStencilMask(0x00); // desactivamos escritura al buffer.
-		//glDisable(GL_DEPTH_TEST);
-		//// pintamos otra vez.
-		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
+			//All the rendering things
+			glClearColor(0.f, 0.f, 0.f, 1.f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		//// DEMO MODE
-		/*const float radius(10.f);
-		float camx(sin(glfwGetTime()) * radius);
-		float camz(cos(glfwGetTime()) * radius);
-		view = glm::lookAt(
-			glm::vec3(camx, 0.f, camz),
-			glm::vec3(0.f, 0.f, 0.f),
-			glm::vec3(0.f, 1.f, 0.f));*/
+			// IMGUI
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
 
-		//// LINKING UNIFORM SHADER ATTRIBUTES
-		//if (Render::demo_mode)
-		//{
-		//	my_shader.use();
-		//	// LIGHT CONFIG
-		//	if (Render::directional_light_enabled)
-		//	{
-		//		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
-		//		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
-		//		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
-		//		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
-		//	}
-		//	// ATTENUATION
-		//	if (Render::point_light_enabled)
-		//	{
-		//		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-		//		my_shader.setFloat("point_light[0].k_constant", Render::light_k_constant);
-		//		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
-		//		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
-
-		//	}
-
-		//	// MATERIAL CONFIG
-		//	if (Render::spot_light_enabled)
-		//	{
-		//		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
-		//		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
-		//	
-		//		glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
-		//		glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
-		//		glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));
-
-		//		my_shader.setFloat("material.shininess", Render::shininess);
-		//		my_shader.setInt("material.diffuse_map", 0);
-		//		my_shader.setInt("material.specular_map", 1);
-		//	}
-
-		//	my_shader.setFloat("CHUNK", CHUNK);
-		//	my_shader.setFloat("SCALE", Render::SCALE);
-
-		//	model = glm::mat4(1.f);
-		//	model = glm::translate(model, glm::vec3(1.f));
-		//	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-		//	// OBSERVATOR
-		//	glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
-		//	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
-		//	glUniform3fv(rgb_color_location, 1, glm::value_ptr(glm::vec3(94.f, 157.f, 52.f)));
-		//	
-		//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK * CHUNK);
-
-		//}
-		//if (Render::cubes_spawned > 0)
-		//{
-		//	unsigned int model_location = glGetUniformLocation(basic_shape_shader.id, "model");
-		//	unsigned int view_location = glGetUniformLocation(basic_shape_shader.id, "view");
-		//	unsigned int projection_location = glGetUniformLocation(basic_shape_shader.id, "projection");
-		//	//
-		//	//// GENERAL LIGHT SETTINGS
-		//	unsigned int viewer_position_location = glGetUniformLocation(basic_shape_shader.id, "viewer_position");
-		//	//// DIRECTIONAL LIGHT
-		//	unsigned int light_ambient_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.ambient");
-		//	unsigned int light_diffuse_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.diffuse");
-		//	basic_shape_shader.use();
-		//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-		//	basic_shape_shader.setFloat("material_shininess", 1);
-		//	glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
-		//	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
-		//	glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-		//	glm::mat4 projection_tex;
-		//	projection_tex = glm::perspective(glm::radians(90.f), 1.f,
-		//		0.3f, 10.f);
-		//	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
-
-		///*	glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
-		//	glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
-		//	glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));*/
-
-		//	/*my_shader.setFloat("material.shininess", Render::shininess);
-		//	my_shader.setInt("material.diffuse_map", 0);
-		//	my_shader.setInt("material.specular_map", 1);*/
-		//	/*my_shader.setFloat("CHUNK", Render::cubes_spawned);
-		//	my_shader.setFloat("SCALE", Render::SCALE);*/
-		//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
-		//	glBindVertexArray(0);
-		//}
-		/*if (Render::demo_model)
-		{
-			Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(Render::custom_model.triangle_count).c_str());
-			for (auto custom_model : Render::custom_models)
+			// Clean the accumulated because we render this frame.
+			ImGui::LabelText("Fps", std::to_string(1/Render::time_accumulated).c_str());
+			Render::time_accumulated = 0;
+			
+			if (Render::show_GUI_cursor)
 			{
-
+				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			}
-			Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
-				Render::light_directional);
-		}*/
-		if (Render::lights_loaded.size() > 0)
-		{
-			for (int j = 0; j < Render::lights_loaded.size(); j++)
+			else 
 			{
-				bool to_delete = false;
-				auto light_to_draw = Render::lights_loaded.front();
-				Render::lights_loaded.pop();
-				ImGui::Begin("Lights outliner");
-				static int current_outliner = 0;
-				if (ImGui::MenuItem(light_to_draw.name.c_str(), "", &light_to_draw.visible))
-				{
-				}
-				if (ImGui::SmallButton("X"))
-				{
-					to_delete = true;
-				}
-				ImGui::End();
-				if (to_delete)
-					continue;
-				if (light_to_draw.visible)
-				{
-					light_to_draw.model_load.Draw(light_to_draw.shader, light_to_draw.model,
-						Render::view, light_to_draw.projection, Render::camera_position,
-						Render::light_position);
-				}
-				Render::lights_loaded.push(light_to_draw);
+				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			}
-		}
-		glBindVertexArray(0);
-		if (Render::models_loaded.size() > 0)
-		{
-		// el truquito de que el size se copia a una variable local de memoria.
-			for (int j = 0; j < Render::models_loaded.size(); j++)
+
+			float time_value = glfwGetTime();
+			float green = (sin(time_value)/2.f)+ .5f;
+			Render::view = glm::lookAt(Render::camera_position, Render::camera_position + Render::camera_forward,
+				Render::camera_up); // camera up direction
+			/*Render::projection = glm::perspective(glm::radians(Render::field_of_view), (float)width / heigth,
+			0.1f, 100.f);*/  // Change de Field of view;
+			//
+			//// MOVE LIGHT OVER TIME
+			/*Render::light_position = glm::vec3(glm::sin(glfwGetTime()),
+				glm::sin(glfwGetTime()),
+				Render::light_position.z);
+			glm::mat4 projection = glm::mat4(1.f);*/
+			//glBindVertexArray(VAO_light_source);
+			//light_shader.use();
+			/*glUniformMatrix4fv(light_model_location, 1, GL_FALSE, glm::value_ptr(light_model));
+			glUniformMatrix4fv(light_view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
+			glUniformMatrix4fv(light_projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+			*///glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // a menos que los dos test pase, mantenemos el valor del buffer
+			//glStencilFunc(GL_ALWAYS, 1, 0xFF); // a 1 todo
+			//glStencilMask(0xFF); // activamos la escritura al buffer
+			//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
+
+			//glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // invertimos la condicion del test queremos los que son != 1
+			//glStencilMask(0x00); // desactivamos escritura al buffer.
+			//glDisable(GL_DEPTH_TEST);
+			//// pintamos otra vez.
+			//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float));
+
+			//// DEMO MODE
+			/*const float radius(10.f);
+			float camx(sin(glfwGetTime()) * radius);
+			float camz(cos(glfwGetTime()) * radius);
+			view = glm::lookAt(
+				glm::vec3(camx, 0.f, camz),
+				glm::vec3(0.f, 0.f, 0.f),
+				glm::vec3(0.f, 1.f, 0.f));*/
+
+			//// LINKING UNIFORM SHADER ATTRIBUTES
+			//if (Render::demo_mode)
+			//{
+			//	my_shader.use();
+			//	// LIGHT CONFIG
+			//	if (Render::directional_light_enabled)
+			//	{
+			//		glUniform3fv(light_ambient_location, 1, glm::value_ptr(Render::light_ambient));
+			//		glUniform3fv(light_diffuse_location, 1, glm::value_ptr(Render::light_diffuse));
+			//		glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
+			//		glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
+			//	}
+			//	// ATTENUATION
+			//	if (Render::point_light_enabled)
+			//	{
+			//		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+			//		my_shader.setFloat("point_light[0].k_constant", Render::light_k_constant);
+			//		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
+			//		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
+
+			//	}
+
+			//	// MATERIAL CONFIG
+			//	if (Render::spot_light_enabled)
+			//	{
+			//		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
+			//		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
+			//	
+			//		glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
+			//		glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
+			//		glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));
+
+			//		my_shader.setFloat("material.shininess", Render::shininess);
+			//		my_shader.setInt("material.diffuse_map", 0);
+			//		my_shader.setInt("material.specular_map", 1);
+			//	}
+
+			//	my_shader.setFloat("CHUNK", CHUNK);
+			//	my_shader.setFloat("SCALE", Render::SCALE);
+
+			//	model = glm::mat4(1.f);
+			//	model = glm::translate(model, glm::vec3(1.f));
+			//	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+			//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+			//	// OBSERVATOR
+			//	glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+			//	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(Render::view));
+			//	glUniform3fv(rgb_color_location, 1, glm::value_ptr(glm::vec3(94.f, 157.f, 52.f)));
+			//	
+			//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), CHUNK * CHUNK);
+
+			//}
+			//if (Render::cubes_spawned > 0)
+			//{
+			//	unsigned int model_location = glGetUniformLocation(basic_shape_shader.id, "model");
+			//	unsigned int view_location = glGetUniformLocation(basic_shape_shader.id, "view");
+			//	unsigned int projection_location = glGetUniformLocation(basic_shape_shader.id, "projection");
+			//	//
+			//	//// GENERAL LIGHT SETTINGS
+			//	unsigned int viewer_position_location = glGetUniformLocation(basic_shape_shader.id, "viewer_position");
+			//	//// DIRECTIONAL LIGHT
+			//	unsigned int light_ambient_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.ambient");
+			//	unsigned int light_diffuse_location = glGetUniformLocation(basic_shape_shader.id, "dir_light.diffuse");
+			//	basic_shape_shader.use();
+			//	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+			//	basic_shape_shader.setFloat("material_shininess", 1);
+			//	glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
+			//	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+			//	glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
+			//	glm::mat4 projection_tex;
+			//	projection_tex = glm::perspective(glm::radians(90.f), 1.f,
+			//		0.3f, 10.f);
+			//	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
+
+			///*	glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
+			//	glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
+			//	glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));*/
+
+			//	/*my_shader.setFloat("material.shininess", Render::shininess);
+			//	my_shader.setInt("material.diffuse_map", 0);
+			//	my_shader.setInt("material.specular_map", 1);*/
+			//	/*my_shader.setFloat("CHUNK", Render::cubes_spawned);
+			//	my_shader.setFloat("SCALE", Render::SCALE);*/
+			//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
+			//	glBindVertexArray(0);
+			//}
+			/*if (Render::custom_model)
 			{
-				auto model_to_draw = Render::models_loaded.front();
-				bool to_delete = false;
-				Render::models_loaded.pop();
-				// TODO: world outliner
-				ImGui::Begin("World outliner");
+				Render::DEBUG_LOG("Triangles Model loaded: ", std::to_string(Render::custom_model.triangle_count).c_str());
+				for (auto custom_model : Render::custom_models)
+				{
+
+				}
+				Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
+					Render::light_directional);
+			}*/
+			if (Render::lights_loaded.size() > 0)
+			{
+				for (int j = 0; j < Render::lights_loaded.size(); j++)
+				{
+					bool to_delete = false;
+					auto light_to_draw = Render::lights_loaded.front();
+					Render::lights_loaded.pop();
+					ImGui::Begin("Lights outliner");
 					static int current_outliner = 0;
-					if (ImGui::MenuItem(model_to_draw.name.c_str(), "", &model_to_draw.visible))
-					{}
+					if (ImGui::MenuItem(light_to_draw.name.c_str(), "", &light_to_draw.visible))
+					{
+					}
 					if (ImGui::SmallButton("X"))
 					{
 						to_delete = true;
 					}
-				ImGui::End();
-				if(to_delete)
-					continue;
-				if (model_to_draw.visible)
-				{
-					model_to_draw.model_load.Draw(model_to_draw.shader, model_to_draw.model,
-						Render::view, model_to_draw.projection, Render::camera_position,
-						Render::light_position);
-				}
-				Render::models_loaded.push(model_to_draw);
-			}
-		}
-		glBindVertexArray(0);
-
-		/*ImGui::Begin("DEBUG LOG");
-			for(unsigned int i=0; i<Render::gui_commands_q.size(); i++)
-			{
-				Render::GUI_command command = Render::gui_commands_q.front();
-				Render::gui_commands_q.pop();
-				switch (command.command)
-				{
-					case Render::GUI_COMMANDS::Text:
-						ImGui::Text(command.value.c_str());
-						break;
-					case Render::GUI_COMMANDS::SameLine:
-						ImGui::SameLine();
-						break;
-					default:
-						break;
-				}
-				Render::gui_commands_q.push(command);
-			}
-		ImGui::End();*/
-		//	APRENDIZAJE DE GRAFICOS y GUI
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::BeginMenu("Load model", models.size() > 0))
-				{
-					// TODO: Search all the models on a folder and show on load
-					for(auto model : models)
+					ImGui::End();
+					if (to_delete)
+						continue;
+					if (light_to_draw.visible)
 					{
-						if (ImGui::BeginMenu(model.c_str()))
+						light_to_draw.model_load.Draw(light_to_draw.shader, light_to_draw.model,
+							Render::view, light_to_draw.projection, Render::camera_position,
+							Render::light_position);
+					}
+					Render::lights_loaded.push(light_to_draw);
+				}
+			}
+			glBindVertexArray(0);
+			if (Render::models_loaded.size() > 0)
+			{
+			// el truquito de que el size se copia a una variable local de memoria.
+				for (int j = 0; j < Render::models_loaded.size(); j++)
+				{
+					auto model_to_draw = Render::models_loaded.front();
+					bool to_delete = false;
+					Render::models_loaded.pop();
+					// TODO: world outliner
+					ImGui::Begin("World outliner");
+						static int current_outliner = 0;
+						if (ImGui::MenuItem(model_to_draw.name.c_str(), "", &model_to_draw.visible))
+						{}
+						if (ImGui::SmallButton("X"))
 						{
-							if (ImGui::MenuItem(model.c_str()))
-							{
-								Render::temp_custom_model = model;
-								Render::demo_model = true;
-							}
-							ImGui::SameLine();
-							if (ImGui::SmallButton("->"))
-							{
-								auto path = argv[0];
-								char* next_token;
-								int str_length = sizeof path;
-								system("explorer resources\\models\\");
-							}
-							ImGui::EndMenu();
+							to_delete = true;
 						}
+					ImGui::End();
+					if(to_delete)
+						continue;
+					if (model_to_draw.visible)
+					{
+						model_to_draw.model_load.Draw(model_to_draw.shader, model_to_draw.model,
+							Render::view, model_to_draw.projection, Render::camera_position,
+							Render::light_position);
+					}
+					Render::models_loaded.push(model_to_draw);
+				}
+			}
+			glBindVertexArray(0);
+
+			/*ImGui::Begin("DEBUG LOG");
+				for(unsigned int i=0; i<Render::gui_commands_q.size(); i++)
+				{
+					Render::GUI_command command = Render::gui_commands_q.front();
+					Render::gui_commands_q.pop();
+					switch (command.command)
+					{
+						case Render::GUI_COMMANDS::Text:
+							ImGui::Text(command.value.c_str());
+							break;
+						case Render::GUI_COMMANDS::SameLine:
+							ImGui::SameLine();
+							break;
+						default:
+							break;
+					}
+					Render::gui_commands_q.push(command);
+				}
+			ImGui::End();*/
+			//	APRENDIZAJE DE GRAFICOS y GUI
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					if (ImGui::BeginMenu("Load model", models.size() > 0))
+					{
+						// TODO: Search all the models on a folder and show on load
+						for(auto model : models)
+						{
+							if (ImGui::BeginMenu(model.c_str()))
+							{
+								if (ImGui::MenuItem(model.c_str()))
+								{
+									Render::temp_custom_model = model;
+									Render::custom_model = true;
+								}
+								ImGui::SameLine();
+								if (ImGui::SmallButton("->"))
+								{
+									auto path = argv[0];
+									char* next_token;
+									int str_length = sizeof path;
+									system("explorer resources\\models\\");
+								}
+								ImGui::EndMenu();
+							}
+						}
+						ImGui::EndMenu();
+					}
+					if (ImGui::MenuItem("Demo mode", nullptr, false, false))
+					{
+						Render::demo_mode = !Render::demo_mode;
+					}
+					if (ImGui::MenuItem("Quit"))
+					{
+						glfwSetWindowShouldClose(m_window, true);
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Demo mode", nullptr, false, false))
+				if (ImGui::BeginMenu("Graphics"))
 				{
-					Render::demo_mode = !Render::demo_mode;
-				}
-				if (ImGui::MenuItem("Quit"))
-				{
-					glfwSetWindowShouldClose(m_window, true);
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Graphics"))
-			{
-				if (ImGui::MenuItem("Wireframe"))
-				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				}
-				if (ImGui::MenuItem("Solid"))
-				{
-					glDisable(GL_CULL_FACE);
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				}
-				if (ImGui::MenuItem("Stencil 0x00"))
-				{
-					glEnable(GL_STENCIL_BUFFER_BIT);
-					glStencilMask(0x00);
-					glStencilFunc(GL_EQUAL, 0.5f, 0xff);
-				}
-				if (ImGui::MenuItem("Disable Stencil"))
-				{
-					glDisable(GL_STENCIL_BUFFER_BIT);
-				}
-				if (ImGui::MenuItem("Disable Depth"))
-				{
-					glDisable(GL_DEPTH_TEST);
-				}
-				if (ImGui::MenuItem("Enable Depth"))
-				{
-					glEnable(GL_DEPTH_TEST);
-					glDepthFunc(GL_LESS);
-				}
-				if (ImGui::MenuItem("Cull Back"))
-				{
-					glEnable(GL_CULL_FACE);
-					glCullFace(GL_BACK);
-				}
-				if (ImGui::MenuItem("Cull Front"))
-				{
-					glEnable(GL_CULL_FACE);
-					glCullFace(GL_FRONT);
-				}
-				if (ImGui::MenuItem("Toggle cursor", "TAB"))
-				{
-					Render::show_GUI_cursor = !Render::show_GUI_cursor;
-				}
-				if (ImGui::MenuItem("Material Shine +", "HOME"))
-				{
-					Render::shininess += 1;
-				}
-				if (ImGui::MenuItem("Material Shine -", "END"))
-				{
-					Render::shininess -= 1;
-				}
-				if (ImGui::MenuItem("Scale +", "PAG UP"))
-				{
-					Render::SCALE += 0.01f;
-				}
-				if (ImGui::MenuItem("Scale -", "PAG DOWN"))
-				{
-					Render::SCALE -= 0.01f;
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Lighting"))
-			{
-				if (ImGui::MenuItem("Directional light", "", Render::directional_light_enabled))
-				{
-					Render::directional_light_enabled = !Render::directional_light_enabled;
-				}
-				if (ImGui::MenuItem("Spotlight", "", Render::point_light_enabled))
-				{
-					Render::point_light_enabled = !Render::point_light_enabled;
-				}
-				if (ImGui::MenuItem("Point light", "", Render::spot_light_enabled))
-				{
-					Render::spot_light_enabled = !Render::spot_light_enabled;
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Object"))
-			{
-				/*if (ImGui::MenuItem("Instance Cube"))
-				{
-					Render::cubes_spawned++;
-				}*/
-				if (ImGui::MenuItem("Basic Shape"))
-				{
-					is_set_position_open = true;
-				}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
-		if (is_set_position_open)
-		{
-			if (ImGui::Begin("Position"))
-			{
-				ImGui::Text("Set the position and rotation to spawn:");
-				Render::Shape_model model_to_create;
-				ImGui::Separator();
-				static float position[3];
-				ImGui::InputFloat3("position", position);
-				static float rotation[1];
-				ImGui::InputFloat("rotation angles degrees", rotation);
-				static int radio_button;
-				if (ImGui::RadioButton("Cube", &radio_button, Render::BASIC_SHAPES::Cube))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Cube;
-					model_to_create.model_obj = Cube;
-				} else if (ImGui::RadioButton("Cone", &radio_button, Render::BASIC_SHAPES::Cone))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Cone;
-					model_to_create.model_obj = Cone;
-				} else if (ImGui::RadioButton("Cylinder", &radio_button, Render::BASIC_SHAPES::Cylinder))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Cylinder;
-					model_to_create.model_obj = Cylinder;
-				}
-				else if (ImGui::RadioButton("Plane", &radio_button, Render::BASIC_SHAPES::Plane))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Plane;
-					model_to_create.model_obj = Plane;
-				}
-				else if (ImGui::RadioButton("Torus", &radio_button, Render::BASIC_SHAPES::Torus))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Torus;
-					model_to_create.model_obj = Torus;
-				}
-				else if (ImGui::RadioButton("LightBulb", &radio_button, Render::BASIC_SHAPES::LightBulb))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::LightBulb;
-					model_to_create.model_obj = Lightbulb;
-				}
-				else if (ImGui::RadioButton("Monkey", &radio_button, Render::BASIC_SHAPES::Monkey))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Monkey;
-					model_to_create.model_obj = Monkey;
-				}
-				else if (ImGui::RadioButton("Sphere", &radio_button, Render::BASIC_SHAPES::Sphere))
-				{
-					model_to_create.shape = Render::BASIC_SHAPES::Sphere;
-					model_to_create.model_obj = Sphere;
-				}
-				if (ImGui::Button("OK"))
-				{
-				// TODO: rotation of the model.
-					glm::mat4 basic_cube_model(1.f);
-					basic_cube_model = glm::translate(basic_cube_model, 
-						glm::vec3(position[0], position[1], position[2]));
-					glm::rotate(basic_cube_model, glm::radians(rotation[0]), 
-						glm::vec3(position[0], position[1], position[2]));
-					Object::Model model_to_load;
-					std::string actor_name = "";
-					switch (model_to_create.shape)
+					if (ImGui::MenuItem("Wireframe"))
 					{
-					case Render::BASIC_SHAPES::Cube:
-						model_to_load = Cube;
-						actor_name = _(Cube);
-						break;
-					case Render::BASIC_SHAPES::Cylinder:
-						model_to_load = Cylinder;
-						actor_name = _(Cylinder);
-						break;
-					case Render::BASIC_SHAPES::Cone:
-						model_to_load = Cone;
-						actor_name = _(Cone);
-						break;
-					case Render::BASIC_SHAPES::Plane:
-						model_to_load = Plane;
-						actor_name = _(Plane);
-						break;
-					case Render::BASIC_SHAPES::Sphere:
-						model_to_load = Sphere;
-						actor_name = _(Sphere);
-						break;
-					case Render::BASIC_SHAPES::Torus:
-						model_to_load = Torus;
-						actor_name = _(Torus);
-						break;
-					case Render::BASIC_SHAPES::LightBulb:
-						model_to_load = Lightbulb;
-						actor_name = _(Lightbulb);
-						break;
-					case Render::BASIC_SHAPES::Monkey:
-						model_to_load = Monkey;
-						actor_name = _(Monkey);
-						break;
-					default:
-						model_to_load = Monkey;
-						actor_name = _(Monkey);
-						break;
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 					}
-					Render::model_loaded object_to_load = Render::model_loaded(
-						model_to_load, basic_shape_shader,
-						basic_cube_model, Render::view, Render::projection, 
-						Render::camera_position, actor_name);
-					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(actor_name, object_to_load));
-					Render::models_loaded.push(object_to_load);
-					is_set_position_open = false;
+					if (ImGui::MenuItem("Solid"))
+					{
+						glDisable(GL_CULL_FACE);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					}
+					if (ImGui::MenuItem("Stencil 0x00"))
+					{
+						glEnable(GL_STENCIL_BUFFER_BIT);
+						glStencilMask(0x00);
+						glStencilFunc(GL_EQUAL, 0.5f, 0xff);
+					}
+					if (ImGui::MenuItem("Disable Stencil"))
+					{
+						glDisable(GL_STENCIL_BUFFER_BIT);
+					}
+					if (ImGui::MenuItem("Disable Depth"))
+					{
+						glDisable(GL_DEPTH_TEST);
+					}
+					if (ImGui::MenuItem("Enable Depth"))
+					{
+						glEnable(GL_DEPTH_TEST);
+						glDepthFunc(GL_LESS);
+					}
+					if (ImGui::MenuItem("Cull Back"))
+					{
+						glEnable(GL_CULL_FACE);
+						glCullFace(GL_BACK);
+					}
+					if (ImGui::MenuItem("Cull Front"))
+					{
+						glEnable(GL_CULL_FACE);
+						glCullFace(GL_FRONT);
+					}
+					if (ImGui::MenuItem("Toggle cursor", "TAB"))
+					{
+						Render::show_GUI_cursor = !Render::show_GUI_cursor;
+					}
+					if (ImGui::MenuItem("Material Shine +", "HOME"))
+					{
+						Render::shininess += 1;
+					}
+					if (ImGui::MenuItem("Material Shine -", "END"))
+					{
+						Render::shininess -= 1;
+					}
+					if (ImGui::MenuItem("Scale +", "PAG UP"))
+					{
+						Render::SCALE += 0.01f;
+					}
+					if (ImGui::MenuItem("Scale -", "PAG DOWN"))
+					{
+						Render::SCALE -= 0.01f;
+					}
+					if (ImGui::MenuItem("Frame cap 30"))
+					{
+						Render::frame_cap = FRAMECAP30;
+					}
+					if (ImGui::MenuItem("Frame cap 60"))
+					{
+						Render::frame_cap = FRAMECAP60;
+					}
+					ImGui::EndMenu();
 				}
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel"))
+				if (ImGui::BeginMenu("Lighting"))
 				{
-					is_set_position_open = false;
+					if (ImGui::MenuItem("Directional light", "", Render::directional_light_enabled))
+					{
+						Render::directional_light_enabled = !Render::directional_light_enabled;
+					}
+					if (ImGui::MenuItem("Spotlight", "", Render::point_light_enabled))
+					{
+						Render::point_light_enabled = !Render::point_light_enabled;
+					}
+					if (ImGui::MenuItem("Point light", "", Render::spot_light_enabled))
+					{
+						Render::spot_light_enabled = !Render::spot_light_enabled;
+					}
+					ImGui::EndMenu();
 				}
-				ImGui::End();
+				if (ImGui::BeginMenu("Object"))
+				{
+					/*if (ImGui::MenuItem("Instance Cube"))
+					{
+						Render::cubes_spawned++;
+					}*/
+					if (ImGui::MenuItem("Basic Shape"))
+					{
+						is_set_position_open = true;
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
 			}
-		}
-		if (Render::demo_model)
-		{
-			if (ImGui::Begin("Position"))
+			if (is_set_position_open)
 			{
-				ImGui::Text("Set the position and rotation to spawn:");
-				ImGui::Separator();
-				static float position[3];
-				ImGui::InputFloat3("position", position);
-				static float rotation[1];
-				ImGui::InputFloat("rotation angles degrees", rotation);
-				static int radio_button;
-				if (ImGui::Button("OK"))
+				if (ImGui::Begin("Position"))
 				{
-					auto temp_mesh = Object::Model("resources\\models\\" + Render::temp_custom_model);
-					glm::mat4 basic_cube_model(1.f);
-					basic_cube_model = glm::translate(basic_cube_model,
-						glm::vec3(position[0], position[1], position[2]));
-					glm::rotate(basic_cube_model, glm::radians(rotation[0]),
-						glm::vec3(position[0], position[1], position[2]));
-					Render::model_loaded object_to_load = Render::model_loaded(
-						temp_mesh, basic_shape_shader,
-						basic_cube_model, Render::view, Render::projection,
-						Render::camera_position);
-					Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
-					Render::models_loaded.push(object_to_load);
-					//delete(&Render::temp_custom_model);
-					Render::demo_model = false;
+					ImGui::Text("Set the position and rotation to spawn:");
+					Render::Shape_model model_to_create;
+					ImGui::Separator();
+					static float position[3];
+					ImGui::InputFloat3("position", position);
+					static float rotation[1];
+					ImGui::InputFloat("rotation angles degrees", rotation);
+					static int radio_button;
+					if (ImGui::RadioButton("Cube", &radio_button, Render::BASIC_SHAPES::Cube))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Cube;
+						model_to_create.model_obj = Cube;
+					} else if (ImGui::RadioButton("Cone", &radio_button, Render::BASIC_SHAPES::Cone))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Cone;
+						model_to_create.model_obj = Cone;
+					} else if (ImGui::RadioButton("Cylinder", &radio_button, Render::BASIC_SHAPES::Cylinder))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Cylinder;
+						model_to_create.model_obj = Cylinder;
+					}
+					else if (ImGui::RadioButton("Plane", &radio_button, Render::BASIC_SHAPES::Plane))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Plane;
+						model_to_create.model_obj = Plane;
+					}
+					else if (ImGui::RadioButton("Torus", &radio_button, Render::BASIC_SHAPES::Torus))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Torus;
+						model_to_create.model_obj = Torus;
+					}
+					else if (ImGui::RadioButton("LightBulb", &radio_button, Render::BASIC_SHAPES::LightBulb))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::LightBulb;
+						model_to_create.model_obj = Lightbulb;
+					}
+					else if (ImGui::RadioButton("Monkey", &radio_button, Render::BASIC_SHAPES::Monkey))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Monkey;
+						model_to_create.model_obj = Monkey;
+					}
+					else if (ImGui::RadioButton("Sphere", &radio_button, Render::BASIC_SHAPES::Sphere))
+					{
+						model_to_create.shape = Render::BASIC_SHAPES::Sphere;
+						model_to_create.model_obj = Sphere;
+					}
+					if (ImGui::Button("OK"))
+					{
+					// TODO: rotation of the model.
+						glm::mat4 basic_cube_model(1.f);
+						basic_cube_model = glm::translate(basic_cube_model, 
+							glm::vec3(position[0], position[1], position[2]));
+						glm::rotate(basic_cube_model, glm::radians(rotation[0]), 
+							glm::vec3(position[0], position[1], position[2]));
+						Object::Model model_to_load;
+						std::string actor_name = "";
+						switch (model_to_create.shape)
+						{
+						case Render::BASIC_SHAPES::Cube:
+							model_to_load = Cube;
+							actor_name = _(Cube);
+							break;
+						case Render::BASIC_SHAPES::Cylinder:
+							model_to_load = Cylinder;
+							actor_name = _(Cylinder);
+							break;
+						case Render::BASIC_SHAPES::Cone:
+							model_to_load = Cone;
+							actor_name = _(Cone);
+							break;
+						case Render::BASIC_SHAPES::Plane:
+							model_to_load = Plane;
+							actor_name = _(Plane);
+							break;
+						case Render::BASIC_SHAPES::Sphere:
+							model_to_load = Sphere;
+							actor_name = _(Sphere);
+							break;
+						case Render::BASIC_SHAPES::Torus:
+							model_to_load = Torus;
+							actor_name = _(Torus);
+							break;
+						case Render::BASIC_SHAPES::LightBulb:
+							model_to_load = Lightbulb;
+							actor_name = _(Lightbulb);
+							break;
+						case Render::BASIC_SHAPES::Monkey:
+							model_to_load = Monkey;
+							actor_name = _(Monkey);
+							break;
+						default:
+							model_to_load = Monkey;
+							actor_name = _(Monkey);
+							break;
+						}
+						Render::model_loaded object_to_load = Render::model_loaded(
+							model_to_load, basic_shape_shader,
+							basic_cube_model, Render::view, Render::projection, 
+							Render::camera_position, actor_name);
+						Render::world_names.insert(std::pair<std::string, Render::model_loaded>(actor_name, object_to_load));
+						Render::models_loaded.push(object_to_load);
+						is_set_position_open = false;
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel"))
+					{
+						is_set_position_open = false;
+					}
+					ImGui::End();
 				}
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel"))
-				{
-					Render::demo_model = false;
-				}
-				ImGui::End();
 			}
+			if (Render::custom_model)
+			{
+				if (ImGui::Begin("Position"))
+				{
+					ImGui::Text("Set the position and rotation to spawn:");
+					ImGui::Separator();
+					static float position[3];
+					ImGui::InputFloat3("position", position);
+					static float rotation[1];
+					ImGui::InputFloat("rotation angles degrees", rotation);
+					static int radio_button;
+					if (ImGui::Button("OK"))
+					{
+						auto temp_mesh = Object::Model("resources\\models\\" + Render::temp_custom_model);
+						glm::mat4 basic_cube_model(1.f);
+						basic_cube_model = glm::translate(basic_cube_model,
+							glm::vec3(position[0], position[1], position[2]));
+						glm::rotate(basic_cube_model, glm::radians(rotation[0]),
+							glm::vec3(position[0], position[1], position[2]));
+						Render::model_loaded object_to_load = Render::model_loaded(
+							temp_mesh, basic_shape_shader,
+							basic_cube_model, Render::view, Render::projection,
+							Render::camera_position);
+						Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
+						Render::models_loaded.push(object_to_load);
+						//delete(&Render::temp_custom_model);
+						Render::custom_model = false;
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel"))
+					{
+						Render::custom_model = false;
+					}
+					ImGui::End();
+				}
+			}
+			// RENDER THE DATA FOR THE GUI
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			// poll the events and call the callback functions.
+			glfwPollEvents();
+			// swap the Color buffer
+			glfwSwapBuffers(m_window);
 		}
-		// RENDER THE DATA FOR THE GUI
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		// poll the events and call the callback functions.
-		glfwPollEvents();
-		// swap the Color buffer
-		glfwSwapBuffers(m_window);
+		if (Render::time_accumulated_physics > FRAMECAP30)
+		{
+			std::cout << "simulo fisicas" << (1/Render::time_accumulated_physics) << '\n';
+			Render::time_accumulated_physics = 0;
+		}
 	}
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

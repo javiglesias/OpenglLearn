@@ -1,14 +1,18 @@
 ﻿  main.cpp
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
 C:\Users\Alientech\Documents\Projects\OpenglLearn\dependencies\glad-master\include\glad\glad.h(32): message : see previous definition of 'APIENTRY'
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(145,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(175,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(176,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(177,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(178,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(196,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(149,30): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(180,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(181,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(182,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(183,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Header.h(201,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(320,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(379,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(646,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(612,15): warning C4101: 'next_token': unreferenced local variable
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(348,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(352,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(387,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(654,31): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(701,37): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(705,37): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\Alientech\Documents\Projects\OpenglLearn\src\main.cpp(620,16): warning C4101: 'next_token': unreferenced local variable
   LearnOpenGL.vcxproj -> C:\Users\Alientech\Documents\Projects\OpenglLearn\x64\Debug\LearnOpenGL.exe
