@@ -2,7 +2,6 @@
 #ifndef C__MESH_H
 #define C__MESH_H
 #include "glm.hpp"
-#include <string>
 #include <vector>
 #include "Shader.h"
 

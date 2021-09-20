@@ -1,9 +1,9 @@
 #pragma once
 #ifndef C__SHADER_H
 #define C__SHADER_H
-#include <string>
 
 #include "glm.hpp"
+#include <string>
 class Shader
 {
 public:

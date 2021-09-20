@@ -1,4 +1,4 @@
-// GLAD goes first
+﻿// GLAD goes first
 #include "glad/glad.h"
 // GLFW goes second
 #include "GLFW/glfw3.h" 
@@ -22,6 +22,8 @@ int main(int args, char** argv)
 	std::string line{};
 	std::vector<std::string> models{};
 	std::ifstream models_paths;
+
+	unsigned int frame_number{0};
 
 	Render::first_mouse_interaction = true;
 	Render::yaw = -90.f;
@@ -215,6 +217,17 @@ int main(int args, char** argv)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);*/
+
+	//FRAMEBUFFERS object
+	unsigned int fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Error creating framebuffer." << '\n';
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(1, &fbo);
+	}
 	
 	unsigned int instanced_cubes;
 	glGenBuffers(1, &instanced_cubes);
@@ -339,13 +352,13 @@ int main(int args, char** argv)
 	glm::mat4 light_model(1.f);
 	light_model = glm::scale(light_model, glm::vec3(0.2f));
 	light_model = glm::translate(light_model, Render::light_position);
-	Render::model_loaded light_to_load = Render::model_loaded(
-		Lightbulb, light_shader,
+	Actor light_to_load ( Lightbulb, light_shader,
 		light_model, Render::view, Render::projection,
 		Render::camera_position, "Light");
-	Render::lights_loaded.push(light_to_load);
+	Render::lights_loaded.push_back(light_to_load);
 	// fixed timestep
 	Render::current_frame = glfwGetTime();
+
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
@@ -357,6 +370,7 @@ int main(int args, char** argv)
 		// Frame fixed a 60
 		if (Render::time_accumulated > Render::frame_cap)
 		{
+			frame_number++;
 			process_input(m_window);
 
 			Render::DEBUG_LOG("Rendering chunk of size: ", std::to_string(CHUNK).c_str());
@@ -373,6 +387,7 @@ int main(int args, char** argv)
 
 			// Clean the accumulated because we render this frame.
 			ImGui::LabelText("Fps", std::to_string(1/Render::time_accumulated).c_str());
+			ImGui::LabelText("Frame", std::to_string(frame_number).c_str());
 			Render::time_accumulated = 0;
 			
 			if (Render::show_GUI_cursor)
@@ -517,65 +532,122 @@ int main(int args, char** argv)
 				Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
 					Render::light_directional);
 			}*/
+			// TODO: world outliner
+			ImGui::Begin("World outliner");
 			if (Render::lights_loaded.size() > 0)
 			{
-				for (int j = 0; j < Render::lights_loaded.size(); j++)
+				for(auto it = 0; it < Render::lights_loaded.size(); it++)
 				{
 					bool to_delete = false;
-					auto light_to_draw = Render::lights_loaded.front();
-					Render::lights_loaded.pop();
-					ImGui::Begin("Lights outliner");
+					auto light_to_draw = Render::lights_loaded.at(it);
 					static int current_outliner = 0;
-					if (ImGui::MenuItem(light_to_draw.name.c_str(), "", &light_to_draw.visible))
-					{
-					}
 					if (ImGui::SmallButton("X"))
 					{
 						to_delete = true;
 					}
-					ImGui::End();
-					if (to_delete)
-						continue;
-					if (light_to_draw.visible)
+					ImGui::SameLine();
+					if (ImGui::MenuItem(light_to_draw.getName().c_str(), "", &Render::lights_loaded[it].visible))
 					{
-						light_to_draw.model_load.Draw(light_to_draw.shader, light_to_draw.model,
-							Render::view, light_to_draw.projection, Render::camera_position,
+					}
+					if (ImGui::BeginPopupContextItem())
+					{
+						ImGui::Text("Current position:");
+						std::string current_position = std::to_string(light_to_draw.getPosition()[0]) + ","
+							+ std::to_string(light_to_draw.getPosition()[1]) + ","
+							+ std::to_string(light_to_draw.getPosition()[2]);
+						ImGui::Text(current_position.c_str());
+						ImGui::Separator();
+						float position[3] {};
+						ImGui::InputFloat3("Translate", position);
+						float rotate_axis[3] {};
+						ImGui::InputFloat3("Rotation axis", rotate_axis);
+						float rotation {0.f};
+						ImGui::InputFloat("Rotate", &rotation);
+						if (ImGui::Button("OK"))
+						{
+							Render::lights_loaded[it].setPosition(position[0], position[1], position[2]);
+							Render::lights_loaded[it].setRotation(rotate_axis[0], rotate_axis[1], rotate_axis[2], rotation);
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
+					}
+					if (to_delete) 
+					{
+						// Remove the item from the vector
+						Render::lights_loaded.erase(Render::lights_loaded.begin() + it);
+						// Skip the draw call.
+						continue;
+					}
+					if (Render::lights_loaded[it].visible)
+					{
+						light_to_draw.getModelLoaded().Draw(light_to_draw.getShader(), light_to_draw.getModel(),
+							Render::view, light_to_draw.getProjection(), Render::camera_position,
 							Render::light_position);
 					}
-					Render::lights_loaded.push(light_to_draw);
 				}
 			}
 			glBindVertexArray(0);
 			if (Render::models_loaded.size() > 0)
 			{
-			// el truquito de que el size se copia a una variable local de memoria.
-				for (int j = 0; j < Render::models_loaded.size(); j++)
+				for(auto it = 0; it < Render::models_loaded.size(); it++)
 				{
-					auto model_to_draw = Render::models_loaded.front();
 					bool to_delete = false;
-					Render::models_loaded.pop();
-					// TODO: world outliner
-					ImGui::Begin("World outliner");
-						static int current_outliner = 0;
-						if (ImGui::MenuItem(model_to_draw.name.c_str(), "", &model_to_draw.visible))
-						{}
-						if (ImGui::SmallButton("X"))
-						{
-							to_delete = true;
-						}
-					ImGui::End();
-					if(to_delete)
-						continue;
-					if (model_to_draw.visible)
+					auto model_to_draw = Render::models_loaded.at(it);
+					static int current_outliner = 0;
+					if (ImGui::SmallButton("X"))
 					{
-						model_to_draw.model_load.Draw(model_to_draw.shader, model_to_draw.model,
-							Render::view, model_to_draw.projection, Render::camera_position,
+						to_delete = true;
+					}
+					ImGui::SameLine();
+					if (ImGui::MenuItem(model_to_draw.getName().c_str(), "", &Render::models_loaded[it].visible))
+					{
+					}
+					if (ImGui::BeginPopupContextItem())
+					{
+						ImGui::Text("Current position:");
+						std::string current_position = std::to_string(model_to_draw.getPosition()[0]) + "," 
+							+ std::to_string(model_to_draw.getPosition()[1]) + "," 
+							+ std::to_string(model_to_draw.getPosition()[2]);
+						ImGui::Text(current_position.c_str());
+						ImGui::Separator();
+						float position[3] {};
+						ImGui::InputFloat3("Translate", position);
+						float rotate_axis[3]{};
+						ImGui::InputFloat3("Rotation axis", rotate_axis);
+						float rotation{0.f};
+						ImGui::InputFloat("Rotate", &rotation);
+						if (ImGui::Button("OK"))
+						{
+							Render::models_loaded[it].setPosition(position[0], position[1], position[2]);
+							Render::models_loaded[it].setRotation(rotate_axis[0], rotate_axis[1], rotate_axis[2], rotation);
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
+					}
+					
+					if (to_delete)
+					{
+						Render::models_loaded.erase(Render::models_loaded.begin() + it);
+						continue;
+					}
+					if (Render::models_loaded[it].visible)
+					{
+						model_to_draw.getModelLoaded().Draw(model_to_draw.getShader(), model_to_draw.getModel(),
+							Render::view, model_to_draw.getProjection(), Render::camera_position,
 							Render::light_position);
 					}
-					Render::models_loaded.push(model_to_draw);
 				}
 			}
 			glBindVertexArray(0);
+			ImGui::End();
 
 			/*ImGui::Begin("DEBUG LOG");
 				for(unsigned int i=0; i<Render::gui_commands_q.size(); i++)
@@ -606,22 +678,18 @@ int main(int args, char** argv)
 						// TODO: Search all the models on a folder and show on load
 						for(auto model : models)
 						{
-							if (ImGui::BeginMenu(model.c_str()))
+							if (ImGui::SmallButton("->"))
 							{
-								if (ImGui::MenuItem(model.c_str()))
-								{
-									Render::temp_custom_model = model;
-									Render::custom_model = true;
-								}
-								ImGui::SameLine();
-								if (ImGui::SmallButton("->"))
-								{
-									auto path = argv[0];
-									char* next_token;
-									int str_length = sizeof path;
-									system("explorer resources\\models\\");
-								}
-								ImGui::EndMenu();
+								auto path = argv[0];
+								char* next_token;
+								int str_length = sizeof path;
+								system("explorer resources\\models\\");
+							}
+							ImGui::SameLine();
+							if (ImGui::MenuItem(model.c_str()))
+							{
+								Render::temp_custom_model = model;
+								Render::custom_model = true;
 							}
 						}
 						ImGui::EndMenu();
@@ -644,8 +712,17 @@ int main(int args, char** argv)
 					}
 					if (ImGui::MenuItem("Solid"))
 					{
-						glDisable(GL_CULL_FACE);
 						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					}
+					if (ImGui::MenuItem("Culling ON"))
+					{
+						glEnable(GL_CULL_FACE);
+						glCullFace(GL_BACK);
+						//glFrontFace(GL_CCW); //This shows the model inside-out backfaces CW
+					}
+					if (ImGui::MenuItem("Culling OFF"))
+					{
+						glDisable(GL_CULL_FACE);
 					}
 					if (ImGui::MenuItem("Stencil 0x00"))
 					{
@@ -703,6 +780,10 @@ int main(int args, char** argv)
 					if (ImGui::MenuItem("Frame cap 60"))
 					{
 						Render::frame_cap = FRAMECAP60;
+					}
+					if (ImGui::MenuItem("step by step"))
+					{
+						Render::frame_cap = 1;
 					}
 					ImGui::EndMenu();
 				}
@@ -835,12 +916,10 @@ int main(int args, char** argv)
 							actor_name = _(Monkey);
 							break;
 						}
-						Render::model_loaded object_to_load = Render::model_loaded(
-							model_to_load, basic_shape_shader,
+						Actor object_to_load ( model_to_load, basic_shape_shader,
 							basic_cube_model, Render::view, Render::projection, 
 							Render::camera_position, actor_name);
-						Render::world_names.insert(std::pair<std::string, Render::model_loaded>(actor_name, object_to_load));
-						Render::models_loaded.push(object_to_load);
+						Render::models_loaded.push_back(object_to_load);
 						is_set_position_open = false;
 					}
 					ImGui::SameLine();
@@ -857,26 +936,22 @@ int main(int args, char** argv)
 				{
 					ImGui::Text("Set the position and rotation to spawn:");
 					ImGui::Separator();
-					static float position[3];
+					float position[3] {0.f};
 					ImGui::InputFloat3("position", position);
-					static float rotation[1];
-					ImGui::InputFloat("rotation angles degrees", rotation);
-					static int radio_button;
+					float rotate_axis[3] {0.f};
+					ImGui::InputFloat3("Rotation axis", rotate_axis);
+					float rotation;
+					ImGui::InputFloat("Degrees", &rotation);
 					if (ImGui::Button("OK"))
 					{
 						auto temp_mesh = Object::Model("resources\\models\\" + Render::temp_custom_model);
 						glm::mat4 basic_cube_model(1.f);
-						basic_cube_model = glm::translate(basic_cube_model,
-							glm::vec3(position[0], position[1], position[2]));
-						glm::rotate(basic_cube_model, glm::radians(rotation[0]),
-							glm::vec3(position[0], position[1], position[2]));
-						Render::model_loaded object_to_load = Render::model_loaded(
-							temp_mesh, basic_shape_shader,
+						Actor object_to_load (temp_mesh, basic_shape_shader,
 							basic_cube_model, Render::view, Render::projection,
-							Render::camera_position);
-						Render::world_names.insert(std::pair<std::string, Render::model_loaded>(object_to_load.name, object_to_load));
-						Render::models_loaded.push(object_to_load);
-						//delete(&Render::temp_custom_model);
+							Render::camera_position, Render::temp_custom_model);
+						object_to_load.setPosition(position[0], position[1], position[2]);
+						object_to_load.setRotation(rotate_axis[0], rotate_axis[1], rotate_axis[2], rotation);
+						Render::models_loaded.push_back(object_to_load);
 						Render::custom_model = false;
 					}
 					ImGui::SameLine();

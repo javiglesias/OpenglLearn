@@ -15,6 +15,7 @@
 
 #include "Shader.h"
 #include "Model.h"
+#include "Actor.h"
 #include "../dependencies/stb_image/stb_image.h"
 #include <fstream>
 #include <iostream>
@@ -22,6 +23,7 @@
 #include <thread>
 #include <future>
 #include <map>
+#include <string>
 #include <Windows.h>
 #include <filesystem>
 
@@ -96,11 +98,11 @@ namespace Render
 	float SCALE = 1.f;
 
 	std::queue<GUI_command> gui_commands_q;
-	std::queue<model_loaded> models_loaded;
-	std::queue<model_loaded> lights_loaded;
-	std::map<std::string, model_loaded> world_names;
-	std::queue<Object::Model> custom_models;
+	std::vector<Actor> models_loaded;
+	std::vector<Actor> lights_loaded;
+	std::vector<Actor> custom_models;
 	std::string temp_custom_model;
+
 	//DEBUG GUI
 	void DEBUG_LOG(std::string title, std::string value)
 	{
