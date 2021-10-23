@@ -27,14 +27,14 @@ void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view,
 	unsigned int viewer_position_location = glGetUniformLocation(shader.id, "viewer_position");
 	unsigned int light_position_location = glGetUniformLocation(shader.id, "dir_light.direction");
 	shader.use();
-	if (texture >= 0)
+	/*if (texture <= 0)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		shader.setFloat("texture_grass", texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 	}
 	else 
-	{
+	{*/
 		for (unsigned int i = 0; i < textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
@@ -51,8 +51,7 @@ void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view,
 			shader.setFloat(("material." + name + number).c_str(), i);
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
-		shader.setFloat("material_shininess", 1);
-	}
+	//}
 	glBindVertexArray(VAO);
 	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 	glUniform3fv(viewer_position_location, 1, glm::value_ptr(camera_position));

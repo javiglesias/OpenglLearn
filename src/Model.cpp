@@ -60,16 +60,24 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::cout << mesh->mNumVertices << '\n';
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
-		Vertex vertex;
-		vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
-		vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-		if (mesh->mTextureCoords[0])
+		Vertex vertex{};
+		try
 		{
-			vertex.texcoord = glm::vec2(mesh->mTextureCoords[0]->x, mesh->mTextureCoords[0]->y);
+			vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+			if(mesh->mNormals != nullptr)
+				vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+			if (mesh->mTextureCoords[0])
+			{
+				vertex.texcoord = glm::vec2(mesh->mTextureCoords[0]->x, mesh->mTextureCoords[0]->y);
+			}
+			else
+			{
+				vertex.texcoord = glm::vec2(0.f, 0.f);
+			}
 		}
-		else 
+		catch (std::exception ex)
 		{
-			vertex.texcoord = glm::vec2(0.f,0.f);
+			std::cerr << "Error reading Position, normals or texcoords" << ex.what() << '\n';
 		}
 		vertices.push_back(vertex);
 	}
@@ -81,7 +89,7 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			indices.push_back(face.mIndices[j]);
 		}
 	}
-	if (mesh->mMaterialIndex >= 0)
+	if (mesh->mMaterialIndex > 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		std::vector<Texture> diffuse_maps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -92,7 +100,7 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	}
 	else
 	{
-		aiMaterial* material;
+		aiMaterial* material{};
 	}
 	model_loaded = true;
 	return Mesh(vertices, indices, textures);

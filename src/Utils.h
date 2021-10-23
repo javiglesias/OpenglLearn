@@ -82,7 +82,7 @@ namespace Render
 	}*/
 	// END DEBUG GUI
 	int screen_width = 800, screen_heigth = 600;
-	float z_near = 0.3f, z_far = 100.f;
+	float z_near = 0.3f, z_far = 10.f;
 	glm::vec3 camera_forward;
 	float field_of_view;
 	float yaw;
@@ -110,7 +110,7 @@ namespace Render
 		Render::camera_forward, camera_up);
 	glm::mat4 projection = glm::mat4(1.f);
 	float const y_constant = camera_position.y;
-	float camera_speed = 0.05f;
+	float camera_speed = 0.01f;
 	float delta_time = 0.f;
 	float new_frame = 0.f;
 	float time_accumulated = 0.f;
@@ -120,11 +120,17 @@ namespace Render
 	unsigned int cubes_spawned = 0;
 	bool demo_mode = false;
 	bool custom_model = false;
-	bool show_GUI_cursor = true;
+	bool show_GUI_cursor = false;
 	unsigned int squared_world_size = CHUNK;
-	bool mouse_movement = false;
 	bool directional_light_enabled = false;
 	bool point_light_enabled = false;
 	bool spot_light_enabled = false;
+	const char *polygon_mode{"Solid"};
+	const char* culling_mode{ "ON" };
+	const char* stencil_mode{ "ON" };
+	const char* depth_mode{ "ON" };
+	const char* cull_mode{ "Back" };
+	float mat_shine_mode = 32.f;
+	float scale_mode = 32.f;
 }
 #endif

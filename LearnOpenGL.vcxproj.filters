@@ -54,6 +54,12 @@
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Octree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -101,6 +107,12 @@
     <ClInclude Include="src\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Octree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\basic_shader.vert" />
@@ -113,6 +125,8 @@
     <None Include="resources\shaders\basic_shape_shader.frag" />
     <None Include="resources\shaders\grass_shader.vert" />
     <None Include="resources\shaders\grass_shader.frag" />
+    <None Include="resources\shaders\rtx\rtx_basic_shader.vert" />
+    <None Include="resources\shaders\rtx\rtx_basic_shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\container.jpg">

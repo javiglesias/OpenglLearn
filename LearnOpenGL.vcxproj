@@ -114,7 +114,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _DEBUG;_CONSOLE;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\glfw-master\include;$(SolutionDir)dependencies\assimp-3.1.1\include;$(SolutionDir)dependencies\glm-0.9.9.8;$(SolutionDir)dependencies\glad-master\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -132,7 +132,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; NDEBUG;_CONSOLE;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Octree.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
@@ -157,8 +158,10 @@
     <ClCompile Include="src\vendor\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\vendor\imgui_tables.cpp" />
     <ClCompile Include="src\vendor\imgui_widgets.cpp" />
+    <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Octree.h" />
     <ClInclude Include="src\App.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
     <ClInclude Include="src\Mesh.h" />
@@ -174,6 +177,7 @@
     <ClInclude Include="src\vendor\imstb_rectpack.h" />
     <ClInclude Include="src\vendor\imstb_textedit.h" />
     <ClInclude Include="src\vendor\imstb_truetype.h" />
+    <ClInclude Include="src\UI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\basic_shader.frag" />
@@ -186,6 +190,8 @@
     <None Include="resources\shaders\light_shader.vert" />
     <None Include="resources\shaders\material_shader.frag" />
     <None Include="resources\shaders\material_shader.vert" />
+    <None Include="resources\shaders\rtx\rtx_basic_shader.frag" />
+    <None Include="resources\shaders\rtx\rtx_basic_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\awesomeface.png" />

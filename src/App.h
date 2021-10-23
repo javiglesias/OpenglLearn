@@ -21,9 +21,11 @@
 #include <queue>
 
 #define _(x) #x
-#define FRAMECAP60 0.016
-#define FRAMECAP30 0.033
+#define FRAMECAP60 0.01666666666666667
+#define FRAMECAP30 0.03333333333333333
 #define CHUNK 1000
+#define DEBUG 0
+
 
 class App
 {

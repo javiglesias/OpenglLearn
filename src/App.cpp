@@ -12,32 +12,23 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height)
 
 void mouse_movement_callback(GLFWwindow* window, double x_position, double y_position)
 {
-	if (Render::mouse_movement)
-	{
-		if (Render::first_mouse_interaction)
-		{
-			//	last_x_position = x_position;
-			//	last_y_position = y_position;
-				//Render::first_mouse_interaction = false;
-		}
-		float x_offset = x_position - Render::last_x_position;
-		float y_offset = Render::last_y_position - y_position;
-		Render::last_x_position = x_position;
-		Render::last_y_position = y_position;
-		float senseo = 0.1f;
-		x_offset *= senseo;
-		y_offset *= senseo;
-		Render::yaw += x_offset;
-		Render::pitch += y_offset;
-		// CONSTRAINTS
-		if (Render::pitch > 89.0f) Render::pitch = 89.0f;
-		if (Render::pitch < -89.0f) Render::pitch = -89.0f;
-		glm::vec3 camera_direction;
-		camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-		camera_direction.y = sin(glm::radians(Render::pitch));
-		camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-		Render::camera_forward = glm::normalize(camera_direction);
-	}
+	float x_offset = x_position - Render::last_x_position;
+	float y_offset = Render::last_y_position - y_position;
+	Render::last_x_position = x_position;
+	Render::last_y_position = y_position;
+	float senseo = 0.1f;
+	x_offset *= senseo;
+	y_offset *= senseo;
+	Render::yaw += x_offset;
+	//Render::pitch += y_offset;
+	// CONSTRAINTS
+	if (Render::pitch > 89.0f) Render::pitch = 89.0f;
+	if (Render::pitch < -89.0f) Render::pitch = -89.0f;
+	glm::vec3 camera_direction;
+	camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
+	camera_direction.y = sin(glm::radians(Render::pitch));
+	camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
+	Render::camera_forward = glm::normalize(camera_direction);
 }
 void mouse_scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 {
@@ -113,15 +104,15 @@ void process_input(GLFWwindow* m_window)
 		Render::SCALE -= 0.01f;
 	}
 
-	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	/*if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
 		Render::mouse_movement = true;
 	}
-	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE 
 		&& Render::mouse_movement)
 	{
 		Render::mouse_movement = false;
-	}
+	}*/
 }
 std::string ExePath() {
 	char pwd[256]{};
@@ -246,6 +237,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 		std::cout << "Glad loaded.\n";
 	}
 
+#if DEBUG
 	// INICIALIZAMOS IMGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -256,7 +248,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	// ESTABLECEMOS LA PATAFORMA Y RENDER
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
-
+#endif
 
 	// CALLBACKS
 	framebuffer_size_callback(m_window, Render::screen_width, Render::screen_heigth);
@@ -266,7 +258,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	glEnable(GL_BLEND);
 
 	// CREATE SHADER INSTANCE AND PROGRAM
-	Shader my_shader("resources/shaders/basic_shader.vert",
+	Shader basic_shader("resources/shaders/basic_shader.vert",
 		"resources/shaders/basic_shader.frag");
 	Shader basic_shape_shader("resources/shaders/basic_shape_shader.vert",
 		"resources/shaders/basic_shape_shader.frag");
@@ -277,17 +269,17 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Shader grass_shader("resources/shaders/grass_shader.vert",
 		"resources/shaders/grass_shader.frag");
 
-	// VERTEX BUFFER OBJECT (GPU)
+	//// VERTEX BUFFER OBJECT (GPU)
 	//unsigned int VBO;
 	//glGenBuffers(1, & VBO);
-	//// VERTEX ARRAY OBJECT
+	////// VERTEX ARRAY OBJECT
 	//unsigned int VAO;
 	//glGenVertexArrays(1, &VAO);
 	//glBindVertexArray(VAO);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle), vertices_triangle, GL_STATIC_DRAW);
 	//glEnableVertexAttribArray(0);
-	// ELEMENT BUFFER OBJECT
+	//// ELEMENT BUFFER OBJECT
 	//unsigned int indices[] = {
 	//	0,1,2,
 	//	0,2,3
@@ -306,10 +298,10 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	//glEnableVertexAttribArray(1);
 
-	//// VERTEX BUFFER OBJECT (GPU)
+	////// VERTEX BUFFER OBJECT (GPU)
 	//unsigned int VBO_triangle;
 	//glGenBuffers(1, &VBO_triangle);
-	////// VERTEX ARRAY OBJECT
+	//////// VERTEX ARRAY OBJECT
 	//unsigned int VAO_triangle;
 	//glGenVertexArrays(1, &VAO_triangle);
 	//glBindVertexArray(VAO_triangle);
@@ -318,46 +310,46 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	//glEnableVertexAttribArray(0);
 
-	/*unsigned int VBO_cube;
-	glGenBuffers(1, &VBO_cube);
-	unsigned int VAO_cube;
-	glGenVertexArrays(1, &VAO_cube);
-	glBindVertexArray(VAO_cube);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_cube_complete), vertices_cube_complete, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);*/
+	//unsigned int VBO_cube;
+	//glGenBuffers(1, &VBO_cube);
+	//unsigned int VAO_cube;
+	//glGenVertexArrays(1, &VAO_cube);
+	//glBindVertexArray(VAO_cube);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_cube_complete), vertices_cube_complete, GL_STATIC_DRAW);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
 
-	//FRAMEBUFFERS object
-	unsigned int fbo;
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "Error creating framebuffer." << '\n';
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDeleteFramebuffers(1, &fbo);
-	}
+	////FRAMEBUFFERS object
+	//unsigned int fbo;
+	//glGenFramebuffers(1, &fbo);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	//{
+	//	std::cout << "Error creating framebuffer." << '\n';
+	//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//	glDeleteFramebuffers(1, &fbo);
+	//}
 
-	unsigned int instanced_cubes;
+	/*unsigned int instanced_cubes;
 	glGenBuffers(1, &instanced_cubes);
 	glBindBuffer(GL_ARRAY_BUFFER, instanced_cubes);
-	glBufferData(GL_ARRAY_BUFFER, CHUNK * sizeof(vertices_cube_complete), NULL, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, CHUNK * sizeof(vertices_cube_complete), NULL, GL_STREAM_DRAW);*/
 
 	//// Load Texture 1
-	stbi_set_flip_vertically_on_load(false);
-	int width, heigth, nr_channels;
-	unsigned char* texture_data = stbi_load("resources/textures/Grass.png",
-		&width, &heigth, &nr_channels, 0);
-	unsigned int texture_grass;
-	glGenTextures(1, &texture_grass);
-	glBindTexture(GL_TEXTURE_2D, texture_grass);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		texture_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	stbi_image_free(texture_data);
+	//stbi_set_flip_vertically_on_load(false);
+	//int width, heigth, nr_channels;
+	//unsigned char* texture_data = stbi_load("resources/textures/Grass.png",
+	//	&width, &heigth, &nr_channels, 0);
+	//unsigned int texture_grass;
+	//glGenTextures(1, &texture_grass);
+	//glBindTexture(GL_TEXTURE_2D, texture_grass);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+	//	texture_data);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	//stbi_image_free(texture_data);
 
 	////// Load Texture 2
 	/*int width2, heigth2, nr_channels2;
@@ -387,26 +379,26 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Render::projection = glm::perspective(glm::radians(Render::field_of_view),
 		(float)Render::screen_width / Render::screen_heigth, Render::z_near, Render::z_far);
 	glm::mat4 model(1.f);
-	unsigned int model_location = glGetUniformLocation(my_shader.id, "model");
-	unsigned int view_location = glGetUniformLocation(my_shader.id, "view");
-	unsigned int projection_location = glGetUniformLocation(my_shader.id, "projection");
+	unsigned int model_location = glGetUniformLocation(basic_shader.id, "model");
+	unsigned int view_location = glGetUniformLocation(basic_shader.id, "view");
+	unsigned int projection_location = glGetUniformLocation(basic_shader.id, "projection");
 	//
 	//// GENERAL LIGHT SETTINGS
-	unsigned int viewer_position_location = glGetUniformLocation(my_shader.id, "viewer_position");
+	unsigned int viewer_position_location = glGetUniformLocation(basic_shader.id, "viewer_position");
 	//// DIRECTIONAL LIGHT
-	unsigned int light_ambient_location = glGetUniformLocation(my_shader.id, "dir_light.ambient");
-	unsigned int light_diffuse_location = glGetUniformLocation(my_shader.id, "dir_light.diffuse");
-	unsigned int light_specular_location = glGetUniformLocation(my_shader.id, "dir_light.specular");
-	unsigned int light_directional_location = glGetUniformLocation(my_shader.id, "dir_light.direction");
+	unsigned int light_ambient_location = glGetUniformLocation(basic_shader.id, "dir_light.ambient");
+	unsigned int light_diffuse_location = glGetUniformLocation(basic_shader.id, "dir_light.diffuse");
+	unsigned int light_specular_location = glGetUniformLocation(basic_shader.id, "dir_light.specular");
+	unsigned int light_directional_location = glGetUniformLocation(basic_shader.id, "dir_light.direction");
 	//// POINT LIGHT
-	unsigned int light_position_location = glGetUniformLocation(my_shader.id, "point_light[0].position");
+	unsigned int light_position_location = glGetUniformLocation(basic_shader.id, "point_light[0].position");
 
 
-	unsigned int material_ambient_location = glGetUniformLocation(my_shader.id, "material.ambient");
-	unsigned int material_diffuse_location = glGetUniformLocation(my_shader.id, "material.diffuse");
-	unsigned int material_specular_location = glGetUniformLocation(my_shader.id, "material.specular");
+	unsigned int material_ambient_location = glGetUniformLocation(basic_shader.id, "material.ambient");
+	unsigned int material_diffuse_location = glGetUniformLocation(basic_shader.id, "material.diffuse");
+	unsigned int material_specular_location = glGetUniformLocation(basic_shader.id, "material.specular");
 
-	unsigned int rgb_color_location = glGetUniformLocation(my_shader.id, "RGB_COLOR");
+	unsigned int rgb_color_location = glGetUniformLocation(basic_shader.id, "RGB_COLOR");
 
 	glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
@@ -453,6 +445,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Object::Model Torus("resources/models/BasicShapes/Torus.obj");
 	Object::Model Sphere("resources/models/BasicShapes/Sphere.obj");
 	Object::Model Cylinder("resources/models/BasicShapes/Cylinder.obj");
+	Object::Model Labyrinth("resources/models/laberinth.obj");
 
 	bool rendering_light_model = false;
 
@@ -467,7 +460,15 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Actor light_to_load(Lightbulb, light_shader,
 		light_model, Render::view, Render::projection,
 		Render::camera_position, "Light");
-	Render::lights_loaded.push_back(light_to_load);
+	//Render::lights_loaded.push_back(light_to_load);
+	// 
+	//Load the laberinth model MAP
+	Actor object_to_load(Labyrinth, basic_shader,
+		light_model, Render::view, Render::projection,
+		Render::camera_position, "map");
+	object_to_load.setPosition(0,0,0);
+	Render::models_loaded.push_back(object_to_load);
+
 	// fixed timestep
 	Render::current_frame = glfwGetTime();
 
@@ -491,15 +492,15 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 			//All the rendering things
 			glClearColor(0.f, 0.f, 0.f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+#if DEBUG
 			// IMGUI
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
-
 			// Clean the accumulated because we render this frame.
 			ImGui::LabelText("Fps", std::to_string(1 / Render::time_accumulated).c_str());
 			ImGui::LabelText("Frame", std::to_string(frame_number).c_str());
+#endif
 			Render::time_accumulated = 0;
 
 			if (Render::show_GUI_cursor)
@@ -551,7 +552,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				//// LINKING UNIFORM SHADER ATTRIBUTES
 				//if (Render::demo_mode)
 				//{
-				//	my_shader.use();
+				//	basic_shader.use();
 				//	// LIGHT CONFIG
 				//	if (Render::directional_light_enabled)
 				//	{
@@ -564,29 +565,29 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				//	if (Render::point_light_enabled)
 				//	{
 				//		glUniform3fv(light_position_location, 1, glm::value_ptr(Render::light_position));
-				//		my_shader.setFloat("point_light[0].k_constant", Render::light_k_constant);
-				//		my_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
-				//		my_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
+				//		basic_shader.setFloat("point_light[0].k_constant", Render::light_k_constant);
+				//		basic_shader.setFloat("point_light[0].k_linear", Render::light_k_linear);
+				//		basic_shader.setFloat("point_light[0].k_quadratic", Render::light_k_quadratic);
 
 				//	}
 
 				//	// MATERIAL CONFIG
 				//	if (Render::spot_light_enabled)
 				//	{
-				//		//my_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
-				//		//my_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
+				//		//basic_shader.setFloat("light.cutoff", glm::cos(glm::radians(Render::light_cutoff)));
+				//		//basic_shader.setFloat("light.outer_cutoff", glm::cos(glm::radians(Render::light_outer_cutoff)));
 				//	
 				//		glUniform3fv(material_ambient_location, 1, glm::value_ptr(glm::vec3(.5)));
 				//		glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
 				//		glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));
 
-				//		my_shader.setFloat("material.shininess", Render::shininess);
-				//		my_shader.setInt("material.diffuse_map", 0);
-				//		my_shader.setInt("material.specular_map", 1);
+				//		basic_shader.setFloat("material.shininess", Render::shininess);
+				//		basic_shader.setInt("material.diffuse_map", 0);
+				//		basic_shader.setInt("material.specular_map", 1);
 				//	}
 
-				//	my_shader.setFloat("CHUNK", CHUNK);
-				//	my_shader.setFloat("SCALE", Render::SCALE);
+				//	basic_shader.setFloat("CHUNK", CHUNK);
+				//	basic_shader.setFloat("SCALE", Render::SCALE);
 
 				//	model = glm::mat4(1.f);
 				//	model = glm::translate(model, glm::vec3(1.f));
@@ -626,11 +627,8 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				//	glUniform3fv(material_diffuse_location, 1, glm::value_ptr(glm::vec3(1)));
 				//	glUniform3fv(material_specular_location, 1, glm::value_ptr(glm::vec3(1)));*/
 
-				//	/*my_shader.setFloat("material.shininess", Render::shininess);
-				//	my_shader.setInt("material.diffuse_map", 0);
-				//	my_shader.setInt("material.specular_map", 1);*/
-				//	/*my_shader.setFloat("CHUNK", Render::cubes_spawned);
-				//	my_shader.setFloat("SCALE", Render::SCALE);*/
+					/*basic_shader.setFloat("CHUNK", Render::cubes_spawned);
+					basic_shader.setFloat("SCALE", Render::SCALE);*/
 				//	glDrawArraysInstanced(GL_TRIANGLES, 0, sizeof(vertices_cube_complete) / sizeof(float), Render::cubes_spawned);
 				//	glBindVertexArray(0);
 				//}
@@ -644,8 +642,9 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					Render::custom_model.Draw(basic_shape_shader, model, Render::view, projection, Render::camera_position,
 						Render::light_directional);
 				}*/
-				// TODO: world outliner
+#if DEBUG
 			ImGui::Begin("World outliner");
+#endif
 			if (Render::lights_loaded.size() > 0)
 			{
 				for (auto it = 0; it < Render::lights_loaded.size(); it++)
@@ -653,6 +652,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					bool to_delete = false;
 					auto light_to_draw = Render::lights_loaded.at(it);
 					static int current_outliner = 0;
+#if DEBUG
 					if (ImGui::SmallButton("X"))
 					{
 						to_delete = true;
@@ -687,6 +687,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 						}
 						ImGui::EndPopup();
 					}
+#endif
 					if (to_delete)
 					{
 						// Remove the item from the vector
@@ -696,6 +697,9 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					}
 					if (Render::lights_loaded[it].visible)
 					{
+						basic_shader.setFloat("material.shininess", Render::shininess);
+						basic_shader.setInt("material.diffuse_map", 0);
+						basic_shader.setInt("material.specular_map", 1);
 						light_to_draw.getModelLoaded().Draw(light_to_draw.getShader(), light_to_draw.getModel(),
 							Render::view, light_to_draw.getProjection(), Render::camera_position,
 							Render::light_position);
@@ -710,6 +714,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					bool to_delete = false;
 					auto model_to_draw = Render::models_loaded.at(it);
 					static int current_outliner = 0;
+#if DEBUG
 					if (ImGui::SmallButton("X"))
 					{
 						to_delete = true;
@@ -744,7 +749,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 						}
 						ImGui::EndPopup();
 					}
-
+#endif
 					if (to_delete)
 					{
 						Render::models_loaded.erase(Render::models_loaded.begin() + it);
@@ -759,8 +764,9 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				}
 			}
 			glBindVertexArray(0);
+#if DEBUG
 			ImGui::End();
-
+#endif
 			/*ImGui::Begin("DEBUG LOG");
 				for(unsigned int i=0; i<Render::gui_commands_q.size(); i++)
 				{
@@ -781,6 +787,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				}
 			ImGui::End();*/
 			//	APRENDIZAJE DE GRAFICOS y GUI
+#if DEBUG
 			if (ImGui::BeginMainMenuBar())
 			{
 				if (ImGui::BeginMenu("File"))
@@ -816,119 +823,128 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::BeginMenu("Graphics"))
-				{
-					if (ImGui::MenuItem("Wireframe"))
-					{
-						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					}
-					if (ImGui::MenuItem("Solid"))
-					{
-						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					}
-					if (ImGui::MenuItem("Culling ON"))
-					{
-						glEnable(GL_CULL_FACE);
-						glCullFace(GL_BACK);
-						//glFrontFace(GL_CCW); //This shows the model inside-out backfaces CW
-					}
-					if (ImGui::MenuItem("Culling OFF"))
-					{
-						glDisable(GL_CULL_FACE);
-					}
-					if (ImGui::MenuItem("Stencil 0x00"))
-					{
-						glEnable(GL_STENCIL_BUFFER_BIT);
-						glStencilMask(0x00);
-						glStencilFunc(GL_EQUAL, 0.5f, 0xff);
-					}
-					if (ImGui::MenuItem("Disable Stencil"))
-					{
-						glDisable(GL_STENCIL_BUFFER_BIT);
-					}
-					if (ImGui::MenuItem("Disable Depth"))
-					{
-						glDisable(GL_DEPTH_TEST);
-					}
-					if (ImGui::MenuItem("Enable Depth"))
-					{
-						glEnable(GL_DEPTH_TEST);
-						glDepthFunc(GL_LESS);
-					}
-					if (ImGui::MenuItem("Cull Back"))
-					{
-						glEnable(GL_CULL_FACE);
-						glCullFace(GL_BACK);
-					}
-					if (ImGui::MenuItem("Cull Front"))
-					{
-						glEnable(GL_CULL_FACE);
-						glCullFace(GL_FRONT);
-					}
-					if (ImGui::MenuItem("Toggle cursor", "TAB"))
-					{
-						Render::show_GUI_cursor = !Render::show_GUI_cursor;
-					}
-					if (ImGui::MenuItem("Material Shine +", "HOME"))
-					{
-						Render::shininess += 1;
-					}
-					if (ImGui::MenuItem("Material Shine -", "END"))
-					{
-						Render::shininess -= 1;
-					}
-					if (ImGui::MenuItem("Scale +", "PAG UP"))
-					{
-						Render::SCALE += 0.01f;
-					}
-					if (ImGui::MenuItem("Scale -", "PAG DOWN"))
-					{
-						Render::SCALE -= 0.01f;
-					}
-					if (ImGui::MenuItem("Frame cap 30"))
-					{
-						Render::frame_cap = FRAMECAP30;
-					}
-					if (ImGui::MenuItem("Frame cap 60"))
-					{
-						Render::frame_cap = FRAMECAP60;
-					}
-					if (ImGui::MenuItem("step by step"))
-					{
-						Render::frame_cap = 1;
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("Lighting"))
-				{
-					if (ImGui::MenuItem("Directional light", "", Render::directional_light_enabled))
-					{
-						Render::directional_light_enabled = !Render::directional_light_enabled;
-					}
-					if (ImGui::MenuItem("Spotlight", "", Render::point_light_enabled))
-					{
-						Render::point_light_enabled = !Render::point_light_enabled;
-					}
-					if (ImGui::MenuItem("Point light", "", Render::spot_light_enabled))
-					{
-						Render::spot_light_enabled = !Render::spot_light_enabled;
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("Object"))
-				{
-					/*if (ImGui::MenuItem("Instance Cube"))
-					{
-						Render::cubes_spawned++;
-					}*/
-					if (ImGui::MenuItem("Basic Shape"))
-					{
-						is_set_position_open = true;
-					}
-					ImGui::EndMenu();
-				}
 				ImGui::EndMainMenuBar();
 			}
+			ImGui::Begin("Tools");
+				if (ImGui::ArrowButton("left", ImGuiDir_Left))
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					Render::polygon_mode = "Wireframe";
+				}
+				ImGui::SameLine();
+				ImGui::Text("%s", Render::polygon_mode);
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("right", ImGuiDir_Right))
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					Render::polygon_mode = "Solid";
+				}
+				if (ImGui::ArrowButton("Culling ON", ImGuiDir_Left))
+				{
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_BACK);
+					//glFrontFace(GL_CCW); //This shows the model inside-out backfaces CW
+				}
+				ImGui::SameLine();
+				ImGui::Text("Culling");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Culling OFF", ImGuiDir_Right))
+				{
+					glDisable(GL_CULL_FACE);
+				}
+				if (ImGui::ArrowButton("Stencil 0x00", ImGuiDir_Left))
+				{
+					glEnable(GL_STENCIL_BUFFER_BIT);
+					glStencilMask(0x00);
+					glStencilFunc(GL_EQUAL, 0.5f, 0xff);
+				}
+				ImGui::SameLine();
+				ImGui::Text("Stencil");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Disable Stencil", ImGuiDir_Right))
+				{
+					glDisable(GL_STENCIL_BUFFER_BIT);
+				}
+				if (ImGui::ArrowButton("Disable Depth", ImGuiDir_Left))
+				{
+					glDisable(GL_DEPTH_TEST);
+				}
+				ImGui::SameLine();
+				ImGui::Text("Depth");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Enable Depth", ImGuiDir_Right))
+				{
+					glEnable(GL_DEPTH_TEST);
+					glDepthFunc(GL_LESS);
+				}
+				if (ImGui::ArrowButton("Cull Back", ImGuiDir_Left))
+				{
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_BACK);
+				}
+				ImGui::SameLine();
+				ImGui::Text("Cull Front/back");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Cull Front", ImGuiDir_Right))
+				{
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_FRONT);
+				}
+				if (ImGui::Button("Toggle cursor"))
+				{
+					Render::show_GUI_cursor = !Render::show_GUI_cursor;
+				}
+				if (ImGui::ArrowButton("Material Shine +", ImGuiDir_Up))
+				{
+					Render::shininess += 1;
+				}
+				ImGui::SameLine();
+				ImGui::Text("Shine");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Material Shine -", ImGuiDir_Down))
+				{
+					Render::shininess -= 1;
+				}
+				if (ImGui::ArrowButton("Scale +", ImGuiDir_Up))
+				{
+					Render::SCALE += 0.01f;
+				}
+				ImGui::SameLine();
+				ImGui::Text("scale");
+				ImGui::SameLine();
+				if (ImGui::ArrowButton("Scale -", ImGuiDir_Down))
+				{
+					Render::SCALE -= 0.01f;
+				}
+				if (ImGui::Button("Frame cap 30"))
+				{
+					Render::frame_cap = FRAMECAP30;
+				}
+				if (ImGui::Button("Frame cap 60"))
+				{
+					Render::frame_cap = FRAMECAP60;
+				}
+				if (ImGui::Button("step by step"))
+				{
+					Render::frame_cap = 1;
+				}
+				if (ImGui::MenuItem("Directional light", "", Render::directional_light_enabled))
+				{
+					Render::directional_light_enabled = !Render::directional_light_enabled;
+				}
+				if (ImGui::MenuItem("Spotlight", "", Render::point_light_enabled))
+				{
+					Render::point_light_enabled = !Render::point_light_enabled;
+				}
+				if (ImGui::MenuItem("Point light", "", Render::spot_light_enabled))
+				{
+					Render::spot_light_enabled = !Render::spot_light_enabled;
+				}
+				if (ImGui::Button("Basic Shape"))
+				{
+					is_set_position_open = true;
+				}
+			ImGui::End();
 			if (is_set_position_open)
 			{
 				if (ImGui::Begin("Position"))
@@ -1076,9 +1092,11 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					ImGui::End();
 				}
 			}
+
 			// RENDER THE DATA FOR THE GUI
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 			// poll the events and call the callback functions.
 			glfwPollEvents();
 			// swap the Color buffer
@@ -1086,11 +1104,12 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 		}
 		if (Render::time_accumulated_physics > FRAMECAP30)
 		{
-			std::cout << "simulo fisicas" << (1 / Render::time_accumulated_physics) << '\n';
 			Render::time_accumulated_physics = 0;
 		}
 	}
+#if DEBUG
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+#endif
     return 0;
 }
