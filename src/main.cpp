@@ -6,7 +6,7 @@ int main(int args, char** argv)
 {
 	if (args >= 2)
 	{
-		App2D* app_2d{};
+		App2D* app_2d = new App2D();
 		if (strcpy(argv[1], "2D"))
 		{
 			return app_2d->Run(args, argv);
@@ -14,7 +14,7 @@ int main(int args, char** argv)
 	}
 	else
 	{
-		App* app{};
+		App* app = new App();
 		return app->Run(args, argv);
 	}
 	return -1;

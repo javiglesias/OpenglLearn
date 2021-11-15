@@ -18,17 +18,17 @@ out vec3 frag_position;
 
 void main()
 {
-	float index_ID = int(gl_InstanceID/CHUNK);
-	float local_instance_ID = gl_InstanceID;
-	if(index_ID > 0)
-	{
-		local_instance_ID = CHUNK * index_ID - gl_InstanceID;
-	}
-	vec3 pos_instance  = vec3(aPos.x + local_instance_ID , aPos.y, aPos.z + index_ID) * SCALE;
-	
-	gl_Position = projection * view * model * vec4(pos_instance, 1.f);
+//	float index_ID = int(gl_InstanceID/CHUNK);
+//	float local_instance_ID = gl_InstanceID;
+//	if(index_ID > 0)
+//	{
+//		local_instance_ID = CHUNK * index_ID - gl_InstanceID;
+//	}
+//	vec3 pos_instance  = vec3(aPos.x + local_instance_ID , aPos.y, aPos.z + index_ID) * SCALE;
+//	
+	gl_Position = projection * view * model * vec4(aPos, 1.f);
 	texCoord = aTexCoord;
 	frag_position = aPos;
 	normal = aNormal;
-	color = RGB_COLOR;// vec3(94.f,157.f,52.f);
+	color =  RGB_COLOR;//vec3(94.f,157.f,52.f);
 }

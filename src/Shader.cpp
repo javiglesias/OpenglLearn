@@ -4,7 +4,7 @@
 #include <iostream>
 #include "glad/glad.h"
 
-Shader::Shader(const char* vertex_path, const char* fragment_path)
+Shader::Shader(const char* vertex_path, const char* fragment_path, const char* _name)
 {
 	std::string vertex_code;
 	std::string fragment_code;
@@ -13,7 +13,7 @@ Shader::Shader(const char* vertex_path, const char* fragment_path)
 
 	v_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	f_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
+	name = _name;
 	try
 	{
 		v_shader_file.open(vertex_path);

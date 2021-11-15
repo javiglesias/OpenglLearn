@@ -12,29 +12,32 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height)
 
 void mouse_movement_callback(GLFWwindow* window, double x_position, double y_position)
 {
-	float x_offset = x_position - Render::last_x_position;
-	float y_offset = Render::last_y_position - y_position;
-	Render::last_x_position = x_position;
-	Render::last_y_position = y_position;
-	float senseo = 0.1f;
-	x_offset *= senseo;
-	y_offset *= senseo;
-	Render::yaw += x_offset;
-	//Render::pitch += y_offset;
-	// CONSTRAINTS
-	if (Render::pitch > 89.0f) Render::pitch = 89.0f;
-	if (Render::pitch < -89.0f) Render::pitch = -89.0f;
-	glm::vec3 camera_direction;
-	camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-	camera_direction.y = sin(glm::radians(Render::pitch));
-	camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
-	Render::camera_forward = glm::normalize(camera_direction);
+	if (!Render::show_GUI_cursor)
+	{
+		float x_offset = x_position - Render::last_x_position;
+		float y_offset = Render::last_y_position - y_position;
+		Render::last_x_position = x_position;
+		Render::last_y_position = y_position;
+		float senseo = 0.1f;
+		x_offset *= senseo;
+		y_offset *= senseo;
+		Render::yaw += x_offset;
+		Render::pitch += y_offset;
+		// CONSTRAINTS
+		if (Render::pitch > 89.0f) Render::pitch = 89.0f;
+		if (Render::pitch < -89.0f) Render::pitch = -89.0f;
+		glm::vec3 camera_direction;
+		camera_direction.x = cos(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
+		camera_direction.y = sin(glm::radians(Render::pitch));
+		camera_direction.z = sin(glm::radians(Render::yaw)) * cos(glm::radians(Render::pitch));
+		Render::camera_forward = glm::normalize(camera_direction);
+	}
 }
 void mouse_scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 {
 	Render::field_of_view -= y_offset;
 	if (Render::field_of_view < 1.f) Render::field_of_view = 1.f;
-	if (Render::field_of_view > 90.f) Render::field_of_view = 90.f;
+	if (Render::field_of_view > 90.f) Render::field_of_view = 100.f;
 }
 
 void process_input(GLFWwindow* m_window)
@@ -81,10 +84,10 @@ void process_input(GLFWwindow* m_window)
 		Render::light_position -= glm::normalize(glm::cross(
 			Render::camera_up, Render::camera_forward)) * Render::camera_speed;
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_PRESS)
+	/*if (glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_PRESS)
 	{
 		Render::show_GUI_cursor = !Render::show_GUI_cursor;
-	}
+	}*/
 	// FPS old school
 	// Render::camera_position.y = Render::y_constant;
 	if (glfwGetKey(m_window, GLFW_KEY_HOME) == GLFW_PRESS)
@@ -104,15 +107,14 @@ void process_input(GLFWwindow* m_window)
 		Render::SCALE -= 0.01f;
 	}
 
-	/*if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
-		Render::mouse_movement = true;
+		Render::show_GUI_cursor = false;
 	}
-	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE 
-		&& Render::mouse_movement)
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{
-		Render::mouse_movement = false;
-	}*/
+		Render::show_GUI_cursor = true;
+	}
 }
 std::string ExePath() {
 	char pwd[256]{};
@@ -122,10 +124,6 @@ std::string ExePath() {
 int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1 
 {
 	bool is_set_position_open = false;
-	std::string line{};
-	std::vector<std::string> models{};
-	std::ifstream models_paths;
-
 	unsigned int frame_number{ 0 };
 
 	Render::first_mouse_interaction = true;
@@ -133,29 +131,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Render::pitch = 0.f;
 	Render::camera_forward = glm::vec3(0.f, 0.f, -1.f);
 	Render::field_of_view = 90.f;
-	system("resources\\bats\\seachModels.bat");
-	models_paths.open("resources\\models\\models.log", std::fstream::in);
-	while (models_paths.is_open() && models_paths.good() && !models_paths.eof())
-	{
-		try
-		{
-			char c = (char)models_paths.get();
-			if (c != '\n')
-			{
-				line += c;
-			}
-			else
-			{
-				std::cout << line << '\n';
-				models.push_back(line);
-				line = "";
-			}
-		}
-		catch (std::exception ex)
-		{
-			std::cerr << "Cannot find models." << '\n';
-		}
-	}
+	GetModelsOnFolder();
 	float vertices_cube_complete[] = {
 		// CUBO COMPLETO
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -259,16 +235,20 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 
 	// CREATE SHADER INSTANCE AND PROGRAM
 	Shader basic_shader("resources/shaders/basic_shader.vert",
-		"resources/shaders/basic_shader.frag");
+		"resources/shaders/basic_shader.frag", "basic_shader");
+	Render::loaded_shaders.push_back(basic_shader);
 	Shader basic_shape_shader("resources/shaders/basic_shape_shader.vert",
-		"resources/shaders/basic_shape_shader.frag");
+		"resources/shaders/basic_shape_shader.frag", "basic_shape_shader");
+	Render::loaded_shaders.push_back(basic_shape_shader);
 	Shader light_shader("resources/shaders/light_shader.vert",
-		"resources/shaders/light_shader.frag");
+		"resources/shaders/light_shader.frag", "light_shader");
+	Render::loaded_shaders.push_back(light_shader);
 	Shader backpack_shader("resources/shaders/material_shader.vert",
-		"resources/shaders/material_shader.frag");
+		"resources/shaders/material_shader.frag", "material_shader");
+	Render::loaded_shaders.push_back(backpack_shader);
 	Shader grass_shader("resources/shaders/grass_shader.vert",
-		"resources/shaders/grass_shader.frag");
-
+		"resources/shaders/grass_shader.frag", "grass_shader");
+	Render::loaded_shaders.push_back(grass_shader);
 	//// VERTEX BUFFER OBJECT (GPU)
 	//unsigned int VBO;
 	//glGenBuffers(1, & VBO);
@@ -379,26 +359,26 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Render::projection = glm::perspective(glm::radians(Render::field_of_view),
 		(float)Render::screen_width / Render::screen_heigth, Render::z_near, Render::z_far);
 	glm::mat4 model(1.f);
-	unsigned int model_location = glGetUniformLocation(basic_shader.id, "model");
+	unsigned int model_location = glGetUniformLocation(Render::loaded_shaders[0].id, "model");
 	unsigned int view_location = glGetUniformLocation(basic_shader.id, "view");
-	unsigned int projection_location = glGetUniformLocation(basic_shader.id, "projection");
+	unsigned int projection_location = glGetUniformLocation(Render::loaded_shaders[0].id, "projection");
 	//
 	//// GENERAL LIGHT SETTINGS
-	unsigned int viewer_position_location = glGetUniformLocation(basic_shader.id, "viewer_position");
+	unsigned int viewer_position_location = glGetUniformLocation(Render::loaded_shaders[0].id, "viewer_position");
 	//// DIRECTIONAL LIGHT
-	unsigned int light_ambient_location = glGetUniformLocation(basic_shader.id, "dir_light.ambient");
-	unsigned int light_diffuse_location = glGetUniformLocation(basic_shader.id, "dir_light.diffuse");
-	unsigned int light_specular_location = glGetUniformLocation(basic_shader.id, "dir_light.specular");
-	unsigned int light_directional_location = glGetUniformLocation(basic_shader.id, "dir_light.direction");
+	unsigned int light_ambient_location = glGetUniformLocation(Render::loaded_shaders[0].id, "dir_light.ambient");
+	unsigned int light_diffuse_location = glGetUniformLocation(Render::loaded_shaders[0].id, "dir_light.diffuse");
+	unsigned int light_specular_location = glGetUniformLocation(Render::loaded_shaders[0].id, "dir_light.specular");
+	unsigned int light_directional_location = glGetUniformLocation(Render::loaded_shaders[0].id, "dir_light.direction");
 	//// POINT LIGHT
-	unsigned int light_position_location = glGetUniformLocation(basic_shader.id, "point_light[0].position");
+	unsigned int light_position_location = glGetUniformLocation(Render::loaded_shaders[0].id, "point_light[0].position");
 
 
-	unsigned int material_ambient_location = glGetUniformLocation(basic_shader.id, "material.ambient");
-	unsigned int material_diffuse_location = glGetUniformLocation(basic_shader.id, "material.diffuse");
-	unsigned int material_specular_location = glGetUniformLocation(basic_shader.id, "material.specular");
+	unsigned int material_ambient_location = glGetUniformLocation(Render::loaded_shaders[0].id, "material.ambient");
+	unsigned int material_diffuse_location = glGetUniformLocation(Render::loaded_shaders[0].id, "material.diffuse");
+	unsigned int material_specular_location = glGetUniformLocation(Render::loaded_shaders[0].id, "material.specular");
 
-	unsigned int rgb_color_location = glGetUniformLocation(basic_shader.id, "RGB_COLOR");
+	unsigned int rgb_color_location = glGetUniformLocation(Render::loaded_shaders[0].id, "RGB_COLOR");
 
 	glm::mat4 view(1.f);
 	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
@@ -447,10 +427,10 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	Object::Model Cylinder("resources/models/BasicShapes/Cylinder.obj");
 	Object::Model Labyrinth("resources/models/laberinth.obj");
 
-	bool rendering_light_model = false;
+	//bool rendering_light_model = false;
 
 	// INITIAL LIGHT
-	unsigned int light_model_location = glGetUniformLocation(light_shader.id, "model");
+	/*unsigned int light_model_location = glGetUniformLocation(light_shader.id, "model");
 	unsigned int light_view_location = glGetUniformLocation(light_shader.id, "view");
 	unsigned int light_projection_location = glGetUniformLocation(light_shader.id, "projection");
 
@@ -459,19 +439,12 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	light_model = glm::translate(light_model, Render::light_position);
 	Actor light_to_load(Lightbulb, light_shader,
 		light_model, Render::view, Render::projection,
-		Render::camera_position, "Light");
+		Render::camera_position, "Light");*/
 	//Render::lights_loaded.push_back(light_to_load);
-	// 
-	//Load the laberinth model MAP
-	Actor object_to_load(Labyrinth, basic_shader,
-		light_model, Render::view, Render::projection,
-		Render::camera_position, "map");
-	object_to_load.setPosition(0,0,0);
-	Render::models_loaded.push_back(object_to_load);
+	//Render::models_loaded.push_back(light_to_load);
 
 	// fixed timestep
 	Render::current_frame = glfwGetTime();
-
 	//Render loop
 	while (!glfwWindowShouldClose(m_window))
 	{
@@ -483,6 +456,12 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 		// Frame fixed a 60
 		if (Render::time_accumulated > Render::frame_cap)
 		{
+#if DEBUG
+			// IMGUI
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+#endif
 			frame_number++;
 			process_input(m_window);
 
@@ -493,10 +472,6 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 			glClearColor(0.f, 0.f, 0.f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 #if DEBUG
-			// IMGUI
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
 			// Clean the accumulated because we render this frame.
 			ImGui::LabelText("Fps", std::to_string(1 / Render::time_accumulated).c_str());
 			ImGui::LabelText("Frame", std::to_string(frame_number).c_str());
@@ -697,9 +672,9 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					}
 					if (Render::lights_loaded[it].visible)
 					{
-						basic_shader.setFloat("material.shininess", Render::shininess);
-						basic_shader.setInt("material.diffuse_map", 0);
-						basic_shader.setInt("material.specular_map", 1);
+						Render::loaded_shaders[0].setFloat("material.shininess", Render::shininess);
+						Render::loaded_shaders[0].setInt("material.diffuse_map", 0);
+						Render::loaded_shaders[0].setInt("material.specular_map", 1);
 						light_to_draw.getModelLoaded().Draw(light_to_draw.getShader(), light_to_draw.getModel(),
 							Render::view, light_to_draw.getProjection(), Render::camera_position,
 							Render::light_position);
@@ -756,7 +731,11 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 						continue;
 					}
 					if (Render::models_loaded[it].visible)
-					{
+					{					
+						//Set the Shader properties for the model
+						unsigned int color_location = glGetUniformLocation(model_to_draw.getShader().id, "RGB_COLOR");
+						glUniform3fv(color_location, 1, glm::value_ptr(model_to_draw.getShader().rgba_color));
+
 						model_to_draw.getModelLoaded().Draw(model_to_draw.getShader(), model_to_draw.getModel(),
 							Render::view, model_to_draw.getProjection(), Render::camera_position,
 							Render::light_position);
@@ -794,7 +773,6 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				{
 					if (ImGui::BeginMenu("Load model", models.size() > 0))
 					{
-						// TODO: Search all the models on a folder and show on load
 						for (auto model : models)
 						{
 							if (ImGui::SmallButton("->"))
@@ -1046,7 +1024,7 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 							actor_name = _(Monkey);
 							break;
 						}
-						Actor object_to_load(model_to_load, basic_shape_shader,
+						Object::Actor object_to_load(model_to_load, basic_shape_shader,
 							basic_cube_model, Render::view, Render::projection,
 							Render::camera_position, actor_name);
 						Render::models_loaded.push_back(object_to_load);
@@ -1066,21 +1044,52 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 				{
 					ImGui::Text("Set the position and rotation to spawn:");
 					ImGui::Separator();
-					float position[3]{ 0.f };
-					ImGui::InputFloat3("position", position);
-					float rotate_axis[3]{ 0.f };
-					ImGui::InputFloat3("Rotation axis", rotate_axis);
-					float rotation;
+					float position[3];
+					ImGui::InputFloat3("position", position, "%.2f");
+					float rotate_axis[3];
+					ImGui::InputFloat3("Rotation axis", rotate_axis, "%.2f");
+					float rotation = 0.f;
 					ImGui::InputFloat("Degrees", &rotation);
+					static int current_shader_idx = 0;
+					Shader current_shader_selected = Render::loaded_shaders[current_shader_idx];
+					const char* current_shader_name = current_shader_selected.name;
+					if (ImGui::BeginCombo("Shader to apply", current_shader_name, NULL))
+					{
+						for (int i = 0 ; i<Render::loaded_shaders.size(); i++)
+						{
+							auto shader = Render::loaded_shaders[i];
+							const bool is_selected = (current_shader_idx == i);
+							if (ImGui::Selectable(shader.name, is_selected))
+							{
+								current_shader_idx = i;
+							}
+							if (is_selected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+					static ImVec4 rgba_color = ImVec4(0.f, 0.f,0.f, 0.f);
+					if (ImGui::TreeNode("Color pick shader"))
+					{
+						ImGui::ColorEdit3("rgb color", (float*)&rgba_color, NULL);
+						ImGui::TreePop();
+					}
+					float scale_vec[3];
+					ImGui::InputFloat3("Scale", scale_vec);
 					if (ImGui::Button("OK"))
 					{
 						auto temp_mesh = Object::Model("resources\\models\\" + Render::temp_custom_model);
 						glm::mat4 basic_cube_model(1.f);
-						Actor object_to_load(temp_mesh, basic_shape_shader,
+						// TODO: Escalar el modelo que se instancia
+						basic_cube_model = glm::scale(basic_cube_model, glm::vec3(scale_vec[0], scale_vec[1], scale_vec[2]));
+						current_shader_selected.rgba_color = glm::vec4(rgba_color.x, rgba_color.y, rgba_color.z, rgba_color.w);
+						basic_cube_model = glm::rotate(basic_cube_model, glm::radians(rotation), glm::vec3(rotate_axis[0], rotate_axis[1], rotate_axis[2]));
+						Object::Actor object_to_load(temp_mesh, current_shader_selected,
 							basic_cube_model, Render::view, Render::projection,
 							Render::camera_position, Render::temp_custom_model);
 						object_to_load.setPosition(position[0], position[1], position[2]);
-						object_to_load.setRotation(rotate_axis[0], rotate_axis[1], rotate_axis[2], rotation);
 						Render::models_loaded.push_back(object_to_load);
 						Render::custom_model = false;
 					}
@@ -1092,11 +1101,10 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 					ImGui::End();
 				}
 			}
-
 			// RENDER THE DATA FOR THE GUI
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif
+#endif // DEBUG
 			// poll the events and call the callback functions.
 			glfwPollEvents();
 			// swap the Color buffer
@@ -1112,4 +1120,34 @@ int App::Run(int args, char** argv,unsigned int mode) // mode Debug:0 Retail:1
 	ImGui::DestroyContext();
 #endif
     return 0;
+}
+
+void App::GetModelsOnFolder()
+{
+	std::string line{};
+	std::ifstream models_paths;
+	models = std::vector<std::string>();
+	system("resources\\bats\\seachModels.bat");
+	models_paths.open("resources\\models\\.models.temp", std::fstream::in);
+	while (models_paths.is_open() && models_paths.good() && !models_paths.eof())
+	{
+		try
+		{
+			char c = (char)models_paths.get();
+			if (c != '\n')
+			{
+				line += c;
+			}
+			else
+			{
+				std::cout << line << '\n';
+				models.push_back(line);
+				line = "";
+			}
+		}
+		catch (std::exception ex)
+		{
+			std::cerr << "Cannot find models." << '\n';
+		}
+	}
 }

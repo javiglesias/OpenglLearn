@@ -8,8 +8,10 @@ class Shader
 {
 public:
 	unsigned int id;
+	const char* name="";
+	glm::vec4 rgba_color{1.f};
 	Shader(){}
-	Shader(const char* vertex_path, const char* fragment_path);
+	Shader(const char* vertex_path, const char* fragment_path, const char* _name="");
 	void use();
 	void setBool(const std::string &name, bool value) const;
 	void setFloat(const std::string &name, float value) const;

@@ -1,18 +1,16 @@
 ﻿  App.cpp
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\Utils.h(118,30): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(24,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(25,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(26,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(27,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(45,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(446,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(473,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(478,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(515,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(844,31): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(891,37): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(895,37): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\Alientech\Documents\Projects\OpenglLearn\src\App.cpp(797,15): warning C4101: 'next_token': unreferenced local variable
-  main.cpp
-  Generating Code...
-  LearnOpenGL.vcxproj -> C:\Users\Alientech\Documents\Projects\OpenglLearn\x64\Debug\LearnOpenGL.exe
+C:\Users\B00l\source\repos\OpenglLearn\src\Utils.h(118,30): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(17,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(18,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(19,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(20,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(38,27): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(417,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(447,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(451,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(490,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(837,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(899,36): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(903,36): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(781,15): warning C4101: 'next_token': unreferenced local variable
+  LearnOpenGL.vcxproj -> C:\Users\B00l\source\repos\OpenglLearn\x64\Debug\LearnOpenGL.exe

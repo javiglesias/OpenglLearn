@@ -24,13 +24,16 @@
 #define FRAMECAP60 0.01666666666666667
 #define FRAMECAP30 0.03333333333333333
 #define CHUNK 1000
-#define DEBUG 0
+#define DEBUG 1
 
 
 class App
 {
-	App() {}
 public:
+	App() {}
 	int Run(int args, char** argv, unsigned int mode=0);
+private:
+	std::vector<std::string> models{};
+	void GetModelsOnFolder();
 };
 #endif // !C__APP_HEADER

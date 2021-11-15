@@ -1,1 +1,1 @@
-dir /b resources\\models\\*.obj > resources\\models\\models.log
+dir /b resources\\models\\*.obj > resources\\models\\.models.temp

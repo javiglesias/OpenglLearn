@@ -65,9 +65,9 @@ namespace Render
 	float SCALE = 1.f;
 
 	std::queue<GUI_command> gui_commands_q;
-	std::vector<Actor> models_loaded;
-	std::vector<Actor> lights_loaded;
-	std::vector<Actor> custom_models;
+	std::vector<Object::Actor> models_loaded;
+	std::vector<Object::Actor> lights_loaded;
+	std::vector<Object::Actor> custom_models;
 	std::string temp_custom_model;
 
 	//DEBUG GUI
@@ -120,7 +120,7 @@ namespace Render
 	unsigned int cubes_spawned = 0;
 	bool demo_mode = false;
 	bool custom_model = false;
-	bool show_GUI_cursor = false;
+	bool show_GUI_cursor = true;
 	unsigned int squared_world_size = CHUNK;
 	bool directional_light_enabled = false;
 	bool point_light_enabled = false;
@@ -132,5 +132,6 @@ namespace Render
 	const char* cull_mode{ "Back" };
 	float mat_shine_mode = 32.f;
 	float scale_mode = 32.f;
+	std::vector<Shader> loaded_shaders{};
 }
 #endif
