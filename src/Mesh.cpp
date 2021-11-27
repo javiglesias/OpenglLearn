@@ -5,7 +5,9 @@
 #include "GLFW/glfw3.h" 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
+#include <iostream>
 
+using namespace Object;
 
 Object::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
@@ -74,6 +76,7 @@ void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view,
 			0.3f, 10.f);
 	}
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
+	// TODO: Draw objects that are the same as instances.
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }

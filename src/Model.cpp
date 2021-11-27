@@ -103,6 +103,7 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		aiMaterial* material{};
 	}
 	model_loaded = true;
+	total_triangles += indices.size() / 3;
 	return Mesh(vertices, indices, textures);
 }
 

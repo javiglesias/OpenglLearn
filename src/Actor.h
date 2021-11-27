@@ -10,6 +10,9 @@ namespace Object
 	class Actor
 	{
 	public:
+		Actor() {}
+		Actor(glm::mat4 _view, glm::mat4 _projection,
+			glm::vec3 _camera_position, bool _visible);
 		Actor(Object::Model _model_load, Shader _shader,
 			glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
 			glm::vec3 _camera_position, std::string _name = "model_",

@@ -1,16 +1,19 @@
 ﻿  App.cpp
 C:\Users\B00l\source\repos\OpenglLearn\src\Utils.h(118,30): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(17,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\B00l\source\repos\OpenglLearn\dependencies\glad-master\include\glad\glad.h(32): message : see previous definition of 'APIENTRY'
 C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(18,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(19,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(19,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(20,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(38,27): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(417,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(447,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(451,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(490,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(837,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(899,36): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(903,36): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(781,15): warning C4101: 'next_token': unreferenced local variable
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(21,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(39,27): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(271,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(292,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(296,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(342,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(438,116): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(511,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(573,36): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(577,36): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(459,15): warning C4101: 'next_token': unreferenced local variable
   LearnOpenGL.vcxproj -> C:\Users\B00l\source\repos\OpenglLearn\x64\Debug\LearnOpenGL.exe

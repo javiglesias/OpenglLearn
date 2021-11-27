@@ -77,7 +77,7 @@ void main()
 //	{
 //		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
 //	}
-	FragColor = vec4(normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
+	FragColor =  vec4(result + normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
 }
 
 float LinearizeDepth(float depth) 
@@ -91,10 +91,10 @@ vec3 directional_light_calculations(DirectionalLight light, vec3 normal, vec3 fr
 	vec3 light_dir = normalize(-light.direction);
 	float diff = max(dot(normal, light_dir), 0.0f);
 	vec3 reflect_dir = reflect(-light_dir, normal);
-	float spec = pow(max(dot(viewer_direction, reflect_dir), 0.0f), material.shininess);
-	vec3 ambient = light.ambient * vec3(texture(material.diffuse_map, texCoord));
-	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse_map, texCoord));
-	vec3 specular = light.specular * spec * vec3(texture(material.specular_map, texCoord));
+	float spec = pow(max(dot(viewer_direction, reflect_dir), 0.0f), 32);//material.shininess);
+	vec3 ambient = light.ambient; //* vec3(texture(material.diffuse_map, texCoord));
+	vec3 diffuse = light.diffuse * diff; //* vec3(texture(material.diffuse_map, texCoord));
+	vec3 specular = light.specular * spec;// * vec3(texture(material.specular_map, texCoord));
 	return ambient + diffuse + specular;
 }
 

@@ -32,9 +32,9 @@ struct SpotLight
 in vec3 Positions;
 in vec3 Normal;
 in vec2 TexCoord;
-in vec3 Color;
+in vec3 color;
 
-out vec4 FragColor;
+out vec4 Fragcolor;
 
 float near = 0.3f;
 float far = 100.f;
@@ -54,13 +54,20 @@ uniform PointLight point_light[NR_POINT_LIGHTS];
 
 void main() 
 {
-	//vec3 directional = directional_light_calculations();
-	//vec3 result =  vec3(1, 0, 1)+directional;
-	//for(int i = 0; i<NR_POINT_LIGHTS; i++)
-	//{
-	//	result += point_light_calculations(point_light[i]);
-	//}
-    FragColor = vec4(0.f, 0.f, 1.f, 1.f);
+vec3 normalized_color = color;
+	vec3 directional = directional_light_calculations();
+	vec3 result =  vec3(1, 0, 1)+directional;
+	if(normalized_color.x > 1.f) 
+	{
+		normalized_color.x = normalized_color.x/256;
+		normalized_color.y = normalized_color.y/256;
+		normalized_color.z = normalized_color.z/256;
+	}
+//	for(int i = 0; i<NR_POINT_LIGHTS; i++)
+//	{
+//		result += point_light_calculations(point_light[i]);
+//	}
+    Fragcolor = vec4(normalized_color, 1.f);
 }
 
 vec3 directional_light_calculations()
@@ -68,11 +75,12 @@ vec3 directional_light_calculations()
 	vec3 viewer_direction = normalize(viewer_position - Positions);
 	vec3 light_dir = normalize(-dir_light.direction);
 	float diff = max(dot(Normal, light_dir), 0.0f);
-	vec3 reflect_dir = reflect(-light_dir, Normal);
+	vec3 reflect_dir = reflect(-light_dir, vec3(1.f));
 	float spec = pow(max(dot(viewer_direction, reflect_dir), 0.0f), material_shininess);
-	vec3 ambient = light_ambient * Color;
-	vec3 diffuse = light_diffuse * diff * Color;
-	vec3 specular = light_specular * spec * Color;
+	vec3 ambient = light_ambient * color;
+	vec3 diffuse = light_diffuse * diff * color;
+	vec3 specular = light_specular * spec * color;
+
 	return ambient + diffuse + specular;
 }
 

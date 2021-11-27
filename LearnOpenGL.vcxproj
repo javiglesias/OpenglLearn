@@ -204,6 +204,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Instanced_Actor.cpp" />
+    <ClCompile Include="src\Physics.cpp" />
     <ClCompile Include="src\2DApp.cpp" />
     <ClCompile Include="src\Octree.cpp" />
     <ClCompile Include="src\App.cpp" />
@@ -222,6 +224,8 @@
     <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Instanced_Actor.h" />
+    <ClInclude Include="src\Physics.h" />
     <ClInclude Include="src\2DApp.h" />
     <ClInclude Include="src\Octree.h" />
     <ClInclude Include="src\App.h" />

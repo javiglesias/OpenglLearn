@@ -2,6 +2,21 @@
 
 namespace Object
 {
+	Actor::Actor(glm::mat4 _view, glm::mat4 _projection,
+		glm::vec3 _camera_position, bool _visible)
+	{
+		Model Lightbulb("resources/models/BasicShapes/LightBulb.obj");
+		Shader light_shader("resources/shaders/light_shader.vert",
+			"resources/shaders/light_shader.frag", "light_shader");
+		model_load = Lightbulb;
+		shader = light_shader;
+		model = glm::mat4(1.f);
+		view = _view;
+		projection = _projection;
+		camera_position = _camera_position;
+		name = "object";
+		visible = _visible;
+	}
 	Actor::Actor(Object::Model _model_load, Shader _shader,
 		glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
 		glm::vec3 _camera_position, std::string _name,

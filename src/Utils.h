@@ -1,5 +1,14 @@
 #ifndef C__RENDER
 #define C__RENDER
+
+#include "Actor.h"
+#include <queue>
+
+#define _(x) #x
+#define FRAMECAP60 0.01666666666666667
+#define FRAMECAP30 0.03333333333333333
+#define CHUNK 1000
+#define DEBUG 1
 // Rendering Namespace
 namespace Render
 {
@@ -66,22 +75,12 @@ namespace Render
 
 	std::queue<GUI_command> gui_commands_q;
 	std::vector<Object::Actor> models_loaded;
+	std::vector<Object::Actor> static_world;
+	std::vector<Object::Actor> dynamic_world;
 	std::vector<Object::Actor> lights_loaded;
-	std::vector<Object::Actor> custom_models;
 	std::string temp_custom_model;
 
-	//DEBUG GUI
-	/*void DEBUG_LOG(std::string title, std::string value)
-	{
-		gui_commands_q.push(Render::GUI_command(
-			Render::GUI_COMMANDS::Text, title.c_str()));
-		gui_commands_q.push(Render::GUI_command(
-			Render::GUI_COMMANDS::SameLine, ""));
-		gui_commands_q.push(GUI_command(
-			GUI_COMMANDS::Text, value.c_str()));
-	}*/
-	// END DEBUG GUI
-	int screen_width = 800, screen_heigth = 600;
+	unsigned int screen_width = 1024, screen_heigth = 720;
 	float z_near = 0.3f, z_far = 10.f;
 	glm::vec3 camera_forward;
 	float field_of_view;
@@ -93,7 +92,7 @@ namespace Render
 	glm::vec4 light_ambient(1.f, 1.f, 1.f, 1.f);
 	glm::vec4 light_diffuse(1.f, 1.f, 1.f, 1.f);
 	glm::vec4 light_specular(1.f, 1.f, 1.f, 1.f);
-	glm::vec3 light_position(0.f);
+	glm::vec3 light_position(1.f);
 	glm::vec3 light_directional(0.f, 0.f, 1.f);
 	float light_k_constant = 1.0;
 	float light_k_linear = 0.09f;
@@ -105,6 +104,7 @@ namespace Render
 	glm::vec3 coral(1.f, .5f, .31f);
 	bool VAO_MODE = true;
 	glm::vec3 camera_position = glm::vec3(0.f, 0.f, 0.3f);
+	float go_camera_position[3]{camera_position.x, camera_position.y, camera_position.z};
 	glm::vec3 camera_up = glm::vec3(0.f, 1.f, 0.f);
 	glm::mat4 view = glm::lookAt(camera_position,
 		Render::camera_forward, camera_up);

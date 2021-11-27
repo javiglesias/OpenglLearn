@@ -21,6 +21,7 @@ namespace Object
 			glm::mat4 projection, glm::vec3 camera_position,
 			glm::vec3 light_position, unsigned int texture = -1);
 	private:
+		unsigned int total_triangles = 0;
 		std::vector<Mesh> meshes;
 		std::string directory;
 		int width, heigth, nr_channels;
