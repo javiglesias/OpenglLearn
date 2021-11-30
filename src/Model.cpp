@@ -13,13 +13,21 @@
 
 void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
 	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
-	unsigned int texture)
+	unsigned int texture, unsigned int _instance_count)
 {
+	/*Mesh mesh_to_draw = meshes[0];*/
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
+		/*for (auto indice : meshes[i].indices)
+		{
+			mesh_to_draw.indices.push_back(indice);
+		}*/
 		meshes[i].Draw(shader, model, view, projection, camera_position, 
-			light_position, texture);
+			light_position, texture, 1000);
 	}
+	// TODO: Draw objects that are the same as instances.
+	/*mesh_to_draw.Draw(shader, model, view, projection, camera_position,
+		light_position, texture);*/
 }
 
 void Object::Model::loadModel(std::string path)
@@ -45,7 +53,6 @@ void Object::Model::processNode(aiNode* node, const aiScene* scene)
 	}
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		std::cout << node->mChildren[i]->mName.C_Str() << ": ";
 		processNode(node->mChildren[i], scene);
 	}
 }
@@ -57,7 +64,6 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Texture> textures;
 
 	triangle_count += mesh->mNumVertices/3;
-	std::cout << mesh->mNumVertices << '\n';
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex{};

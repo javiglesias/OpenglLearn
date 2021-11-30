@@ -8,7 +8,7 @@
 #define FRAMECAP60 0.01666666666666667
 #define FRAMECAP30 0.03333333333333333
 #define CHUNK 1000
-#define DEBUG 1
+#define DEBUG 1 // 0 retail
 // Rendering Namespace
 namespace Render
 {

@@ -77,7 +77,7 @@ void main()
 //	{
 //		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
 //	}
-	FragColor =  vec4(result + normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
+	FragColor =  vec4(normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
 }
 
 float LinearizeDepth(float depth) 

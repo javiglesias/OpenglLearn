@@ -1,4 +1,5 @@
-﻿  App.cpp
+﻿  Actor.cpp
+  App.cpp
 C:\Users\B00l\source\repos\OpenglLearn\src\Utils.h(118,30): warning C4305: 'initializing': truncation from 'double' to 'float'
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
 C:\Users\B00l\source\repos\OpenglLearn\dependencies\glad-master\include\glad\glad.h(32): message : see previous definition of 'APIENTRY'
@@ -8,12 +9,22 @@ C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(20,29): warning C4244: '=': c
 C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(21,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(39,27): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
 C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(271,29): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(292,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(296,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(342,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(438,116): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(511,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(573,36): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(577,36): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(459,15): warning C4101: 'next_token': unreferenced local variable
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(308,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(312,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(358,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(526,30): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(588,36): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(592,36): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\App.cpp(474,15): warning C4101: 'next_token': unreferenced local variable
+  Instanced_Actor.cpp
+  Mesh.cpp
+C:\Users\B00l\source\repos\OpenglLearn\src\Mesh.cpp(53,59): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\B00l\source\repos\OpenglLearn\src\Mesh.cpp(82,89): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Model.cpp
+C:\Users\B00l\source\repos\OpenglLearn\src\Model.cpp(112,36): warning C4267: '+=': conversion from 'size_t' to 'unsigned int', possible loss of data
+  main.cpp
+C:\Users\B00l\source\repos\OpenglLearn\src\2DApp.h(23,20): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\B00l\source\repos\OpenglLearn\src\2DApp.h(24,28): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating Code...
   LearnOpenGL.vcxproj -> C:\Users\B00l\source\repos\OpenglLearn\x64\Debug\LearnOpenGL.exe
+  0 File(s) copied

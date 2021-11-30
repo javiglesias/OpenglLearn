@@ -19,7 +19,7 @@ namespace Object
 		}
 		void Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
 			glm::mat4 projection, glm::vec3 camera_position,
-			glm::vec3 light_position, unsigned int texture = -1);
+			glm::vec3 light_position, unsigned int texture = -1, unsigned int _instance_count=1);
 	private:
 		unsigned int total_triangles = 0;
 		std::vector<Mesh> meshes;

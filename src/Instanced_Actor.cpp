@@ -7,7 +7,3 @@ Instanced_Actor::Instanced_Actor(glm::mat4 _view, glm::mat4 _projection,
 {
 }
 
-Instanced_Actor::Instanced_Actor(BASIC_SHAPES _basic_shape=BASIC_SHAPES::Cube)
-{
-	basic_shape = _basic_shape;
-}

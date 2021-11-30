@@ -10,7 +10,7 @@ void main()
 {
    vec4 texColor = texture(texture_bulb, TexCoords);
 	if(texColor.a < 0.1)
-		discard;;
+		discard;
 	//228,112,37 warm
-	frag_color = vec4(1.f);
+	frag_color = vec4(228,112,37,1);
 }

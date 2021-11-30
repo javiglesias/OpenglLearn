@@ -282,12 +282,28 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 	Object::Model Labyrinth("resources/models/laberinth.obj");
 
 	glm::mat4 light_model(1.f);
-	Object::Actor light_to_load(Lightbulb, light_shader,
+	Object::Actor light_to_load(Lightbulb, basic_shader,
 		light_model, Render::view, Render::projection,
 		Render::camera_position, "Light");
 	triangles_drawed += light_to_load.getModelLoaded().triangle_count;
 	Render::models_loaded.push_back(light_to_load);
 
+#if !DEBUG
+	//for (unsigned int i = 0; i < 10; i++)
+	//{
+	//	// LOAD A DEMO OF 10 BACKPACKS
+	//	auto temp_mesh = Object::Model("resources\\models\\" + models[1]);
+	//	glm::mat4 basic_cube_model(1.f);
+	//	Shader current_shader_selected = Render::loaded_shaders[0];
+	//	basic_cube_model = glm::scale(basic_cube_model, glm::vec3(1, 1, 1));
+	//	current_shader_selected.rgba_color = glm::vec4(rgba_color.x, rgba_color.y, rgba_color.z, rgba_color.w);
+	//	Object::Actor object_to_load(temp_mesh, current_shader_selected,
+	//		basic_cube_model, Render::view, Render::projection,
+	//		Render::camera_position, Render::temp_custom_model);
+	//	object_to_load.setPosition(i, 0, 0);
+	//	Render::models_loaded.push_back(object_to_load);
+	//}
+#endif
 	// fixed timestep
 	Render::current_frame = glfwGetTime();
 	//Render loop
@@ -334,8 +350,8 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 			ImGui::LabelText("Fps", std::to_string(1 / Render::time_accumulated).c_str());
 			ImGui::LabelText("Frame", std::to_string(frame_number).c_str());
 			ImGui::LabelText("Triangles drawn", std::to_string(triangles_drawed).c_str());
-			glGetString(GL_VENDOR);
-			glGetString(GL_RENDERER);
+#else
+			std::cout << std::to_string(1 / Render::time_accumulated).c_str() << '\r';
 #endif
 			Render::time_accumulated = 0;
 
@@ -400,7 +416,6 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 						glUniform3fv(light_specular_location, 1, glm::value_ptr(Render::light_specular));
 						glUniform3fv(light_directional_location, 1, glm::value_ptr(Render::light_directional));
 						glUniform3fv(viewer_position_location, 1, glm::value_ptr(Render::camera_position));
-						model_to_draw.getShader().use();
 						model_to_draw.getShader().setFloat("material_shininess", 1);
 						glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model_to_draw.getModel()));
 						glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
@@ -409,7 +424,7 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 						glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(model_to_draw.getProjection()));
 						// RENDER
 						model_to_draw.getModelLoaded().Draw(model_to_draw.getShader(), model_to_draw.getModel(),
-							Render::view, model_to_draw.getProjection(), Render::camera_position,
+							Render::view, Render::projection, Render::camera_position,
 							Render::light_position);
 					}
 				}
@@ -418,24 +433,24 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 			{
 				// TODO Draw all the different basic shapes as Instances.
 				// 1 Draw Call instead of 1 for each basic_shape to draw.
-				/*for (auto it = 0; it < Render::static_world.size(); it++)
+				for (auto it = 0; it < Render::static_world.size(); it++)
 				{
-					
-					basic_shape.getModelLoaded().Draw(basic_shape.getShader(), basic_shape.getModel(),
-						Render::view, basic_shape.getProjection(), Render::camera_position,
-						Render::light_position);
-				}*/
-				unsigned int instanceVAO;
-				glGenBuffers(1, &instanceVAO);
-				glBindBuffer(GL_ARRAY_BUFFER, instanceVAO);
-				auto basic_shape = Render::static_world[0];
-				glm::vec3 translations[100]{};
-				glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * Render::static_world.size(), &translations[0], GL_STATIC_DRAW);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glEnableVertexAttribArray(3);
-				glBindBuffer(GL_ARRAY_BUFFER, instanceVAO);
-				glUseProgram(basic_shape.getShader().id);
-				glDrawArraysInstanced(GL_TRIANGLES, 0, basic_shape.getModelLoaded().triangle_count, Render::static_world.size());
+					/*Render::static_world[it].getModelLoaded().Draw(Render::static_world[it].getShader(), Render::static_world[it].getModel(),
+						Render::view, Render::static_world[it].getProjection(), Render::camera_position,
+						Render::light_position);*/
+					Render::static_world[it].draw(Render::light_ambient, Render::light_diffuse, Render::light_specular, Render::light_directional,
+						Render::camera_position, Render::light_position, Render::projection, Render::view);
+				}
+#if DEBUG
+				if (ImGui::SmallButton(std::to_string(Render::static_world.size()).c_str()))
+				{
+
+				}
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Static World"))
+				{ }
+#endif
+			// TODO draw InstancedMesh
 			}
 #if DEBUG
 			ImGui::End();
@@ -446,7 +461,7 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 			{
 				if (ImGui::BeginMenu("File"))
 				{
-					if (ImGui::MenuItem("Save scene", false))
+					if (ImGui::MenuItem("Save scene"))
 					{
 					}
 					if (ImGui::BeginMenu("Load model", models.size() > 0))
@@ -705,10 +720,13 @@ int App::Run(int args, char** argv, unsigned int mode) // mode Debug:0 Retail:1
 							actor_name = _(Cube);
 							break;
 						}
-						Object::Actor object_to_load(model_to_load, basic_shape_shader,
+						Object::Actor object_to_load(model_to_load, basic_shader,
 							basic_cube_model, Render::view, Render::projection,
 							Render::camera_position, actor_name);
 						Render::static_world.push_back(object_to_load);
+						object_to_load.addInstance(glm::vec3(1, 0, 0));
+						object_to_load.addInstance(glm::vec3(2, 0, 0));
+						object_to_load.addInstance(glm::vec3(2, 2, 0));
 						is_set_position_open = false;
 					}
 					ImGui::SameLine();

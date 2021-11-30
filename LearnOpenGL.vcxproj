@@ -169,6 +169,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\assimp-3.1.1\lib64;$(SolutionDir)dependencies\glad-master\Debug;$(SolutionDir)dependencies\glfw-master\Debug\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glad.lib;glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectDir)resources $(OutputPath) /y /f</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='32D|x64'">
     <ClCompile>
@@ -204,6 +207,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Instanced_Mesh.cpp" />
     <ClCompile Include="src\Instanced_Actor.cpp" />
     <ClCompile Include="src\Physics.cpp" />
     <ClCompile Include="src\2DApp.cpp" />
@@ -224,6 +228,7 @@
     <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Instanced_Mesh.h" />
     <ClInclude Include="src\Instanced_Actor.h" />
     <ClInclude Include="src\Physics.h" />
     <ClInclude Include="src\2DApp.h" />

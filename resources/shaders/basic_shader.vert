@@ -10,6 +10,8 @@ uniform mat4 projection;
 uniform float CHUNK;
 uniform float SCALE;
 uniform vec3 RGB_COLOR;
+uniform vec3 instance_positions[10]; // Max instances of each object
+
 
 out vec3 color;
 out vec2 texCoord;
@@ -17,18 +19,13 @@ out vec3 normal;
 out vec3 frag_position;
 
 void main()
-{
-//	float index_ID = int(gl_InstanceID/CHUNK);
-//	float local_instance_ID = gl_InstanceID;
-//	if(index_ID > 0)
-//	{
-//		local_instance_ID = CHUNK * index_ID - gl_InstanceID;
-//	}
-//	vec3 pos_instance  = vec3(aPos.x + local_instance_ID , aPos.y, aPos.z + index_ID) * SCALE;
-//	
-	gl_Position = projection * view * model * vec4(aPos, 1.f);
+{	
+	vec3 instance_position[10];
+	instance_position[0] = vec3(0);
+	vec4 current_position = vec4(aPos.x + gl_InstanceID, aPos.y, aPos.z, 1.0); // position where draw the current instance
+	gl_Position = projection * view * model * current_position;
 	texCoord = aTexCoord;
 	frag_position = aPos;
 	normal = aNormal;
-	color =  RGB_COLOR;//vec3(94.f,157.f,52.f);
+	color =  vec3(94.f,157.f,52.f);
 }
