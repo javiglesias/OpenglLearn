@@ -27,5 +27,5 @@ void main()
 	texCoord = aTexCoord;
 	frag_position = aPos;
 	normal = aNormal;
-	color =  vec3(94.f,157.f,52.f);
+	color =  RGB_COLOR;
 }

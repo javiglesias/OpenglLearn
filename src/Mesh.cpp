@@ -7,9 +7,7 @@
 #include "gtc/type_ptr.hpp"
 #include <iostream>
 
-using namespace Object;
-
-Object::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
 	this->vertices= vertices;
 	this->indices = indices;
@@ -17,7 +15,7 @@ Object::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indic
 	setupMesh();
 }
 
-void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
+void Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
 	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
 	unsigned int texture, unsigned int _instance_count)
 {
@@ -79,12 +77,12 @@ void Object::Mesh::Draw(Shader& shader, glm::mat4 model, glm::mat4 view,
 			0.3f, 10.f);
 	}
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection_tex));
-	glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT,0, instance_count);
-	//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	//glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT,0, instance_count);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
-void Object::Mesh::setupMesh()
+void Mesh::setupMesh()
 {
 	glGenVertexArrays(1, & VAO);
 	glGenBuffers(1, &VBO);

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "glad/glad.h"
 
-Shader::Shader(const char* vertex_path, const char* fragment_path, const char* _name)
+Shader::Shader(const char* _name, const char* vertex_path, const char* fragment_path)
 {
 	std::string vertex_code;
 	std::string fragment_code;

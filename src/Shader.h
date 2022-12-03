@@ -11,7 +11,7 @@ public:
 	const char* name="";
 	glm::vec4 rgba_color{1.f};
 	Shader(){}
-	Shader(const char* vertex_path, const char* fragment_path, const char* _name="");
+	Shader(const char* _name, const char* vertex_path, const char* fragment_path);
 	void use();
 	void setBool(const std::string &name, bool value) const;
 	void setFloat(const std::string &name, float value) const;

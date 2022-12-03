@@ -15,7 +15,6 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Actor.h"
-#include "Physics.h"
 
 #include "../dependencies/stb_image/stb_image.h"
 
@@ -31,9 +30,9 @@ private:
 	unsigned int models_count = 0;
 	ImVec4 rgba_color = ImVec4(1.f, 0.f, 0.f, 0.f);
 	float scale_vec[3]{ 1.F,1.F, 1.F };
-	Physics* m_physics{};
 	std::vector<std::string> models{};
 	unsigned int triangles_drawed = 0;
-	void GetModelsOnFolder();
+	std::string sTempActorName = "Cube";
+	Model* oTempModelToCreate;
 };
 #endif // !C__APP_HEADER

@@ -11,7 +11,7 @@
 
 #include "../dependencies/stb_image/stb_image.h"
 
-void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
+void Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
 	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
 	unsigned int texture, unsigned int _instance_count)
 {
@@ -23,14 +23,14 @@ void Object::Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view,
 			mesh_to_draw.indices.push_back(indice);
 		}*/
 		meshes[i].Draw(shader, model, view, projection, camera_position, 
-			light_position, texture, 1000);
+			light_position, texture, _instance_count);
 	}
 	// TODO: Draw objects that are the same as instances.
 	/*mesh_to_draw.Draw(shader, model, view, projection, camera_position,
 		light_position, texture);*/
 }
 
-void Object::Model::loadModel(std::string path)
+void Model::loadModel(std::string path)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -44,7 +44,7 @@ void Object::Model::loadModel(std::string path)
 	processNode(scene->mRootNode, scene);
 }
 
-void Object::Model::processNode(aiNode* node, const aiScene* scene)
+void Model::processNode(aiNode* node, const aiScene* scene)
 {
 	for (unsigned int  i = 0; i < node->mNumMeshes; i++)
 	{
@@ -57,7 +57,7 @@ void Object::Model::processNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -113,7 +113,7 @@ Object::Mesh Object::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	return Mesh(vertices, indices, textures);
 }
 
-std::vector<Object::Texture> Object::Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType texture_type, std::string name)
+std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType texture_type, std::string name)
 {
 	std::vector<Texture> textures;
 	// Hacer un bucle que compruebe si la textura que se intenta cargar, ya estaba cargada en memoria, para optimizar.
@@ -133,7 +133,7 @@ std::vector<Object::Texture> Object::Model::LoadMaterialTextures(aiMaterial* mat
 	return textures;
 }
 
-unsigned int Object::Model::TextureFromFile(std::string str, std::string directory)
+unsigned int Model::TextureFromFile(std::string str, std::string directory)
 {
 	stbi_set_flip_vertically_on_load(false);
 	directory.append(str);
