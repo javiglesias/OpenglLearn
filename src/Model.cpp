@@ -11,9 +11,9 @@
 
 #include "../dependencies/stb_image/stb_image.h"
 
-void Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view, 
+void Model::Draw(Shader _Shader, glm::mat4 model, glm::mat4 view, 
 	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
-	unsigned int texture, unsigned int _instance_count)
+	glm::vec3 _LightColor, unsigned int texture, unsigned int _instance_count)
 {
 	/*Mesh mesh_to_draw = meshes[0];*/
 	for (unsigned int i = 0; i < meshes.size(); i++)
@@ -22,8 +22,8 @@ void Model::Draw(Shader& shader, glm::mat4 model, glm::mat4 view,
 		{
 			mesh_to_draw.indices.push_back(indice);
 		}*/
-		meshes[i].Draw(shader, model, view, projection, camera_position, 
-			light_position, texture, _instance_count);
+		meshes[i].Draw(_Shader, model, view, projection, camera_position, 
+			light_position, _LightColor, texture, _instance_count);
 	}
 	// TODO: Draw objects that are the same as instances.
 	/*mesh_to_draw.Draw(shader, model, view, projection, camera_position,

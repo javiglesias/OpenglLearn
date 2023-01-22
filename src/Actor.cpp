@@ -8,32 +8,28 @@
 Actor::Actor(glm::mat4 _view, glm::mat4 _projection,
 	glm::vec3 _camera_position, bool _visible)
 {
-	Model Lightbulb("resources/models/BasicShapes/LightBulb.obj");
-	Shader light_shader("resources/shaders/light_shader.vert",
-		"resources/shaders/light_shader.frag", "light_shader");
-	model_load = Lightbulb;
-	shader = light_shader;
 	model = glm::mat4(1.f);
 	view = _view;
 	projection = _projection;
 	camera_position = _camera_position;
-	name = "object";
+	memcpy(name, "object", sizeof("object"));
 	visible = _visible;
 	glm::vec3 position{ 0 };
 	instace_positions.push_back(position);
 }
-Actor::Actor(Model _model_load, Shader _shader,
+Actor::Actor(Model _model_load, uint8_t _ShaderId,
 	glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
-	glm::vec3 _camera_position, std::string _name,
+	glm::vec3 _camera_position, const char* _name, const char* _type,
 	bool _visible)
 {
 	model_load = _model_load;
-	shader = _shader;
 	model = _model;
 	view = _view;
+	ShaderId = _ShaderId;
 	projection = _projection;
 	camera_position = _camera_position;
-	name = _name;
+	memcpy(name, _name, sizeof(_name));
+	memcpy(type, _type, sizeof(type));
 	visible = _visible;
 	glm::vec3 position{0};
 	instace_positions.push_back(position);
@@ -43,9 +39,9 @@ Actor::~Actor()
 {
 }
 
-Shader& Actor::getShader()
+uint8_t Actor::getShader()
 {
-	return shader;
+	return ShaderId;
 }
 
 glm::mat4& Actor::getProjection()
@@ -70,9 +66,19 @@ Model& Actor::getModelLoaded()
 	return model_load;
 }
 
-std::string Actor::getName()
+void Actor::getName(char& name_)
+{
+	name_ = *name;
+}
+
+const char* Actor::getNameConst()
 {
 	return name;
+}
+
+const char* Actor::getTypeConst()
+{
+	return type;
 }
 
 float* Actor::getPosition()
@@ -103,15 +109,20 @@ void Actor::setRotation(float _x, float _y, float _z, float rotation)
 	glm::rotate(getModel(), glm::radians(rotation),
 		glm::vec3(_x, _y, _z));
 }
-void Actor::draw(glm::vec4 _light_ambient, glm::vec4 _light_diffuse, glm::vec4 _light_specular, glm::vec3 _light_directional, 
-	glm::vec3 _camera_position, glm::vec3 _light_position, glm::mat4 _projection, glm::mat4 _view)
+void Actor::Draw(Shader _Shader, glm::vec4 _light_ambient, glm::vec4 _light_diffuse, glm::vec4 _light_specular, glm::vec3 _light_directional, 
+	glm::vec3 _camera_position, glm::vec3 _light_position, glm::vec3 _LightColor, glm::mat4 _projection, glm::mat4 _view)
 {
 	//Set the Shader properties for the model
-	unsigned int color_location = glGetUniformLocation(shader.id, "RGB_COLOR");
-	glUniform3fv(color_location, 1, glm::value_ptr(shader.rgba_color));
-	model_load.Draw(shader, model, _view, _projection, _camera_position, _light_position);
+	
+	model_load.Draw(_Shader, model, _view, _projection, _camera_position, _light_position, _LightColor);
 }
 void Actor::addInstance(glm::vec3 _position)
 {
 	instace_positions.push_back(_position);
+}
+
+void Actor::Serialize()
+{
+	// TO-DO serializar el objeto a un string para volver a leerlo despues
+
 }

@@ -2,10 +2,11 @@
 #define C__RENDER
 
 #include "Actor.h"
+#include "vendor/imgui.h"
 
 #define _(x) #x
-#define FRAMECAP60 0.01666666666666667
-#define FRAMECAP30 0.03333333333333333
+#define FRAMECAP60 0.016667
+#define FRAMECAP30 0.033333
 #define CHUNK 1000
 #define DEBUG 1 // 0 retail
 
@@ -76,10 +77,13 @@ struct model_loaded
 
 std::vector<tHashItem<Model>>	vModelsAlreadyLoaded;
 std::vector<Actor>				vModelsLoaded;
+std::vector<Actor>				vModelsToSave;
 std::vector<Actor>				vStaticWorld;
 std::vector<Actor>				vDynamicWorld;
 std::vector<Actor>				vLightsLoaded;
 std::vector<Shader>				vLoadedShaders;
+
+ImVec4							vLightColor(255.f, 255.f, 255.f, 1.f);
 
 bool							bVAO_MODE = true;
 bool							bCustomModel = false;

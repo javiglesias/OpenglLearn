@@ -4,14 +4,15 @@
 
 #include "glm.hpp"
 #include <string>
+
 class Shader
 {
 public:
-	unsigned int id;
+	unsigned int id, iComputeShaderProgram;
 	const char* name="";
 	glm::vec4 rgba_color{1.f};
 	Shader(){}
-	Shader(const char* _name, const char* vertex_path, const char* fragment_path);
+	Shader(const char* _name, const char* vertex_path, const char* fragment_path, const char* _ComputeShader);
 	void use();
 	void setBool(const std::string &name, bool value) const;
 	void setFloat(const std::string &name, float value) const;

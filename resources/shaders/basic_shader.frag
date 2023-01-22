@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 struct DirectionalLight 
 {
@@ -6,6 +6,7 @@ struct DirectionalLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	vec3 color;
 };
 
 struct PointLight
