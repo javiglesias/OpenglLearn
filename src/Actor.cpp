@@ -17,7 +17,7 @@ Actor::Actor(glm::mat4 _view, glm::mat4 _projection,
 	glm::vec3 position{ 0 };
 	instace_positions.push_back(position);
 }
-Actor::Actor(Model _model_load, uint8_t _ShaderId,
+Actor::Actor(Model* _model_load, uint8_t _ShaderId,
 	glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
 	glm::vec3 _camera_position, const char* _name, const char* _type,
 	bool _visible)
@@ -63,7 +63,7 @@ void Actor::setModel(glm::mat4 _model)
 Model& Actor::getModelLoaded()
 {
 	// TODO: Insertar una instrucción "return" aquí
-	return model_load;
+	return *model_load;
 }
 
 void Actor::getName(char& name_)
@@ -109,12 +109,12 @@ void Actor::setRotation(float _x, float _y, float _z, float rotation)
 	glm::rotate(getModel(), glm::radians(rotation),
 		glm::vec3(_x, _y, _z));
 }
-void Actor::Draw(Shader _Shader, glm::vec4 _light_ambient, glm::vec4 _light_diffuse, glm::vec4 _light_specular, glm::vec3 _light_directional, 
-	glm::vec3 _camera_position, glm::vec3 _light_position, glm::vec3 _LightColor, glm::mat4 _projection, glm::mat4 _view)
+void Actor::Draw(Shader _Shader, glm::vec3 _camera_position, 
+	glm::vec3 _light_position, glm::vec3 _LightColor, glm::mat4 _projection, glm::mat4 _view)
 {
 	//Set the Shader properties for the model
 	
-	model_load.Draw(_Shader, model, _view, _projection, _camera_position, _light_position, _LightColor);
+	model_load->Draw(_Shader, model, _view, _projection, _camera_position, _light_position, _LightColor);
 }
 void Actor::addInstance(glm::vec3 _position)
 {

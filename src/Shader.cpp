@@ -4,7 +4,7 @@
 #include <iostream>
 #include "glad/glad.h"
 
-Shader::Shader(const char* _name, const char* vertex_path, const char* fragment_path, const char* _ComputeShader)
+Shader::Shader(const char* _Name, const char* _VertexPath, const char* _FragmentPath, const char* _ComputeShader)
 {
 	std::string vertex_code;
 	std::string fragment_code;
@@ -17,11 +17,15 @@ Shader::Shader(const char* _name, const char* vertex_path, const char* fragment_
 	f_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	c_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-	name = _name;
+	name = _Name;
+	memcpy(VertexPath, _VertexPath, sizeof(VertexPath));
+	memcpy(FragmentPath, _FragmentPath, sizeof(FragmentPath));
+	memcpy(ComputePath, _ComputeShader, sizeof(ComputePath));
+
 	try
 	{
-		v_shader_file.open(vertex_path);
-		f_shader_file.open(fragment_path);
+		v_shader_file.open(_VertexPath);
+		f_shader_file.open(_FragmentPath);
 		c_shader_file.open(_ComputeShader);
 
 		std::stringstream v_shader_stream, f_shader_stream, c_shader_stream;
@@ -44,7 +48,7 @@ Shader::Shader(const char* _name, const char* vertex_path, const char* fragment_
 	const char* v_shader_code = vertex_code.c_str();
 	const char* f_shader_code = fragment_code.c_str();
 	const char* c_shader_code = compute_code.c_str();
-	unsigned int vertex, fragment, compute;
+	int vertex, fragment, compute;
 	int success;
 	char log_info[512];
 	vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -135,4 +139,19 @@ void Shader::setInt(const std::string& name, int value) const
 void Shader::setVec3(const std::string& name, glm::vec3 value) const
 {
 	//glUniform3fv(glGetUniformLocation(id, name.c_str()), value);
+}
+
+const char* Shader::GetVertexShaderPath()
+{
+	return VertexPath;
+}
+
+const char* Shader::GetFragmentShaderPath()
+{
+	return FragmentPath;
+}
+
+const char* Shader::GetComputeShaderPath()
+{
+	return ComputePath;
 }

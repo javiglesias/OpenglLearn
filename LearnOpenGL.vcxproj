@@ -164,10 +164,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\assimp-3.1.1\lib64;$(SolutionDir)dependencies\glad-master\Debug;$(SolutionDir)dependencies\glfw-master\Debug\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glad.lib;glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <EntryPointSymbol>mainCRTStartup </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(ProjectDir)resources $(OutputPath) /y /f</Command>
@@ -226,7 +228,6 @@
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Actor.h" />
     <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\vendor\imconfig.h" />
     <ClInclude Include="src\vendor\imgui.h" />
     <ClInclude Include="src\vendor\imgui_impl_glfw.h" />
