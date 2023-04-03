@@ -5,22 +5,10 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
-Actor::Actor(glm::mat4 _view, glm::mat4 _projection,
-	glm::vec3 _camera_position, bool _visible)
-{
-	model = glm::mat4(1.f);
-	view = _view;
-	projection = _projection;
-	camera_position = _camera_position;
-	memcpy(name, "object", sizeof("object"));
-	visible = _visible;
-	glm::vec3 position{ 0 };
-	instace_positions.push_back(position);
-}
 Actor::Actor(Model* _model_load, uint8_t _ShaderId,
 	glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
 	glm::vec3 _camera_position, const char* _name, const char* _type,
-	bool _visible)
+	bool _visible, glm::vec4 _Color)
 {
 	model_load = _model_load;
 	model = _model;
@@ -32,7 +20,7 @@ Actor::Actor(Model* _model_load, uint8_t _ShaderId,
 	memcpy(type, _type, sizeof(type));
 	visible = _visible;
 	glm::vec3 position{0};
-	instace_positions.push_back(position);
+	Color = _Color;
 }
 
 Actor::~Actor()
@@ -114,7 +102,7 @@ void Actor::Draw(Shader _Shader, glm::vec3 _camera_position,
 {
 	//Set the Shader properties for the model
 	
-	model_load->Draw(_Shader, model, _view, _projection, _camera_position, _light_position, _LightColor);
+	model_load->Draw(_Shader, model, _view, _projection, _camera_position, _light_position, _LightColor, -1, 0, Color);
 }
 void Actor::addInstance(glm::vec3 _position)
 {

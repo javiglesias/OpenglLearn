@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 struct DirectionalLight 
 {
@@ -48,7 +48,7 @@ float LinearizeDepth(float depth);
 
 #define NR_POINT_LIGHTS 4
 
-out vec4 FragColor;
+layout (location = 0) out vec4 Color;
 
 uniform vec3 viewer_position;
 
@@ -78,7 +78,7 @@ void main()
 //	{
 //		result += point_light_calculations(point_light[i], normal, frag_position, viewer_direction);
 //	}
-	FragColor =  vec4(normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
+	Color =  vec4(normalized_color, 1.f); //vec4(result + normalized_color, 1.0);
 }
 
 float LinearizeDepth(float depth) 

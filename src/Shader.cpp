@@ -4,7 +4,7 @@
 #include <iostream>
 #include "glad/glad.h"
 
-Shader::Shader(const char* _Name, const char* _VertexPath, const char* _FragmentPath, const char* _ComputeShader)
+Shader::Shader(const char* _Name, const char* _VertexPath, const char* _FragmentPath, const char* _ComputeShader, float* _Color)
 {
 	std::string vertex_code;
 	std::string fragment_code;
@@ -18,6 +18,14 @@ Shader::Shader(const char* _Name, const char* _VertexPath, const char* _Fragment
 	c_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
 	name = _Name;
+	if (_Color)
+	{
+		Color.x = _Color[0];
+		Color.y = _Color[1];
+		Color.z = _Color[2];
+	}
+	else
+		Color = glm::vec4(1.f);
 	memcpy(VertexPath, _VertexPath, sizeof(VertexPath));
 	memcpy(FragmentPath, _FragmentPath, sizeof(FragmentPath));
 	memcpy(ComputePath, _ComputeShader, sizeof(ComputePath));
@@ -60,10 +68,6 @@ Shader::Shader(const char* _Name, const char* _VertexPath, const char* _Fragment
 		glGetShaderInfoLog(vertex, 512, nullptr, log_info);
 		std::cerr << log_info;
 	}
-	else
-	{
-		std::cout << "Vertex Shader created successfully.\n";
-	}
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &f_shader_code, nullptr);
 	glCompileShader(fragment);
@@ -72,10 +76,6 @@ Shader::Shader(const char* _Name, const char* _VertexPath, const char* _Fragment
 	{
 		glGetShaderInfoLog(fragment, 512, nullptr, log_info);
 		std::cerr << log_info;
-	}
-	else
-	{
-		std::cout << "Fragment Shader created successfully.\n";
 	}
 	// COMPUTE SHADER
 	iComputeShaderProgram = glCreateProgram();
@@ -87,10 +87,6 @@ Shader::Shader(const char* _Name, const char* _VertexPath, const char* _Fragment
 	{
 		glGetShaderInfoLog(compute, 512, nullptr, log_info);
 		std::cerr << log_info;
-	}
-	else
-	{
-		std::cout << "Compute Shader created successfully.\n";
 	}
 	glAttachShader(iComputeShaderProgram, compute);
 	glLinkProgram(iComputeShaderProgram);
@@ -106,10 +102,6 @@ Shader::Shader(const char* _Name, const char* _VertexPath, const char* _Fragment
 	{
 		glGetProgramInfoLog(id, 512, nullptr, log_info);
 		std::cerr << log_info;
-	}
-	else
-	{
-		std::cout << "Shader program linked successfully.\n";
 	}
 
 	glDeleteShader(vertex);
@@ -138,7 +130,17 @@ void Shader::setInt(const std::string& name, int value) const
 
 void Shader::setVec3(const std::string& name, glm::vec3 value) const
 {
-	//glUniform3fv(glGetUniformLocation(id, name.c_str()), value);
+	float_t values[3] = {value.x, value.y, value.z};
+	glUniform3fv(glGetUniformLocation(id, name.c_str()),1, values);
+}
+
+void Shader::setColor(const std::string& name, glm::vec3 value)
+{
+	float_t values[3] = { value.x, value.y, value.z };
+	Color.x = value.x;
+	Color.y = value.y;
+	Color.z = value.z;
+	setVec3(name, value);
 }
 
 const char* Shader::GetVertexShaderPath()

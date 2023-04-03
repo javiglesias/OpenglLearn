@@ -13,35 +13,35 @@
 
 void Model::Draw(Shader _Shader, glm::mat4 model, glm::mat4 view, 
 	glm::mat4 projection, glm::vec3 camera_position, glm::vec3 light_position,
-	glm::vec3 _LightColor, unsigned int texture, unsigned int _instance_count)
+	glm::vec3 _LightColor, unsigned int texture, int _instance_count, glm::vec3 _Color)
 {
-	/*Mesh mesh_to_draw = meshes[0];*/
+	int indices = 0;
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
-		/*for (auto indice : meshes[i].indices)
-		{
-			mesh_to_draw.indices.push_back(indice);
-		}*/
 		meshes[i].Draw(_Shader, model, view, projection, camera_position, 
 			light_position, _LightColor, texture, _instance_count);
+		indices += meshes[i].indices.size();
 	}
-	// TODO: Draw objects that are the same as instances.
-	/*mesh_to_draw.Draw(shader, model, view, projection, camera_position,
-		light_position, texture);*/
+	_Shader.setColor("RgbColor", _Color);
+	if (_instance_count > 0)
+		glDrawElementsInstanced(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0, _instance_count);
+	else
+		glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
 }
 
-void Model::loadModel(std::string path)
+bool Model::loadModel(std::string path)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		std::cerr << "Error loading the model " << importer.GetErrorString() << '\n';
-		return;
+		return false;
 	}
 	directory = path.substr(0, path.find_last_of('/'));
 	directory = directory + '/';
 	processNode(scene->mRootNode, scene);
+	return true;
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -63,7 +63,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
-	triangle_count += mesh->mNumVertices/3;
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex{};
@@ -108,8 +107,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		aiMaterial* material{};
 	}
-	model_loaded = true;
-	total_triangles += indices.size() / 3;
+	Status = LOADING;
 	return Mesh(vertices, indices, textures);
 }
 

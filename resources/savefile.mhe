@@ -1,0 +1,3 @@
+aaaaaaaa|Cube|1.00|0.00|0.00|resources/shaders/basic_shader.vert|resources/shaders/basic_shader.frag|resources/shaders/basic_shader.comp
+aaaaaaaa|Cylinder|1.00|1.00|0.00|resources/shaders/basic_shader.vert|resources/shaders/basic_shader.frag|resources/shaders/basic_shader.comp
+aaaaaaaa|Torus|1.00|1.00|1.00|resources/shaders/basic_shader.vert|resources/shaders/basic_shader.frag|resources/shaders/basic_shader.comp

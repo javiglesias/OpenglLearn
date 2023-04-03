@@ -19,13 +19,12 @@ public:
 	bool editable = false;
 		
 	Actor() {}
-	Actor(glm::mat4 _view, glm::mat4 _projection,
-		glm::vec3 _camera_position, bool _visible);
 	Actor(Model* _model_load, uint8_t _ShaderId,
 		glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
 		glm::vec3 _camera_position, const char* _name = "model_",
 		const char* _type = "Cube",
-		bool _visible = true);
+		bool _visible = true,
+		glm::vec4 _Color = glm::vec4(255,0,255, 1.f));
 	~Actor();
 	uint8_t getShader();
 	glm::mat4& getProjection();
@@ -46,6 +45,7 @@ public:
 		
 private:
 	Model* model_load;
+	glm::vec4 Color;
 	uint8_t ShaderId;
 	glm::mat4 model;
 	glm::mat4 view;

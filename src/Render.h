@@ -1,0 +1,17 @@
+#pragma once
+#include <wtypes.h>
+
+enum RENDER_INPUT
+{
+	KEY_W,
+	KEY_A,
+	KEY_S,
+	KEY_D,
+	KEY_R,
+	KEY_HOME,
+	KEY_END,
+	KEY_PAGE_UP,
+	KEY_PAGE_DOWN,
+	MOUSE_BUTTON_RIGHT,
+	MOUSE_BUTTON_LEFT
+};

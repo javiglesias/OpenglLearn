@@ -5,23 +5,15 @@
 #include "Model.h"
 #include "Actor.h"
 
-#include <wtypes.h>
 #include <crtdbg.h>
+#include "Render.h"
 
 #include "vendor/imgui.h"
 #include "vendor/imgui_impl_glfw.h"
 #include "vendor/imgui_impl_opengl3.h"
 #include "vendor/ImFileDialog.h"
 
-#include "../dependencies/stb_image/stb_image.h"
-#include "glad/glad.h"
-// GLFW goes second
-#include "GLFW/glfw3.h" 
-#include "glm.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
 
-#define EDITOR_GUI
 #define X glm::vec3(1, 0, 0)
 #define Y glm::vec3(0, 1, 0)
 #define Z glm::vec3(0, 0, 1)
@@ -29,6 +21,23 @@
 #define _(x) #x
 #define FRAMECAP60 0.0167f
 #define FRAMECAP30 0.0333f
+#define MAX_MODELS 100
+
+//Render Variables
+extern GLFWwindow* m_window;
+
+// Render Functions
+bool Render_Init(const char*, int _ScreenWidth, int _ScreenHeight);
+int  Render_ShouldCloseWindow();
+float_t Render_GetTime();
+void Render_PollEvents();
+void Render_SwapBuffers();
+void Render_Sleep(int _Milisecons);
+RENDER_INPUT Render_ProcessInput();
+void Render_ClearColor();
+void Render_BindVertexArray(unsigned int _VertexArray);
+void Render_SetCallbacks(void (*_MouseMovement)(GLFWwindow* window, double x_position, double y_position),
+	void (*_MouseScroll)(GLFWwindow* window, double x_offset, double y_offset));
 
 template<class T>
 struct tHashItem {
@@ -68,60 +77,20 @@ inline const char aBasicShapes[8][64] =
 	"LightBulb",
 	"Monkey"
 };
-enum GUI_COMMANDS
+
+inline const char aModels[8][64] =
 {
-	Text,
-	SameLine
+	"backpack"
 };
 
-struct GUI_command
-{
-	GUI_COMMANDS command;
-	std::string value;
-
-	GUI_command(GUI_COMMANDS _command, std::string _value)
-	{
-		command = _command;
-		value = _value;
-	}
-};
-
-struct model_loaded
-{
-	Model model_load;
-	Shader shader;
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 projection;
-	glm::vec3 camera_position;
-	std::string name;
-	bool visible = true;
-
-	model_loaded(Model _model_load, Shader _shader,
-		glm::mat4 _model, glm::mat4 _view, glm::mat4 _projection,
-		glm::vec3 _camera_position, std::string _name = "model_",
-		bool _visible = true)
-	{
-		model_load = _model_load;
-		shader = _shader;
-		model = _model;
-		view = _view;
-		projection = _projection;
-		camera_position = _camera_position;
-		name = _name;
-		visible = _visible;
-	}
-};
-
-inline sHashTable<Model>				tModelsDictionary;
-inline sHashTable<Shader>				tShaderDictionary;
-inline std::vector<Actor>				vModelsLoaded;
-inline std::vector<Actor>				vModelsToSave;
+Actor*  vModelsLoaded[MAX_MODELS];
+Actor*  vModelsToSave[MAX_MODELS];
+Shader* vLoadedShaders[MAX_MODELS];
+Shader* vShadersToSave[MAX_MODELS];
+unsigned int iLoadedShaders = 0, iLoadedModels = 0;
 inline std::vector<Actor>				vStaticWorld;
 inline std::vector<Actor>				vDynamicWorld;
 inline std::vector<Actor>				vLightsLoaded;
-inline std::vector<Shader>				vLoadedShaders;
-inline std::vector<Shader>				vShadersToSave;
 
 inline ImVec4							vLightColor(255.f, 255.f, 255.f, 1.f);
 
@@ -183,16 +152,16 @@ inline const char*						sCullMode{ "Back" };
 inline bool								bVAO_MODE = true;
 inline bool								bCustomModel = false;
 inline bool								bShowGUICursor = true;
+inline bool								bMustRefresh = false;
 inline bool								bDirectionalLightEnabled = false;
 inline bool								bPointLightEnabled = false;
 inline bool								bSpotLightEnabled = false;
-
-GLFWwindow* m_window = nullptr;
 
 ImVec4 rgba_color = ImVec4(1.f, 0.f, 0.f, 0.f);
 glm::mat4 basic_cube_model(1.f);
 glm::vec3 EditableObjectsMovement{ 0,0,0 };
 std::thread* tSaveThread = nullptr;
+std::thread* tJobs[16];
 std::thread tPoolJobs[128];
 std::string sTempActorType { "Cube" };
 
@@ -206,13 +175,6 @@ char sTempActorName[64] = { "" };
 bool IsRunningApp = true;
 bool bForceSave = false;
 bool bEditionMode = false;
-
-// FREE FUNCTIONS
-void framebuffer_size_callback(GLFWwindow*, int width, int height)
-{
-	glViewport(0, 1, width, height);
-	glm::ortho(0.f, (float)width, 0.f, (float)height, 0.3f, 10.f);
-}
 
 void mouse_movement_callback(GLFWwindow* window, double x_position, double y_position)
 {
@@ -248,20 +210,20 @@ void mouse_scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 void process_input(GLFWwindow* m_window)
 {
 	// CAMERA MOVEMENT
-	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+	if (Render_ProcessInput() == RENDER_INPUT::KEY_W)
 	{
 		vCameraPosition += fCameraSpeed * vCameraForward;
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+	if (Render_ProcessInput() == RENDER_INPUT::KEY_A)
 	{
 		vCameraPosition += glm::normalize(glm::cross(
 			vCameraUp, vCameraForward)) * fCameraSpeed;
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+	if (Render_ProcessInput() == RENDER_INPUT::KEY_S)
 	{
 		vCameraPosition -= fCameraSpeed * vCameraForward;
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+	if (Render_ProcessInput() == RENDER_INPUT::KEY_D)
 	{
 		vCameraPosition -= glm::normalize(glm::cross(
 			vCameraUp, vCameraForward)) * fCameraSpeed;
@@ -269,32 +231,19 @@ void process_input(GLFWwindow* m_window)
 	// FPS old school
 	// vCameraPosition.y = y_constant;
 
-	if (glfwGetKey(m_window, GLFW_KEY_HOME) == GLFW_PRESS)
-	{
-		fShininess += 1;
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_END) == GLFW_PRESS)
-	{
-		fShininess -= 1;
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
-	{
-		fScale += 0.01f;
-	}
-	else if (glfwGetKey(m_window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
-	{
-		fScale -= 0.01f;
-	}
-
-	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	if (Render_ProcessInput() == RENDER_INPUT::MOUSE_BUTTON_RIGHT)
 	{
 		bShowGUICursor = false;
 	}
-	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+	if (Render_ProcessInput() == RENDER_INPUT::MOUSE_BUTTON_LEFT)
 	{
 		bShowGUICursor = true;
 	}
 	// EDITION MODE
+	if (Render_ProcessInput() == RENDER_INPUT::KEY_R)
+	{
+		bMustRefresh = true;
+	}
 }
 
 std::string ExePath() {
@@ -302,109 +251,161 @@ std::string ExePath() {
 	return std::string(pwd);
 }
 
-// Dedicated GPU for laptops with 2 https://stackoverflow.com/questions/16823372/forcing-machine-to-use-dedicated-graphics-card
-extern "C" {
-	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-}
-extern "C"
-{
-	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-}
-
-void RefreshShaders()
-{
-	vLoadedShaders.clear();
-	vLoadedShaders.push_back(Shader("basic_shader", "resources/shaders/basic_shader.vert",
-		"resources/shaders/basic_shader.frag", "resources/shaders/basic_shader.comp"));
-}
-
-void SaveCurrentState()
-{
-	float CurrentFrame = (float_t)glfwGetTime();
-	float TimeAccumulated = 0.f;
-	while (IsRunningApp)
-	{
-		float NewFrame = (float_t)glfwGetTime();
-		float DeltaTime = NewFrame - CurrentFrame;
-		CurrentFrame = NewFrame;
-		TimeAccumulated += DeltaTime;
-		if (TimeAccumulated > 100 || bForceSave)
-		{
-			vModelsToSave = vModelsLoaded;
-			vShadersToSave = vLoadedShaders;
-			FILE* f = fopen("savefile.mhe", "w+");
-			for (auto i : vModelsToSave)
-			{
-				fprintf(stdout, "Saving %s (%s) at %.2f,%.2f,%.2f with %s y %s, %s\n", 
-					i.getNameConst(), i.getTypeConst(), i.getPosition()[0], 
-					i.getPosition()[1], i.getPosition()[2],
-					vShadersToSave[i.getShader()].GetVertexShaderPath(),
-					vShadersToSave[i.getShader()].GetFragmentShaderPath(),
-					vShadersToSave[i.getShader()].GetComputeShaderPath());
-				if(f)
-				{
-					fprintf(f, "%s|%s|%.2f|%.2f|%.2f|%s|%s|%s\n",
-						i.getNameConst(), i.getTypeConst(),
-						i.getPosition()[0],
-						i.getPosition()[1], i.getPosition()[2],
-						vShadersToSave[i.getShader()].GetVertexShaderPath(),
-						vShadersToSave[i.getShader()].GetFragmentShaderPath(),
-						vShadersToSave[i.getShader()].GetComputeShaderPath());
-				}
-			}
-			fclose(f);
-			TimeAccumulated = 0.f;
-			bForceSave = false;
-			vModelsToSave.clear();
-		}
-		Sleep(1000);
-	}
-}
-
 Model* LocalizeModel( const char* _type )
 {
 	// TO-DO adapt the code to use lightweight patter with models already loaded.
 	Model* oTempModelToCreate = nullptr;
 	char sModelPath[128], sModelHash[64];
-	oTempModelToCreate = tModelsDictionary.find(_type); // Model Already loaded.
-	if (!oTempModelToCreate)
+	//oTempModelToCreate = tModelsDictionary.find(_type); // Model Already loaded.
+	sprintf(sModelPath, "resources/models/BasicShapes/%s.obj", _type);
+	oTempModelToCreate = new Model(sModelPath);
+	/*if (!oTempModelToCreate)
 	{
-		sprintf(sModelPath, "resources/models/BasicShapes/%s.obj", _type);
-		oTempModelToCreate = new Model(sModelPath);
-		memcpy(sModelHash, sTempActorType.c_str(), sizeof(sModelHash));
-		tModelsDictionary.items.push_back(tHashItem(sModelHash, *oTempModelToCreate));
-	}
+		tModelsDictionary.items.push_back(tHashItem(_type, *oTempModelToCreate));
+	}*/
+
 	return oTempModelToCreate;
 }
 
-int LocalizeShader(const char* _name, const char* _VertPath, const char* _FragPath, const char* _CompPath)
+int LocalizeShader(const char* _name, const char* _VertPath, const char* _FragPath, const char* _CompPath, glm::vec3 _Color)
 {
 	// To-Do Adapt this vLoadedShaders to be a hashtable.
-	for(int i = 0; i < vLoadedShaders.size(); i++)
+	/*for(int i = 0; i < vLoadedShaders.size(); i++)
 	{
 		if(strcmp(_name, vLoadedShaders[i].name) == 0)
 		{
 			return i;
 		}
-	}
+	}*/
 	//if(!tShaderDictionary.find(_name))
 		//tShaderDictionary.items.push_back(tHashItem(_name, Shader(_name, _VertPath, _FragPath, _CompPath)));
-	vLoadedShaders.push_back(Shader(_name, _VertPath, _FragPath, _CompPath));
+	vLoadedShaders[iLoadedShaders] = new Shader(_name, _VertPath, _FragPath, _CompPath);
+	++iLoadedShaders;
 	return 0;
+}
+
+void SaveCurrentState()
+{
+	float CurrentFrame = Render_GetTime();
+	float TimeAccumulated = 0.f;
+	while (IsRunningApp)
+	{
+		float NewFrame = Render_GetTime();
+		float DeltaTime = NewFrame - CurrentFrame;
+		CurrentFrame = NewFrame;
+		TimeAccumulated += DeltaTime;
+		if (TimeAccumulated > 1000 || bForceSave)
+		{
+			memcpy(vModelsToSave, vModelsLoaded, sizeof(vModelsToSave));
+			memcpy(vShadersToSave, vLoadedShaders, sizeof(vShadersToSave));
+			FILE* f = fopen("savefile.csv", "w+");
+			for (auto i : vModelsToSave)
+			{
+				fprintf(stdout, "Saving %s (%s) at %.2f,%.2f,%.2f with %s y %s, %s\n", 
+					i->getNameConst(), i->getTypeConst(), i->getPosition()[0],
+					i->getPosition()[1], i->getPosition()[2],
+					vShadersToSave[i->getShader()]->GetVertexShaderPath(),
+					vShadersToSave[i->getShader()]->GetFragmentShaderPath(),
+					vShadersToSave[i->getShader()]->GetComputeShaderPath());
+				if(f)
+				{
+					fprintf(f, "%s;%s;%.2f;%.2f;%.2f;%s;%s;%s;%.2f;%.2f;%.2f\n",
+						i->getNameConst(), i->getTypeConst(),
+						i->getPosition()[0],
+						i->getPosition()[1], i->getPosition()[2],
+						vShadersToSave[i->getShader()]->GetVertexShaderPath(),
+						vShadersToSave[i->getShader()]->GetFragmentShaderPath(),
+						vShadersToSave[i->getShader()]->GetComputeShaderPath(),
+						vShadersToSave[i->getShader()]->Color.x,
+						vShadersToSave[i->getShader()]->Color.y,
+						vShadersToSave[i->getShader()]->Color.z);
+				}
+			}
+			fclose(f);
+			TimeAccumulated = 0.f;
+			bForceSave = false;
+		}
+		Render_Sleep(1000);
+	}
+}
+
+void ReadSaveFile(char** argv)
+{
+	// Is trying to load a scene?
+	FILE* f = fopen(argv[1], "r+");
+	if (f)
+	{
+		char saveData[256], name[128], type[64], shaderVert[128], shaderFrag[128], shaderComp[128] = "";
+		char* iterator;
+		float_t position[4];
+		glm::vec4 Color;
+		while (fscanf(f, "%s", saveData) != EOF)
+		{
+			iterator = strtok(saveData, ";");
+			memcpy(name, iterator, sizeof(name));
+			memcpy(type, strtok(NULL, ";"), sizeof(type));
+			position[0] = (float_t)atof(strtok(NULL, ";"));
+			position[1] = (float_t)atof(strtok(NULL, ";"));
+			position[2] = (float_t)atof(strtok(NULL, ";"));
+			memcpy(shaderVert, strtok(NULL, ";"), sizeof(shaderVert));
+			memcpy(shaderFrag, strtok(NULL, ";"), sizeof(shaderFrag));
+			memcpy(shaderComp, strtok(NULL, ";"), sizeof(shaderComp));
+			Color.x = (float_t)atof(strtok(NULL, ";"));
+			Color.y = (float_t)atof(strtok(NULL, ";"));
+			Color.z = (float_t)atof(strtok(NULL, ";"));
+			Color.w = 1.f;
+			int shaderId = LocalizeShader("Basic_shader", shaderVert, shaderFrag, shaderComp, Color);
+			vLoadedShaders[shaderId]->setColor("RgbColor", Color);
+			vModelsLoaded[iLoadedModels] = new Actor(LocalizeModel(type), shaderId,
+				basic_cube_model, mView, mProjection, vCameraPosition, name, type,
+				true, Color);
+			vModelsLoaded[iLoadedModels]->setPosition(position[0], position[1], position[2]);
+			if (iLoadedModels >= MAX_MODELS) break;
+			++iLoadedModels;
+		}
+	}
+}
+
+void RenderLoop()
+{
+	Render_ClearColor();
+	// Render Loop
+	for (size_t i = 0; i < iLoadedModels; i++)
+	{
+		//Set the Shader properties for the model
+		Shader* ShaderToUse = vLoadedShaders[vModelsLoaded[i]->getShader()];
+		ShaderToUse->setColor("RgbColor", ShaderToUse->Color);
+		glm::vec3 LightColor(vLightColor.x, vLightColor.y, vLightColor.z);
+		ShaderToUse->setVec3("LightColor", LightColor);
+
+		vModelsLoaded[i]->Draw(*ShaderToUse, vCameraPosition, vLightPosition,
+			LightColor, mProjection, mView);
+	}
+	Render_BindVertexArray(0);
 }
 
 void CloseEngine()
 {
 	// TO-DO Delete all the dynamic memory.
-	vModelsLoaded.clear();
-	vLoadedShaders.clear();
+	for (int i = 0; i < iLoadedModels; i++)
+	{
+		vModelsLoaded[i]  = nullptr;
+		vLoadedShaders[i] = nullptr;
+	}
+	iLoadedModels = 0;
+	iLoadedShaders = 0;
 	IsRunningApp = false;
 	if (tSaveThread->joinable())
 		tSaveThread->join();
+	for (size_t i = 0; i < 16; i++)
+	{
+		if (tJobs[i] && tJobs[i]->joinable()) tJobs[i]->join();
+	}
 	delete tSaveThread;
+#ifdef EDITOR_GUI
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-	glfwTerminate();
+#endif
 	_ASSERTE(_CrtCheckMemory());
 }
 
@@ -412,56 +413,13 @@ void CloseEngine()
 int main(int args, char** argv)
 {
 	// INICIALIZAMOS GLFW
+refresh:
 	_CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE,
-		GLFW_OPENGL_CORE_PROFILE);
-	m_window = glfwCreateWindow(iScreenWidth, iScreenHeight,
-		"LearnOpenGL", nullptr, nullptr);
-
-	if (m_window == nullptr)
-	{
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(m_window);
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Error loading GLAD.";
-		return -1;
-	}
-
-	if (args > 1)
-	{
-		// Is trying to load a scene?
-		FILE* f = fopen(argv[1], "r+");
-		if (f)
-		{
-			char saveData[256], name[128], type[64], shaderVert[128], shaderFrag[128], shaderComp[128] = "";
-			char* iterator;
-			float_t position[4];
-			while(fscanf(f, "%s", saveData) != EOF)
-			{
-				iterator = strtok(saveData, "|");
-				memcpy(name, iterator, sizeof(name));
-				memcpy(type, strtok(NULL, "|"), sizeof(type));
-				position[0] = (float_t)atof(strtok(NULL, "|"));
-				position[1] = (float_t)atof(strtok(NULL, "|"));
-				position[2] = (float_t)atof(strtok(NULL, "|"));
-				memcpy(shaderVert, strtok(NULL, "|"), sizeof(shaderVert));
-				memcpy(shaderFrag, strtok(NULL, "|"), sizeof(shaderFrag));
-				memcpy(shaderComp, strtok(NULL, "|"), sizeof(shaderComp));
-				int shaderId = LocalizeShader("Basic_shader",shaderVert, shaderFrag, shaderComp);
-				Actor oNewActor(LocalizeModel( type ), shaderId,
-					basic_cube_model, mView, mProjection, vCameraPosition, name, type);
-				oNewActor.setPosition(position[0], position[1], position[2]);
-				vModelsLoaded.push_back(oNewActor);
-			}
-		}
-	}
-
+	unsigned long long start, stop;
+	start = __rdtsc();
+	Render_Init("LearnOpenGL", 800, 600);
+	ReadSaveFile(argv);
+#ifdef EDITOR_GUI
 	// INICIALIZAMOS IMGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -474,25 +432,9 @@ int main(int args, char** argv)
 	// ESTABLECEMOS LA PATAFORMA Y RENDER
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 	ImGui_ImplOpenGL3_Init("#version 430");
+#endif
 
-	// CALLBACKS
-	framebuffer_size_callback(m_window, iScreenWidth, iScreenHeight);
-	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(m_window, mouse_movement_callback);
-	glfwSetScrollCallback(m_window, mouse_scroll_callback);
-
-	glEnable(GL_BLEND);
-
-	//Render prep
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NOTEQUAL, (GLint)1, 0xff);
-
+	Render_SetCallbacks(mouse_movement_callback, mouse_scroll_callback);
 
 	// Vector cross product gives us a orthogonal vector;
 	vCameraRight = glm::vec3(glm::normalize(glm::cross(vUp, vCameraForward)));
@@ -511,59 +453,28 @@ int main(int args, char** argv)
 		glm::vec4(0.f, 0.f, 0.f, 1.f));
 
 	tSaveThread = new std::thread(SaveCurrentState);
-	fCurrentFrame = (float_t)glfwGetTime();
-	//Render loop
-	while (!glfwWindowShouldClose(m_window))
+	fCurrentFrame = Render_GetTime();
+	stop = __rdtsc();
+	printf("Inicializacion: %llu ciclos\n", (stop - start));
+
+	while (!Render_ShouldCloseWindow())
 	{
-		fNewFrame = (float_t)glfwGetTime();
+		fNewFrame = Render_GetTime();
 		fDeltaTime = fNewFrame - fCurrentFrame;
 		fCurrentFrame = fNewFrame;
 		fTimeAccumulated += fDeltaTime;
 		fTimeAccumulated_physics += fDeltaTime;
-		// Frame fixed a 60
+		
 		if (fTimeAccumulated > fFrameCap)
 		{
 			process_input(m_window);
-			if (bShowGUICursor)
-			{
-				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			}
-			else
-			{
-				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			}
-
 			mProjection = glm::perspective(glm::radians(fFieldOfView),
 				(float_t)(iScreenWidth / iScreenHeight), fZNear, fZFar);
 
 			mView = glm::lookAt(vCameraPosition, vCameraPosition + vCameraForward,
 				vCameraUp); // camera up direction
 			iFrameNumber++;
-
-			glClearColor(0.f, 0.f, 0.f, 1.f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			glBindVertexArray(0);
-
-			// Render Loop
-			for (uint8_t i = 0; i < vModelsLoaded.size(); i++)
-			{
-				Actor* oActor = &vModelsLoaded[i];
-				if (vModelsLoaded[i].visible)
-				{
-					//Set the Shader properties for the model
-					Shader* ShaderToUse = &vLoadedShaders[oActor->getShader()];
-					int ColorLocation = glGetUniformLocation(ShaderToUse->id, "RgbColor");
-					glUniform3fv((GLint)ColorLocation, 1, glm::value_ptr(ShaderToUse->rgba_color));
-
-					glm::vec3 LightColor(vLightColor.x, vLightColor.y, vLightColor.z);
-					int LightColorLocation = glGetUniformLocation(ShaderToUse->id, "LightColor");
-					glUniform3fv((GLint)LightColorLocation, 1, value_ptr(LightColor));
-					
-					oActor->Draw(*ShaderToUse, vCameraPosition, vLightPosition, 
-						LightColor, mProjection, mView);
-				}
-			}
-
+			RenderLoop();
 			// IMGUI
 #ifdef EDITOR_GUI
 			ImGui_ImplOpenGL3_NewFrame();
@@ -740,10 +651,6 @@ int main(int args, char** argv)
 				{
 					bSpotLightEnabled = !bSpotLightEnabled;
 				}
-				if (ImGui::Button("Refresh shaders"))
-				{
-					RefreshShaders();
-				}
 				ImGui::ColorEdit3("Light Color", (float*)&vLightColor, NULL);
 				ImGui::End();
 			}
@@ -793,6 +700,10 @@ int main(int args, char** argv)
 				{
 					sTempActorType = _(Sphere);
 
+				}
+				else if (ImGui::RadioButton("Backpack", &radio_button, 1))
+				{
+					sTempActorType = _(backpack);
 				}
 				if (ImGui::BeginCombo("Diffuse to apply", "", NULL))
 				{
@@ -855,11 +766,15 @@ int main(int args, char** argv)
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
 
-			// poll the events and call the callback functions.
-			glfwPollEvents();
-			// swap the Color buffer
-			glfwSwapBuffers(m_window);
+			Render_PollEvents();
+			Render_SwapBuffers();
 			fTimeAccumulated = 0;
+			if(bMustRefresh)
+			{
+				bMustRefresh = false;
+				CloseEngine();
+				goto refresh;
+			}
 		}
 	}
 	CloseEngine();

@@ -1,2 +1,3 @@
 C:\Users\Alientech\Documents\Projects\OpenglLearn\x64\Debug\LearnOpenGL.exe
 C:\Users\B00l\source\repos\OpenglLearn\x64\Debug\LearnOpenGL.exe
+C:\Users\unframed\Documents\repos\OpenglLearn\x64\Debug\LearnOpenGL.exe
